@@ -8,9 +8,9 @@ import java.util.function.Consumer;
  */
 public interface BeeAction {
 
-    BeeAction onSuccess(Consumer<BeeAction> onSuccess);
+    BeeAction onSuccess(Consumer<BeeControl> onSuccess);
 
-    BeeAction onFailed(Consumer<BeeAction> onFailed);
+    BeeAction onFailed(Consumer<BeeControl> onFailed);
 
     BeeAction onPositionChange(Consumer<Position> positionChange, double deltaDistance);
     
