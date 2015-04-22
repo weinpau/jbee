@@ -16,7 +16,7 @@ public interface BeeControl {
 
     BeeAction land();
 
-    BeeAction gotoPosition(Position position);
+    BeeAction flyTo(Position position);
     
     BeeAction foreward(double distance);
         
