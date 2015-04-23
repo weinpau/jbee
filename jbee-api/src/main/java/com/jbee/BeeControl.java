@@ -18,7 +18,7 @@ public interface BeeControl {
     BeeAction takeOff(Distance height);
 
     BeeAction land();
-    
+
     BeeAction hover(Duration duration);
 
     BeeAction flyTo(Position position, Velocity velocity);
@@ -30,5 +30,9 @@ public interface BeeControl {
     BeeAction left(Distance distance, Velocity velocity);
 
     BeeAction backward(Distance distance, Velocity velocity);
+
+    BeeAction up(Distance distance, Velocity velocity);
+
+    BeeAction down(Distance distance, Velocity velocity);
 
 }
