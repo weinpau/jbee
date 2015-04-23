@@ -12,7 +12,7 @@ public interface BeeControl {
      
     BeeState getLastKnownState();
 
-    BeeAction takeOff();
+    BeeAction takeOff(double height);
 
     BeeAction land();
 
