@@ -16,15 +16,15 @@ public interface BeeControl {
 
     BeeAction land();
 
-    BeeAction flyTo(Position position);
+    BeeAction flyTo(Position position, Velocity velocity);
     
-    BeeAction foreward(double distance);
+    BeeAction foreward(double distance, Velocity velocity);
         
-    BeeAction right(double distance);
+    BeeAction right(double distance, Velocity velocity);
     
-    BeeAction left(double distance);
+    BeeAction left(double distance, Velocity velocity);
     
-    BeeAction backward(double distance);
+    BeeAction backward(double distance, Velocity velocity);
     
     
 
