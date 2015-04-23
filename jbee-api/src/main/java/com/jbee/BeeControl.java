@@ -1,5 +1,6 @@
 package com.jbee;
 
+import com.jbee.units.Velocity;
 import java.util.function.Consumer;
 
 /**
