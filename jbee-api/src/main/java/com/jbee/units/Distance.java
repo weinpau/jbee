@@ -41,6 +41,11 @@ public final class Distance {
     }
 
     @Override
+    public String toString() {
+        return mm + " mm";
+    }
+
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 37 * hash + (int) (this.mm ^ (this.mm >>> 32));
@@ -58,7 +63,5 @@ public final class Distance {
         final Distance other = (Distance) obj;
         return this.mm == other.mm;
     }
-    
-    
 
 }
