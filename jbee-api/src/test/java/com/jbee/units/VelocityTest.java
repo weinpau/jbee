@@ -1,6 +1,5 @@
 package com.jbee.units;
 
-import com.jbee.units.Velocity;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

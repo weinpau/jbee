@@ -12,8 +12,8 @@ public class DistanceTest {
     @Test
     public void testToMilimeters() {
         assertEquals(10, Distance.ofMilimeters(10).toMilimeters());
-        assertEquals(104, Distance.ofCentimeters(10.4).toMilimeters());
-        assertEquals(1387, Distance.ofMeters(1.387).toMilimeters());
+        assertEquals(100, Distance.ofCentimeters(10).toMilimeters());
+        assertEquals(1000, Distance.ofMeters(1).toMilimeters());
     }
 
     @Test
@@ -25,9 +25,13 @@ public class DistanceTest {
 
     @Test
     public void testToMeters() {
-        assertEquals(0.01, Distance.ofMilimeters(10).toMeters(), 0.0);
-        assertEquals(0.1, Distance.ofCentimeters(10).toMeters(), 0.0);
+        assertEquals(0.01, Distance.ofMilimeters(10).toMeters(), 0.0001);
+        assertEquals(0.1, Distance.ofCentimeters(10).toMeters(), 0.0001);
         assertEquals(1, Distance.ofMeters(1).toMeters(), 0.0);
     }
 
+    @Test
+    public void testAdd() {
+        assertEquals(150, Distance.ofMeters(1).add(Distance.ofCentimeters(50)).toCentimeters(), 0.0);
+    }
 }

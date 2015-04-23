@@ -6,38 +6,42 @@ package com.jbee.units;
  */
 public final class Distance {
 
-    private final long mm;
+    private final int mm;
 
     private Distance() {
         this(0);
     }
 
-    private Distance(long mm) {
+    private Distance(int mm) {
         this.mm = mm;
     }
 
-    public long toMilimeters() {
+    public int toMilimeters() {
         return mm;
     }
 
     public double toCentimeters() {
-        return mm / 10d;
+        return mm / 10f;
     }
 
     public double toMeters() {
-        return mm / 1000d;
+        return mm / 1000f;
+    }
+    
+    public Distance add(Distance distance) {
+        return new Distance(StrictMath.addExact(mm, distance.mm));
     }
 
-    public static Distance ofMilimeters(long milimeters) {
+    public static Distance ofMilimeters(int milimeters) {
         return new Distance(milimeters);
     }
 
-    public static Distance ofCentimeters(double centimeter) {
-        return new Distance((long) (centimeter * 10));
+    public static Distance ofCentimeters(int centimeters) {
+        return new Distance(StrictMath.multiplyExact(centimeters, 10));
     }
 
-    public static Distance ofMeters(double meters) {
-        return new Distance((long) (meters * 1000));
+    public static Distance ofMeters(int meters) {
+        return new Distance(StrictMath.multiplyExact(meters, 1000));
     }
 
     @Override
@@ -47,8 +51,8 @@ public final class Distance {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + (int) (this.mm ^ (this.mm >>> 32));
+        int hash = 3;
+        hash = 17 * hash + this.mm;
         return hash;
     }
 
