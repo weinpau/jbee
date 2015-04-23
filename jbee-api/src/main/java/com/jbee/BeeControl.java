@@ -2,6 +2,7 @@ package com.jbee;
 
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
+import java.time.Duration;
 import java.util.function.Consumer;
 
 /**
@@ -17,6 +18,8 @@ public interface BeeControl {
     BeeAction takeOff(Distance height);
 
     BeeAction land();
+    
+    BeeAction hover(Duration duration);
 
     BeeAction flyTo(Position position, Velocity velocity);
 
