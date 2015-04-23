@@ -1,5 +1,6 @@
 package com.jbee;
 
+import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
 import java.util.function.Consumer;
 
@@ -10,23 +11,21 @@ import java.util.function.Consumer;
 public interface BeeControl {
 
     void onStateChange(Consumer<BeeState> beeStateListener);
-     
+
     BeeState getLastKnownState();
 
-    BeeAction takeOff(double height);
+    BeeAction takeOff(Distance height);
 
     BeeAction land();
 
     BeeAction flyTo(Position position, Velocity velocity);
-    
-    BeeAction foreward(double distance, Velocity velocity);
-        
-    BeeAction right(double distance, Velocity velocity);
-    
-    BeeAction left(double distance, Velocity velocity);
-    
-    BeeAction backward(double distance, Velocity velocity);
-    
-    
+
+    BeeAction foreward(Distance distance, Velocity velocity);
+
+    BeeAction right(Distance distance, Velocity velocity);
+
+    BeeAction left(Distance distance, Velocity velocity);
+
+    BeeAction backward(Distance distance, Velocity velocity);
 
 }

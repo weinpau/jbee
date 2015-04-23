@@ -17,7 +17,7 @@ public final class Velocity {
         this(0);
     }
 
-    public Velocity(double mps) {
+    private Velocity(double mps) {
         this.mps = mps;
     }
 
