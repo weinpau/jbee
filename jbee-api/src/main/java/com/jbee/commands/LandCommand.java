@@ -6,7 +6,7 @@ package com.jbee.commands;
  */
 public interface LandCommand extends Command{
     
-    CommandPromise land();
+    CommandResult land();
     
     
 }

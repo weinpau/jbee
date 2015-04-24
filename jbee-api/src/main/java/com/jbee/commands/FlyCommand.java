@@ -10,6 +10,6 @@ import com.jbee.units.Velocity;
  */
 public interface FlyCommand extends Command {
 
-    CommandPromise fly(Direction direction, Distance distance, Velocity velocity);
+    CommandResult fly(Direction direction, Distance distance, Velocity velocity);
 
 }

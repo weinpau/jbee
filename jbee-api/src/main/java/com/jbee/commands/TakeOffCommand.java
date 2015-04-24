@@ -8,5 +8,5 @@ import com.jbee.units.Distance;
  */
 public interface TakeOffCommand extends Command {
     
-    CommandPromise takeOff(Distance height);
+    CommandResult takeOff(Distance height);
 }
