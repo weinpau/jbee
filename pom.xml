@@ -11,6 +11,8 @@
 
     <modules>
         <module>jbee-api</module>
+        <module>jbee-core</module>
+        <module>jbee-device-simulation</module>
     </modules>
     
     <dependencyManagement>
