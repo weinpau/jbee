@@ -1,4 +1,4 @@
-package com.jbee;
+package com.jbee.positioning;
 
 /**
  *

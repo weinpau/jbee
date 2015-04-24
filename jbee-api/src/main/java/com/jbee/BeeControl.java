@@ -1,5 +1,6 @@
 package com.jbee;
 
+import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
 import com.jbee.units.YAW;
@@ -12,9 +13,6 @@ import java.util.function.Consumer;
  */
 public interface BeeControl {
 
-    void onStateChange(Consumer<BeeState> beeStateListener);
-
-    BeeState getLastKnownState();
 
     BeeAction takeOff(Distance height);
 

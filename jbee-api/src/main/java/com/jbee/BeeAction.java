@@ -1,5 +1,6 @@
 package com.jbee;
 
+import com.jbee.positioning.Position;
 import java.time.Duration;
 import java.util.function.Consumer;
 

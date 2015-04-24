@@ -1,5 +1,6 @@
 package com.jbee;
 
+import com.jbee.positioning.Position;
 import com.jbee.units.Velocity;
 import com.jbee.units.YAW;
 
