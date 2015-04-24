@@ -8,6 +8,6 @@ import java.time.Duration;
  */
 public interface HoverCommand extends Command {
     
-    void hover(Duration duration);
+    CommandPromise hover(Duration duration);
     
 }

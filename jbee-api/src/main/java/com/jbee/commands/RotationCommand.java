@@ -8,6 +8,6 @@ import com.jbee.units.YAW;
  */
 public interface RotationCommand extends Command {
  
-    void rotate(YAW yaw);
+    CommandPromise rotate(YAW yaw);
     
 }

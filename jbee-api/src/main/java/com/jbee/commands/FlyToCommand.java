@@ -10,6 +10,6 @@ import com.jbee.units.YAW;
  */
 public interface FlyToCommand extends Command {
 
-    void flyTo(Position position, YAW yaw, Velocity velocity);
+    CommandPromise flyTo(Position position, YAW yaw, Velocity velocity);
 
 }
