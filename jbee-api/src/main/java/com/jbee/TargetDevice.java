@@ -15,6 +15,8 @@ public interface TargetDevice {
 
     String getId();
     
+    BeeState getCurrentState();
+    
     FlyCommand getFlyCommand();
     
     FlyToCommand getFlyToCommand();
