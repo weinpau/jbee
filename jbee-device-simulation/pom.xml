@@ -11,8 +11,8 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jbee-core</artifactId>
-            <version>${project.version}</version>         
+            <artifactId>jbee-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

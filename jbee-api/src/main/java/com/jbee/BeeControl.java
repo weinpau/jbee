@@ -21,23 +21,37 @@ public interface BeeControl {
     BeeAction land();
 
     BeeAction hover(Duration duration);
-    
+
+    BeeAction rotate(YAW yaw);
+
     BeeAction flyTo(Position position, YAW yaw, Velocity velocity);
 
     BeeAction flyTo(Position position, Velocity velocity);
 
-    BeeAction foreward(Distance distance, Velocity velocity);
+    BeeAction fly(Direction direction, Distance distance, Velocity velocity);
 
-    BeeAction right(Distance distance, Velocity velocity);
+    default BeeAction foreward(Distance distance, Velocity velocity) {
+        return fly(Direction.FOREWARD, distance, velocity);
+    }
 
-    BeeAction left(Distance distance, Velocity velocity);
+    default BeeAction right(Distance distance, Velocity velocity) {
+        return fly(Direction.RIGHT, distance, velocity);
+    }
 
-    BeeAction backward(Distance distance, Velocity velocity);
+    default BeeAction left(Distance distance, Velocity velocity) {
+        return fly(Direction.LEFT, distance, velocity);
+    }
 
-    BeeAction up(Distance distance, Velocity velocity);
+    default BeeAction backward(Distance distance, Velocity velocity) {
+        return fly(Direction.BACKWARD, distance, velocity);
+    }
 
-    BeeAction down(Distance distance, Velocity velocity);
-    
-    BeeAction rotate(YAW yaw);
+    default BeeAction up(Distance distance, Velocity velocity) {
+        return fly(Direction.UP, distance, velocity);
+    }
+
+    default BeeAction down(Distance distance, Velocity velocity) {
+        return fly(Direction.DOWN, distance, velocity);
+    }
 
 }
