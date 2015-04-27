@@ -9,7 +9,9 @@ public interface Bee {
     BeeControl control();
 
     BeeMonitor monitor();
-    
+
     BeeWorld getWorld();
+
+    void close();
 
 }

@@ -17,11 +17,14 @@ import java.util.function.Consumer;
  *
  * @author weinpau
  */
-class BeeControlImpl implements BeeControl {
+class DefaultBeeControl implements BeeControl {
 
-    ExecutorService commandExecutor;
-    TargetDevice device;
-    DefaultBeeMonitor monitor;
+    boolean closed = false;
+    List<DefaultBeeControl> childs = new ArrayList<>();
+
+    final ExecutorService commandExecutor;
+    final TargetDevice device;
+    final DefaultBeeMonitor monitor;
 
     List<Consumer<Command>> failedListeners = new ArrayList<>();
     List<Consumer<Command>> interruptListeners = new ArrayList<>();
@@ -29,7 +32,7 @@ class BeeControlImpl implements BeeControl {
 
     WeakReference<Command> currentCommand;
 
-    BeeControlImpl(ExecutorService commandExecutor, TargetDevice device, DefaultBeeMonitor monitor) {
+    DefaultBeeControl(ExecutorService commandExecutor, TargetDevice device, DefaultBeeMonitor monitor) {
         this.commandExecutor = commandExecutor;
         this.device = device;
         this.monitor = monitor;
@@ -37,38 +40,47 @@ class BeeControlImpl implements BeeControl {
 
     @Override
     public BeeControl onFailed(Consumer<Command> onFailed) {
-        BeeControlImpl control = new BeeControlImpl(commandExecutor, device, monitor);
+        checkControl();
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, device, monitor);
         control.failedListeners.addAll(failedListeners);
         control.failedListeners.add(onFailed);
+        childs.add(control);
         return control;
     }
 
     @Override
     public BeeControl onInterrupt(Consumer<Command> onInterrupt) {
-        BeeControlImpl control = new BeeControlImpl(commandExecutor, device, monitor);
+        checkControl();
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, device, monitor);
         control.interruptListeners.addAll(interruptListeners);
         control.interruptListeners.add(onInterrupt);
+        childs.add(control);
         return control;
     }
 
     @Override
     public BeeControl onAction(Consumer<Command> onAction, Duration period) {
-        BeeControlImpl control = new BeeControlImpl(commandExecutor, device, monitor);
+        checkControl();
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, device, monitor);
         control.commandHandlers.addAll(commandHandlers);
         control.commandHandlers.add(new ActionHandler(onAction, period));
+        childs.add(control);
         return control;
     }
 
     @Override
     public BeeControl onPositionChange(BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
-        BeeControlImpl control = new BeeControlImpl(commandExecutor, device, monitor);
+        checkControl();
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, device, monitor);
         control.commandHandlers.addAll(commandHandlers);
         control.commandHandlers.add(new PositionChangeHandler(monitor, onPositionChange, deltaDistance));
+        childs.add(control);
         return control;
     }
 
     @Override
     public CommandResult execute(Command command) {
+        checkControl();
         if (currentCommand != null) {
             clearCommand();
         }
@@ -85,6 +97,7 @@ class BeeControlImpl implements BeeControl {
 
     @Override
     public CommandResult interrupt() {
+        checkControl();
         if (currentCommand == null) {
             return CommandResult.NOT_EXECUTED;
         }
@@ -95,6 +108,15 @@ class BeeControlImpl implements BeeControl {
         }
         clearCommand();
         return result;
+    }
+
+    public void close() {
+        childs.forEach(c -> c.close());
+        currentCommand = null;
+        failedListeners.clear();
+        commandHandlers.clear();
+        interruptListeners.clear();
+        closed = true;
     }
 
     private CommandResult runByExecutor(Command command) {
@@ -120,6 +142,12 @@ class BeeControlImpl implements BeeControl {
     private void clearCommand() {
         interruptListeners.forEach(listener -> listener.accept(currentCommand.get()));
         currentCommand = null;
+    }
+
+    private void checkControl() {
+        if (closed) {
+            throw new RuntimeException("Illegal call, the control is already closed.");
+        }
     }
 
 }

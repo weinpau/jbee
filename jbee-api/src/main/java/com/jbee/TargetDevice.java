@@ -17,5 +17,5 @@ public interface TargetDevice {
     RunnableFuture<CommandResult> execute(Command command);
 
     void bootstrap() throws BeeBootstrapException;
-
+    
 }

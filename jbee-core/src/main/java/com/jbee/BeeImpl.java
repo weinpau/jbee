@@ -13,7 +13,7 @@ class BeeImpl implements Bee {
 
     final ExecutorService commandExecutor = Executors.newFixedThreadPool(1);
     final BeeWorld world = new BeeWorldImpl();
-    final BeeControl control;
+    final DefaultBeeControl control;
     final DefaultBeeMonitor monitor = new DefaultBeeMonitor();
 
     private static final int CLOCK = 100;
@@ -21,7 +21,7 @@ class BeeImpl implements Bee {
     Timer timer = new Timer(true);
 
     public BeeImpl(TargetDevice device) {
-        control = new BeeControlImpl(commandExecutor, device, monitor);
+        control = new DefaultBeeControl(commandExecutor, device, monitor);
 
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -44,6 +44,13 @@ class BeeImpl implements Bee {
     @Override
     public BeeWorld getWorld() {
         return world;
+    }
+
+    @Override
+    public void close() {
+        timer.cancel();
+        commandExecutor.shutdown();
+        control.close();
     }
 
 }
