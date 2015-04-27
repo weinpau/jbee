@@ -7,6 +7,9 @@ import java.lang.ref.WeakReference;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RunnableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -16,6 +19,7 @@ import java.util.function.Consumer;
  */
 class BeeControlImpl implements BeeControl {
 
+    ExecutorService commandExecutor;
     TargetDevice device;
     DefaultBeeMonitor monitor;
 
@@ -25,14 +29,15 @@ class BeeControlImpl implements BeeControl {
 
     WeakReference<Command> currentCommand;
 
-    BeeControlImpl(TargetDevice device, DefaultBeeMonitor monitor) {
+    BeeControlImpl(ExecutorService commandExecutor, TargetDevice device, DefaultBeeMonitor monitor) {
+        this.commandExecutor = commandExecutor;
         this.device = device;
         this.monitor = monitor;
     }
 
     @Override
     public BeeControl onFailed(Consumer<Command> onFailed) {
-        BeeControlImpl control = new BeeControlImpl(device, monitor);
+        BeeControlImpl control = new BeeControlImpl(commandExecutor, device, monitor);
         control.failedListeners.addAll(failedListeners);
         control.failedListeners.add(onFailed);
         return control;
@@ -40,7 +45,7 @@ class BeeControlImpl implements BeeControl {
 
     @Override
     public BeeControl onInterrupt(Consumer<Command> onInterrupt) {
-        BeeControlImpl control = new BeeControlImpl(device, monitor);
+        BeeControlImpl control = new BeeControlImpl(commandExecutor, device, monitor);
         control.interruptListeners.addAll(interruptListeners);
         control.interruptListeners.add(onInterrupt);
         return control;
@@ -48,7 +53,7 @@ class BeeControlImpl implements BeeControl {
 
     @Override
     public BeeControl onAction(Consumer<Command> onAction, Duration period) {
-        BeeControlImpl control = new BeeControlImpl(device, monitor);
+        BeeControlImpl control = new BeeControlImpl(commandExecutor, device, monitor);
         control.commandHandlers.addAll(commandHandlers);
         control.commandHandlers.add(new ActionHandler(onAction, period));
         return control;
@@ -56,7 +61,7 @@ class BeeControlImpl implements BeeControl {
 
     @Override
     public BeeControl onPositionChange(BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
-        BeeControlImpl control = new BeeControlImpl(device, monitor);
+        BeeControlImpl control = new BeeControlImpl(commandExecutor, device, monitor);
         control.commandHandlers.addAll(commandHandlers);
         control.commandHandlers.add(new PositionChangeHandler(monitor, onPositionChange, deltaDistance));
         return control;
@@ -68,8 +73,9 @@ class BeeControlImpl implements BeeControl {
             clearCommand();
         }
         currentCommand = new WeakReference<>(command);
+        command.init(monitor.newCommandNumber());
         startHandlers(command);
-        CommandResult result = device.execute(command);
+        CommandResult result = runByExecutor(command);
         if (CommandResult.FAILED.equals(result)) {
             failedListeners.forEach(listener -> listener.accept(currentCommand.get()));
         }
@@ -89,6 +95,18 @@ class BeeControlImpl implements BeeControl {
         }
         clearCommand();
         return result;
+    }
+
+    private CommandResult runByExecutor(Command command) {
+
+        try {
+            RunnableFuture<CommandResult> future = device.execute(command);
+            commandExecutor.execute(future);
+            return future.get();
+        } catch (InterruptedException | ExecutionException ex) {
+            return CommandResult.FAILED;
+        }
+
     }
 
     private void startHandlers(Command command) {

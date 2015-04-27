@@ -2,6 +2,7 @@ package com.jbee;
 
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import java.util.concurrent.RunnableFuture;
 
 /**
  *
@@ -13,7 +14,7 @@ public interface TargetDevice {
 
     BeeState getCurrentState();
 
-    CommandResult execute(Command command);
+    RunnableFuture<CommandResult> execute(Command command);
 
     void bootstrap() throws BeeBootstrapException;
 

@@ -3,13 +3,12 @@ package com.jbee.commands;
 import com.jbee.positioning.Position;
 import com.jbee.units.Velocity;
 import com.jbee.units.YAW;
-import java.util.Objects;
 
 /**
  *
  * @author weinpau
  */
-public class FlyToCommand implements Command {
+public class FlyToCommand extends AbstractCommand {
 
     private final Position position;
 
@@ -36,33 +35,6 @@ public class FlyToCommand implements Command {
 
     public YAW getYAW() {
         return yaw;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 79 * hash + Objects.hashCode(this.position);
-        hash = 79 * hash + Objects.hashCode(this.yaw);
-        hash = 79 * hash + Objects.hashCode(this.velocity);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final FlyToCommand other = (FlyToCommand) obj;
-        if (!Objects.equals(this.position, other.position)) {
-            return false;
-        }
-        if (!Objects.equals(this.yaw, other.yaw)) {
-            return false;
-        }
-        return Objects.equals(this.velocity, other.velocity);
     }
 
 }

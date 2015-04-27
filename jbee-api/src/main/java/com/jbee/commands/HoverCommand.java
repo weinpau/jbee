@@ -1,13 +1,12 @@
 package com.jbee.commands;
 
 import java.time.Duration;
-import java.util.Objects;
 
 /**
  *
  * @author weinpau
  */
-public class HoverCommand implements Command {
+public class HoverCommand extends AbstractCommand {
 
     private final Duration duration;
 
@@ -17,28 +16,6 @@ public class HoverCommand implements Command {
 
     public Duration getDuration() {
         return duration;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.duration);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final HoverCommand other = (HoverCommand) obj;
-        if (!Objects.equals(this.duration, other.duration)) {
-            return false;
-        }
-        return true;
     }
 
 }

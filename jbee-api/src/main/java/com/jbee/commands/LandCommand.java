@@ -4,6 +4,7 @@ package com.jbee.commands;
  *
  * @author weinpau
  */
-public class LandCommand implements Command {
+public class LandCommand extends AbstractCommand {
 
+  
 }

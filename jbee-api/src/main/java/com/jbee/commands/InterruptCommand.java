@@ -4,6 +4,6 @@ package com.jbee.commands;
  *
  * @author weinpau
  */
-public class InterruptCommand implements Command{
-    
+public class InterruptCommand extends AbstractCommand {
+
 }

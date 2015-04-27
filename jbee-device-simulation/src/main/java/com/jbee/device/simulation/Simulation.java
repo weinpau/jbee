@@ -5,6 +5,9 @@ import com.jbee.BeeState;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RunnableFuture;
 
 /**
  *
@@ -23,13 +26,16 @@ public class Simulation implements TargetDevice {
     }
 
     @Override
-    public CommandResult execute(Command command) {
+    public RunnableFuture<CommandResult> execute(Command command) {
+        return new FutureTask<>(() -> {
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException interruptedException) {
-        }
-        return CommandResult.COMPLETED;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException interruptedException) {
+            }
+            return CommandResult.COMPLETED;
+
+        });
     }
 
     @Override

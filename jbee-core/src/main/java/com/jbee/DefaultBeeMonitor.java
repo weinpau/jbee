@@ -12,8 +12,9 @@ import java.util.function.Consumer;
  */
 class DefaultBeeMonitor implements BeeMonitor {
 
-    long startTime = System.currentTimeMillis();
-    BeeState lastKnownState = BeeState.START_STATE;
+    volatile int currentCommandNumber;
+    volatile long startTime = System.currentTimeMillis();
+    volatile BeeState lastKnownState = BeeState.START_STATE;
     List<Consumer<BeeState>> beeStateChangeListeners = new ArrayList<>();
 
     ExecutorService monitorExecutor = Executors.newCachedThreadPool();
@@ -32,7 +33,7 @@ class DefaultBeeMonitor implements BeeMonitor {
         beeStateChangeListeners.remove(beeStateListener);
     }
 
-    synchronized void changeState(BeeState state) {
+    public void changeState(BeeState state) {
         if (lastKnownState.equals(lastKnownState)) {
             lastKnownState = state;
             beeStateChangeListeners.forEach(l -> monitorExecutor.submit(() -> l.accept(state)));
@@ -40,8 +41,16 @@ class DefaultBeeMonitor implements BeeMonitor {
     }
 
     @Override
-    public synchronized BeeState getLastKnownState() {
+    public BeeState getLastKnownState() {
         return lastKnownState;
+    }
+
+    public int newCommandNumber() {
+        return ++currentCommandNumber;
+    }
+
+    public int getCurrentCommandNumber() {
+        return currentCommandNumber;
     }
 
 }
