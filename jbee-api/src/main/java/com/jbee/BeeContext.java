@@ -15,12 +15,12 @@ public interface BeeContext {
 
     Collection<Provider> getAllProviders();
 
-    Collection<Provider> getProviders(Class<? extends Provider> providerType); 
+    Collection<Provider> getProviders(Class<? extends Provider> providerType);
 
     @SuppressWarnings("UseSpecificCatch")
-    public static BeeContext of(TargetDevice device) {
+    static BeeContext of(TargetDevice device) {
         try {
-            String defaultContext = "com.jbee.core.DefaultBeeContext";
+            String defaultContext = "com.jbee.DefaultBeeContext";
             Constructor<?> constructor = Class.forName(defaultContext).getDeclaredConstructor(TargetDevice.class);
             constructor.setAccessible(true);
             return BeeContext.class.cast(constructor.newInstance(device));

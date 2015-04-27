@@ -1,10 +1,19 @@
 package com.jbee;
 
+import com.jbee.commands.Command;
+import com.jbee.commands.CommandResult;
+import com.jbee.commands.FlyCommand;
+import com.jbee.commands.FlyToCommand;
+import com.jbee.commands.HoverCommand;
+import com.jbee.commands.LandCommand;
+import com.jbee.commands.RotationCommand;
+import com.jbee.commands.TakeOffCommand;
 import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
 import com.jbee.units.YAW;
 import java.time.Duration;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -13,42 +22,67 @@ import java.util.function.Consumer;
  */
 public interface BeeControl {
 
+    BeeControl onFailed(Consumer<Command> onFailed);
 
-    BeeAction takeOff(Distance height);
+    BeeControl onInterrupt(Consumer<Command> onInterrupt);
 
-    BeeAction land();
+    BeeControl onAction(Consumer<Command> onAction, Duration period);
 
-    BeeAction hover(Duration duration);
+    BeeControl onPositionChange(BiConsumer<Command, Position> positionChange, Distance deltaDistance);
+  
+    CommandResult execute(Command command);
+    
+    CommandResult interrupt();
 
-    BeeAction rotate(YAW yaw);
+    default CommandResult takeOff(Distance height) {
+        return execute(new TakeOffCommand(height));
+    }
 
-    BeeAction flyTo(Position position, YAW yaw, Velocity velocity);
+    default CommandResult land() {
+        return execute(new LandCommand());
+    }
 
-    BeeAction flyTo(Position position, Velocity velocity);
+    default CommandResult hover(Duration duration) {
+        return execute(new HoverCommand(duration));
+    }
 
-    BeeAction fly(Direction direction, Distance distance, Velocity velocity);
+    default CommandResult rotate(YAW yaw) {
+       return execute(new RotationCommand(yaw)); 
+    }
 
-    default BeeAction foreward(Distance distance, Velocity velocity) {
+    default CommandResult flyTo(Position position, Velocity velocity, YAW yaw) {
+        return execute(new FlyToCommand(position,velocity, yaw));
+    }
+
+    default CommandResult flyTo(Position position, Velocity velocity) {
+        return execute(new FlyToCommand(position, velocity, null));
+    }
+
+    default CommandResult fly(Direction direction, Distance distance, Velocity velocity) {
+        return execute(new FlyCommand(direction, distance, velocity));
+    }
+
+    default CommandResult foreward(Distance distance, Velocity velocity) {
         return fly(Direction.FOREWARD, distance, velocity);
     }
 
-    default BeeAction right(Distance distance, Velocity velocity) {
+    default CommandResult right(Distance distance, Velocity velocity) {
         return fly(Direction.RIGHT, distance, velocity);
     }
 
-    default BeeAction left(Distance distance, Velocity velocity) {
+    default CommandResult left(Distance distance, Velocity velocity) {
         return fly(Direction.LEFT, distance, velocity);
     }
 
-    default BeeAction backward(Distance distance, Velocity velocity) {
+    default CommandResult backward(Distance distance, Velocity velocity) {
         return fly(Direction.BACKWARD, distance, velocity);
     }
 
-    default BeeAction up(Distance distance, Velocity velocity) {
+    default CommandResult up(Distance distance, Velocity velocity) {
         return fly(Direction.UP, distance, velocity);
     }
 
-    default BeeAction down(Distance distance, Velocity velocity) {
+    default CommandResult down(Distance distance, Velocity velocity) {
         return fly(Direction.DOWN, distance, velocity);
     }
 

@@ -4,7 +4,7 @@ package com.jbee.units;
  *
  * @author weinpau
  */
-public final class Velocity {
+public final class Velocity implements Comparable<Velocity> {
 
     public static Velocity ZERO = new Velocity(0);
 
@@ -43,6 +43,14 @@ public final class Velocity {
 
     public static Velocity kn(double kn) {
         return mps(kn / kn2mpsFactor);
+    }
+
+    @Override
+    public int compareTo(Velocity o) {
+        if (o == null) {
+            return 0;
+        }
+        return Double.compare(mps, o.mps);
     }
 
     @Override

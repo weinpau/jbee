@@ -6,6 +6,6 @@ package com.jbee.commands;
  */
 public enum CommandResult {
 
-    FAILED, COMPLETED;
+    FAILED, COMPLETED, NOT_EXECUTED;
 
 }

@@ -4,7 +4,9 @@ package com.jbee.units;
  *
  * @author weinpau
  */
-public final class Distance {
+public final class Distance implements Comparable<Distance> {
+
+    public static final Distance ZERO = new Distance(0);
 
     private final int mm;
 
@@ -21,13 +23,13 @@ public final class Distance {
     }
 
     public double toCentimeters() {
-        return mm / 10f;
+        return mm / 10d;
     }
 
     public double toMeters() {
-        return mm / 1000f;
+        return mm / 1000d;
     }
-    
+
     public Distance add(Distance distance) {
         return new Distance(StrictMath.addExact(mm, distance.mm));
     }
@@ -42,6 +44,14 @@ public final class Distance {
 
     public static Distance ofMeters(int meters) {
         return new Distance(StrictMath.multiplyExact(meters, 1000));
+    }
+
+    @Override
+    public int compareTo(Distance o) {
+        if (o == null) {
+            return 0;
+        }
+        return Integer.compare(mm, o.mm);
     }
 
     @Override

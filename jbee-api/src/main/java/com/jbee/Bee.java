@@ -1,7 +1,5 @@
 package com.jbee;
 
-import com.jbee.positioning.BeeWorld;
-
 /**
  *
  * @author weinpau

@@ -15,4 +15,6 @@ public interface TargetDevice {
 
     CommandResult execute(Command command);
 
+    void bootstrap() throws BeeBootstrapException;
+
 }

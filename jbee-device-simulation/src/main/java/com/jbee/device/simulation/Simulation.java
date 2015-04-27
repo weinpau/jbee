@@ -1,5 +1,6 @@
 package com.jbee.device.simulation;
 
+import com.jbee.BeeBootstrapException;
 import com.jbee.BeeState;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
@@ -18,12 +19,21 @@ public class Simulation implements TargetDevice {
 
     @Override
     public BeeState getCurrentState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return BeeState.START_STATE;
     }
 
     @Override
     public CommandResult execute(Command command) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException interruptedException) {
+        }
+        return CommandResult.COMPLETED;
+    }
+
+    @Override
+    public void bootstrap() throws BeeBootstrapException {
     }
 
 }

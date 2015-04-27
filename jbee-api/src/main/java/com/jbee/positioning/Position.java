@@ -1,10 +1,16 @@
 package com.jbee.positioning;
 
+import com.jbee.units.Distance;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
 /**
  *
  * @author weinpau
  */
 public class Position {
+
+    public static final Position ORIGIN = new Position(0, 0, 0);
 
     private final double x, y, z;
 
@@ -40,6 +46,10 @@ public class Position {
 
     public Position move(double deltaX, double deltaY, double deltaZ) {
         return new Position(x + deltaX, y + deltaY, z + deltaZ);
+    }
+
+    public Distance distance(Position position) {
+        return Distance.ofMilimeters((int) (1000 * sqrt(pow(x - position.x, 2) + pow(y - position.y, 2) + pow(z - position.z, 2))));
     }
 
     @Override

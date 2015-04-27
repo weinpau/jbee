@@ -12,13 +12,18 @@ import java.util.Objects;
 public class FlyToCommand implements Command {
 
     private final Position position;
-    private final YAW yaw;
-    private final Velocity velocity;
 
-    public FlyToCommand(Position position, YAW yaw, Velocity velocity) {
+    private final Velocity velocity;
+    private final YAW yaw;
+
+    public FlyToCommand(Position position, Velocity velocity, YAW yaw) {
         this.position = position;
-        this.yaw = yaw;
         this.velocity = velocity;
+        this.yaw = yaw;
+    }
+
+    public FlyToCommand(Position position, Velocity velocity) {
+        this(position, velocity, null);
     }
 
     public Position getPosition() {
@@ -57,10 +62,7 @@ public class FlyToCommand implements Command {
         if (!Objects.equals(this.yaw, other.yaw)) {
             return false;
         }
-        if (!Objects.equals(this.velocity, other.velocity)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.velocity, other.velocity);
     }
 
 }
