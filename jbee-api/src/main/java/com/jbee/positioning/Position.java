@@ -2,6 +2,7 @@ package com.jbee.positioning;
 
 import com.jbee.units.Distance;
 import static java.lang.Math.*;
+import java.text.DecimalFormat;
 
 /**
  *
@@ -85,7 +86,8 @@ public class Position {
 
     @Override
     public String toString() {
-        return "Position{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
+        DecimalFormat df = new DecimalFormat("#.###");
+        return "Position{" + "x=" + df.format(x) + ", y=" + df.format(y) + ", z=" + df.format(z) + '}';
     }
 
     @Override
