@@ -112,10 +112,8 @@ class DefaultBeeControl implements BeeControl {
 
     public void close() {
         childs.forEach(c -> c.close());
+        stopHandlers();
         currentCommand = null;
-        failedListeners.clear();
-        commandHandlers.clear();
-        interruptListeners.clear();
         closed = true;
     }
 

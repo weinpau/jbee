@@ -1,8 +1,7 @@
 package com.jbee.positioning;
 
 import com.jbee.units.Distance;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
+import static java.lang.Math.*;
 
 /**
  *
@@ -44,12 +43,49 @@ public class Position {
         return new Position(x, y, z);
     }
 
-    public Position move(double deltaX, double deltaY, double deltaZ) {
-        return new Position(x + deltaX, y + deltaY, z + deltaZ);
+    public Position addX(double x) {
+        return new Position(this.x + x, y, z);
+    }
+
+    public Position addY(double y) {
+        return new Position(x, this.y + y, z);
+    }
+
+    public Position addZ(double z) {
+        return new Position(x, y, this.z + z);
+    }
+
+    public Position abs() {
+        return new Position(Math.abs(x), Math.abs(y), Math.abs(z));
+    }
+
+    public Position add(Position position) {
+        return new Position(x + position.x, y + position.y, z + position.z);
+    }
+
+    public Position sub(Position position) {
+        return new Position(x - position.x, y - position.y, z - position.z);
+    }
+
+    public Position multiply(double factor) {
+        return new Position(x * factor, y * factor, z * factor);
+    }
+
+    public Position normalize() {
+        double length = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+        if (length == 0) {
+            return new Position(0, 0, 0);
+        }
+        return multiply(1d / length);
     }
 
     public Distance distance(Position position) {
         return Distance.ofMilimeters((int) (1000 * sqrt(pow(x - position.x, 2) + pow(y - position.y, 2) + pow(z - position.z, 2))));
+    }
+
+    @Override
+    public String toString() {
+        return "Position{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
     }
 
     @Override

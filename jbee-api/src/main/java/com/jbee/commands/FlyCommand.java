@@ -3,6 +3,7 @@ package com.jbee.commands;
 import com.jbee.Direction;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
+import com.jbee.units.YAW;
 
 /**
  *

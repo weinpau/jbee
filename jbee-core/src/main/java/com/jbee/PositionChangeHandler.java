@@ -17,7 +17,7 @@ class PositionChangeHandler implements CommandHandler {
     private final DefaultBeeMonitor monitor;
     private Command command;
 
-    private Position currentPosition;
+    private volatile Position currentPosition;
 
     PositionChangeHandler(DefaultBeeMonitor monitor, BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
         this.monitor = monitor;

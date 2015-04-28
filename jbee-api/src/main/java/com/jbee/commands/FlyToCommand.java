@@ -36,5 +36,5 @@ public class FlyToCommand extends AbstractCommand {
     public YAW getYAW() {
         return yaw;
     }
-
+    
 }

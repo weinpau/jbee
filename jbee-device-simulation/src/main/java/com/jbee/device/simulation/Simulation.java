@@ -5,8 +5,7 @@ import com.jbee.BeeState;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import com.jbee.units.Velocity;
 import java.util.concurrent.RunnableFuture;
 
 /**
@@ -15,6 +14,10 @@ import java.util.concurrent.RunnableFuture;
  */
 public class Simulation implements TargetDevice {
 
+    Velocity defaultVelocity = Velocity.mps(1);
+    
+    StateMachine stateMachine = new StateMachine(defaultVelocity);
+    
     @Override
     public String getId() {
         return "simulation";
@@ -22,20 +25,12 @@ public class Simulation implements TargetDevice {
 
     @Override
     public BeeState getCurrentState() {
-        return BeeState.START_STATE;
+        return stateMachine.getCurrentState();
     }
 
     @Override
     public RunnableFuture<CommandResult> execute(Command command) {
-        return new FutureTask<>(() -> {
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException interruptedException) {
-            }
-            return CommandResult.COMPLETED;
-
-        });
+      return stateMachine.execute(command);
     }
 
     @Override

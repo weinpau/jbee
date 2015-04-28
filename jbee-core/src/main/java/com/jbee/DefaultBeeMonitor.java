@@ -2,8 +2,6 @@ package com.jbee;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -16,8 +14,6 @@ class DefaultBeeMonitor implements BeeMonitor {
     volatile long startTime = System.currentTimeMillis();
     volatile BeeState lastKnownState = BeeState.START_STATE;
     List<Consumer<BeeState>> beeStateChangeListeners = new ArrayList<>();
-
-    ExecutorService monitorExecutor = Executors.newCachedThreadPool();
 
     @Override
     public long getCurrentTimestamp() {
@@ -33,10 +29,10 @@ class DefaultBeeMonitor implements BeeMonitor {
         beeStateChangeListeners.remove(beeStateListener);
     }
 
-    public void changeState(BeeState state) {
+    public synchronized void changeState(BeeState state) {
         if (lastKnownState.equals(lastKnownState)) {
-            lastKnownState = state;
-            beeStateChangeListeners.forEach(l -> monitorExecutor.submit(() -> l.accept(state)));
+            lastKnownState = state;            
+            beeStateChangeListeners.forEach(l -> l.accept(state));
         }
     }
 
