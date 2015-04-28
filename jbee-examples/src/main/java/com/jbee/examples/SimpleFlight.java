@@ -27,7 +27,7 @@ public class SimpleFlight {
                 },
                 Distance.ofCentimeters(50));
 
-        beeControl.takeOff(Distance.ofMeters(2));
+        beeControl.takeOff();
         beeControl.up(Distance.ofMeters(10), Velocity.kn(5));
         beeControl.flyTo(new Position(10, 10, 10), Velocity.kn(4));
         beeControl.hover(Duration.ofSeconds(2));

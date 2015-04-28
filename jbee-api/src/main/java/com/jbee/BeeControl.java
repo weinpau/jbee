@@ -34,8 +34,8 @@ public interface BeeControl {
     
     CommandResult interrupt();
 
-    default CommandResult takeOff(Distance height) {
-        return execute(new TakeOffCommand(height));
+    default CommandResult takeOff() {
+        return execute(new TakeOffCommand());
     }
 
     default CommandResult land() {

@@ -24,7 +24,7 @@ public class StateMachine {
 
     volatile SimulationStep step = SimulationStep.START_STEP;
     Velocity defaultVelocity;
-    public final static int DELAY = 10;
+    Distance takeOffHeight = Distance.ofMeters(1);
 
     public StateMachine(Velocity defaultVelocity) {
         this.defaultVelocity = defaultVelocity;
@@ -73,12 +73,12 @@ public class StateMachine {
 
     SimulationStep exec(TakeOffCommand command) {
         BeeState startState = new SimulationState(lastState().getPosition(), defaultVelocity, lastState().getYAW());
-        BeeState followingState = new SimulationState(startState.getPosition().withZ(command.getHeight().toMeters()), Velocity.ZERO, startState.getYAW());
+        BeeState followingState = new SimulationState(startState.getPosition().withZ(takeOffHeight.toMeters()), Velocity.ZERO, startState.getYAW());
 
         if (!lastState().equals(BeeState.START_STATE)) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
         } else {
-            int timeSpent = calculateTimeSpent(defaultVelocity, command.getHeight());
+            int timeSpent = calculateTimeSpent(defaultVelocity, takeOffHeight);
             return new SimulationStep(command, CommandResult.COMPLETED, startState, followingState, timeSpent);
         }
 
