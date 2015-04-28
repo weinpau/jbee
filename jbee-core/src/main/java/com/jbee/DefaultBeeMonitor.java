@@ -30,7 +30,7 @@ class DefaultBeeMonitor implements BeeMonitor {
     }
 
     public synchronized void changeState(BeeState state) {
-        if (lastKnownState.equals(lastKnownState)) {
+        if (!lastKnownState.equals(state)) {
             lastKnownState = state;            
             beeStateChangeListeners.forEach(l -> l.accept(state));
         }
