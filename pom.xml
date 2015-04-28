@@ -13,7 +13,8 @@
         <module>jbee-api</module>
         <module>jbee-core</module>
         <module>jbee-device-simulation</module>
-        <module>jbee-examples</module>
+        <module>jbee-device-ardrone2</module>
+        <module>jbee-examples</module>        
     </modules>
     
     <dependencyManagement>
