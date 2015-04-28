@@ -16,21 +16,28 @@ class DefaultBeeContext implements BeeContext {
 
     final Set<Provider> providers = new LinkedHashSet<>();
 
-        
     DefaultBeeContext(TargetDevice device) {
         this.device = device;
     }
 
     @Override
-    public Bee bootstrap() throws BeeBootstrapException {                      
-        System.out.println("bootstrapping " + device.getId());
+    public Bee bootstrap() throws BeeBootstrapException {
         device.bootstrap();
         return new BeeImpl(device);
     }
 
     @Override
-    public BeeContext registerProvider(Provider provider) {
-        providers.add(provider);
+    public BeeContext register(Class<?>... component) {
+
+        try {
+            for (Class c : component) {
+                if (Provider.class.isAssignableFrom(c)) {
+                    providers.add((Provider) c.newInstance());
+                }
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 

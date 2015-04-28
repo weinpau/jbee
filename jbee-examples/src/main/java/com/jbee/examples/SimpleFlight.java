@@ -5,9 +5,9 @@ import com.jbee.BeeBootstrapException;
 import com.jbee.BeeContext;
 import com.jbee.BeeControl;
 import com.jbee.device.simulation.Simulation;
-import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
+import com.jbee.units.YAW;
 import java.time.Duration;
 
 /**
@@ -28,11 +28,12 @@ public class SimpleFlight {
                 Distance.ofCentimeters(50));
 
         beeControl.takeOff();
-        beeControl.up(Distance.ofMeters(10), Velocity.kn(5));
-        beeControl.flyTo(new Position(10, 10, 10), Velocity.kn(4));
+        beeControl.rotate(YAW.ofDegrees(90));
+        beeControl.forward(Distance.ofMeters(2), Velocity.mps(1));        
         beeControl.hover(Duration.ofSeconds(2));
         beeControl.land();
-
+        
+       System.out.println("target position: " + bee.monitor().getLastKnownState().getPosition());
         bee.close();
 
     }

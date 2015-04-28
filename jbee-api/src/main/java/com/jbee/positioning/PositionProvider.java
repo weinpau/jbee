@@ -6,6 +6,6 @@ import javax.xml.ws.Provider;
  *
  * @author weinpau
  */
-interface PositionProvider extends Provider<Position> {
+public interface PositionProvider extends Provider<Position> {
   
 }
