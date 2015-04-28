@@ -51,6 +51,10 @@ public class Simulation extends BeeModule implements TargetDevice {
         stateMachine = new StateMachine(defaultVelocity, takeOffHeight);
     }
 
+    @Override
+    public void disconnect() {
+    }
+
     public Velocity getDefaultVelocity() {
         return defaultVelocity;
     }

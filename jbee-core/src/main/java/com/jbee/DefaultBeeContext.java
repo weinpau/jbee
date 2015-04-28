@@ -5,13 +5,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  *
  * @author weinpau
  */
 class DefaultBeeContext implements BeeContext {
+
+    boolean closed = false;
+    Bee bee;
 
     final TargetDevice device;
 
@@ -23,8 +25,12 @@ class DefaultBeeContext implements BeeContext {
 
     @Override
     public Bee bootstrap() throws BeeBootstrapException {
+        if (bee != null) {
+            throw new BeeBootstrapException("Bee has already been created.");
+        }
         device.bootstrap();
-        return new BeeImpl(device, new StateFactory(this));
+        bee = new BeeImpl(device, new StateFactory(this));
+        return bee;
     }
 
     @Override
@@ -50,6 +56,17 @@ class DefaultBeeContext implements BeeContext {
                 forEach(p -> result.add((P) p));
         return result;
 
+    }
+
+    @Override
+    public void close() {
+        if (bee == null) {
+            throw new RuntimeException("Context can not be closed.");
+        }
+        if (!closed) {
+            bee.close();
+            closed = true;
+        }
     }
 
 }

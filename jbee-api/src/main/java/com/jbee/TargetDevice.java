@@ -11,9 +11,11 @@ import java.util.concurrent.RunnableFuture;
 public interface TargetDevice {
 
     String getId();
-   
+
     RunnableFuture<CommandResult> execute(Command command);
 
     void bootstrap() throws BeeBootstrapException;
+
+    void disconnect();
 
 }

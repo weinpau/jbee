@@ -11,6 +11,8 @@ import java.util.concurrent.Executors;
  */
 class BeeImpl implements Bee {
 
+    final TargetDevice device;
+
     final ExecutorService commandExecutor = Executors.newFixedThreadPool(1);
     final BeeWorld world = new BeeWorldImpl();
     final DefaultBeeControl control;
@@ -21,6 +23,7 @@ class BeeImpl implements Bee {
     Timer timer = new Timer(true);
 
     public BeeImpl(TargetDevice device, StateFactory stateFactory) {
+        this.device = device;
         control = new DefaultBeeControl(commandExecutor, device, monitor);
 
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -48,6 +51,7 @@ class BeeImpl implements Bee {
 
     @Override
     public void close() {
+        device.disconnect();
         timer.cancel();
         commandExecutor.shutdown();
         control.close();

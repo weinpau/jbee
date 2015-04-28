@@ -17,6 +17,8 @@ public interface BeeContext {
     Collection<Provider> getAllProviders();
 
     <P extends Provider> Collection<P> getProviders(Class<P> providerType);
+    
+    void close();
 
     @SuppressWarnings("UseSpecificCatch")
     static BeeContext of(TargetDevice device, BeeModule... module) {
