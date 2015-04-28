@@ -6,7 +6,7 @@ package com.jbee;
  */
 public enum Direction {
 
-    FOREWARD,
+    FORWARD,
     BACKWARD,
     LEFT,
     RIGHT,

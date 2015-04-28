@@ -154,15 +154,25 @@ public class StateMachine {
     }
 
     Position calculatePosition(FlyCommand command) {
-        Position position = lastState().getPosition();
+        Position p = lastState().getPosition();
+        double yaw = lastState().getYAW().toDegrees();
+        double distance = command.getDistance().toMeters();
 
         switch (command.getDirection()) {
             case DOWN:
-                return position.addZ(-command.getDistance().toMeters());
+                return p.addZ(-distance);
             case UP:
-                return position.addZ(command.getDistance().toMeters());
+                return p.addZ(distance);
+            case FORWARD:
+                return p.withX(p.getX() * Math.cos(yaw) * distance).withY(p.getY() * Math.sin(yaw) * distance);
+            case BACKWARD:
+                return p.withX(p.getX() * Math.cos(yaw) * -distance).withY(p.getY() * Math.sin(yaw) * -distance);
+            case RIGHT:
+                return p.withX(p.getX() - Math.sin(yaw) * distance).withY(p.getY() + Math.cos(yaw) * distance);
+            case LEFT:
+                return p.withX(p.getX() - Math.sin(yaw) * -distance).withY(p.getY() + Math.cos(yaw) * -distance);
         }
-        return position;
+        return p;
     }
 
     static int calculateTimeSpent(Velocity velocity, Distance distance) {

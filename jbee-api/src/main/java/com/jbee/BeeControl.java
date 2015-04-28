@@ -62,8 +62,8 @@ public interface BeeControl {
         return execute(new FlyCommand(direction, distance, velocity));
     }
 
-    default CommandResult foreward(Distance distance, Velocity velocity) {
-        return fly(Direction.FOREWARD, distance, velocity);
+    default CommandResult forward(Distance distance, Velocity velocity) {
+        return fly(Direction.FORWARD, distance, velocity);
     }
 
     default CommandResult right(Distance distance, Velocity velocity) {
