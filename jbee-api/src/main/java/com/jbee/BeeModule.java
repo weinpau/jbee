@@ -10,13 +10,13 @@ import java.util.Set;
  */
 public abstract class BeeModule {
 
-    private final Set<Class<?>> components = new HashSet<>();
+    private final Set<Object> components = new HashSet<>();
 
-    protected void register(Class<?> component) {
+    protected void register(Object component) {
         components.add(component);
     }
 
-    public Set<Class> getClasses() {
+    public Set<Object> getComponents() {
         return Collections.unmodifiableSet(components);
     }
 

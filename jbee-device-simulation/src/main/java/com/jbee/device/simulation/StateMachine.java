@@ -31,7 +31,7 @@ public class StateMachine {
         this.takeOffHeight = takeOffHeight;
     }
 
-    public BeeState getCurrentState() {
+    public State getCurrentState() {
         return step.simulateState(System.currentTimeMillis());
     }
 
@@ -73,10 +73,10 @@ public class StateMachine {
     }
 
     SimulationStep exec(TakeOffCommand command) {
-        BeeState startState = new SimulationState(lastState().getPosition(), defaultVelocity, lastState().getYAW());
-        BeeState followingState = new SimulationState(startState.getPosition().withZ(takeOffHeight.toMeters()), Velocity.ZERO, startState.getYAW());
+        State startState = new State(lastState().getPosition(), defaultVelocity, lastState().getYAW());
+        State followingState = new State(startState.getPosition().withZ(takeOffHeight.toMeters()), Velocity.ZERO, startState.getYAW());
 
-        if (!lastState().equals(BeeState.START_STATE)) {
+        if (!lastState().equals(State.START_STATE)) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
         } else {
             int timeSpent = calculateTimeSpent(defaultVelocity, takeOffHeight);
@@ -86,11 +86,11 @@ public class StateMachine {
     }
 
     SimulationStep exec(LandCommand command) {
-        BeeState startState = new SimulationState(lastState().getPosition(), defaultVelocity, lastState().getYAW());
+        State startState = new State(lastState().getPosition(), defaultVelocity, lastState().getYAW());
         Position newPos = startState.getPosition().withZ(0);
-        BeeState followingState = new SimulationState(newPos, Velocity.ZERO, startState.getYAW());
+        State followingState = new State(newPos, Velocity.ZERO, startState.getYAW());
 
-        if (lastState().equals(BeeState.START_STATE)) {
+        if (lastState().equals(State.START_STATE)) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
         } else {
             int timeSpent = calculateTimeSpent(defaultVelocity, startState.getPosition().distance(newPos));
@@ -99,11 +99,11 @@ public class StateMachine {
     }
 
     SimulationStep exec(FlyToCommand command) {
-        BeeState startState = new SimulationState(lastState().getPosition(), command.getVelocity(), lastState().getYAW());
-        BeeState followingState = new SimulationState(command.getPosition(), Velocity.ZERO,
+        State startState = new State(lastState().getPosition(), command.getVelocity(), lastState().getYAW());
+        State followingState = new State(command.getPosition(), Velocity.ZERO,
                 command.getYAW() == null ? lastState().getYAW() : command.getYAW());
 
-        if (lastState().equals(BeeState.START_STATE)) {
+        if (lastState().equals(State.START_STATE)) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
         } else {
             Distance distance = startState.getPosition().distance(command.getPosition());
@@ -114,8 +114,8 @@ public class StateMachine {
     }
 
     SimulationStep exec(RotationCommand command) {
-        BeeState startState = new SimulationState(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
-        BeeState followingState = new SimulationState(lastState().getPosition(), Velocity.ZERO, command.getYAW());
+        State startState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
+        State followingState = new State(lastState().getPosition(), Velocity.ZERO, command.getYAW());
 
         if (lastState().getPosition().getZ() <= 0) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
@@ -126,8 +126,8 @@ public class StateMachine {
     }
 
     SimulationStep exec(HoverCommand command) {
-        BeeState startState = new SimulationState(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
-        BeeState followingState = new SimulationState(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
+        State startState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
+        State followingState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
 
         if (lastState().getPosition().getZ() <= 0) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
@@ -143,14 +143,14 @@ public class StateMachine {
     }
 
     SimulationStep exec(InterruptCommand command) {
-        BeeState startState = new SimulationState(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
-        BeeState followingState = new SimulationState(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
+        State startState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
+        State followingState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
 
         return new SimulationStep(command, CommandResult.COMPLETED, startState, followingState, 0);
 
     }
 
-    BeeState lastState() {
+    State lastState() {
         return step.getFollowingState();
     }
 

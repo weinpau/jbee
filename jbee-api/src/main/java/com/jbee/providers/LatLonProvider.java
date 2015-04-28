@@ -1,6 +1,7 @@
-package com.jbee.positioning;
+package com.jbee.providers;
 
 import com.jbee.Provider;
+import com.jbee.positioning.LatLon;
 
 /**
  *

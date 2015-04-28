@@ -12,11 +12,11 @@ public interface BeeContext {
 
     Bee bootstrap() throws BeeBootstrapException;
 
-    BeeContext register(Class<?>... component);
+    BeeContext register(Object... component);
 
     Collection<Provider> getAllProviders();
 
-    Collection<Provider> getProviders(Class<? extends Provider> providerType);
+    <P extends Provider> Collection<P> getProviders(Class<P> providerType);
 
     @SuppressWarnings("UseSpecificCatch")
     static BeeContext of(TargetDevice device, BeeModule... module) {
@@ -25,9 +25,9 @@ public interface BeeContext {
             Constructor<?> constructor = Class.forName(defaultContext).getDeclaredConstructor(TargetDevice.class);
             constructor.setAccessible(true);
             BeeContext context = BeeContext.class.cast(constructor.newInstance(device));
-            Stream.of(module).forEach(m -> context.register(m.getClasses().toArray(new Class[0])));
+            Stream.of(module).forEach(m -> context.register(m.getComponents().toArray(new Object[0])));
             if (device instanceof BeeModule) {
-                context.register(((BeeModule) device).getClasses().toArray(new Class[0]));
+                context.register(((BeeModule) device).getComponents().toArray(new Object[0]));
             }
             return context;
         } catch (Exception exception) {

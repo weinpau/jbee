@@ -20,13 +20,13 @@ class BeeImpl implements Bee {
 
     Timer timer = new Timer(true);
 
-    public BeeImpl(TargetDevice device) {
+    public BeeImpl(TargetDevice device, StateFactory stateFactory) {
         control = new DefaultBeeControl(commandExecutor, device, monitor);
 
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                monitor.changeState(device.getCurrentState());
+                monitor.changeState(stateFactory.getCurrentState());
             }
         }, CLOCK, CLOCK);
     }

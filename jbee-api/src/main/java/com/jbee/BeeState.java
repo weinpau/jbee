@@ -9,73 +9,67 @@ import java.util.Objects;
  *
  * @author weinpau
  */
-public interface BeeState {
+public class BeeState {
 
-    long getTimestamp();
+    public static final BeeState START_STATE = new BeeState(0, Position.ORIGIN, Velocity.ZERO, YAW.ZERO);
 
-    Position getPosition();
+    private final long timestamp;
+    private final Position position;
+    private final Velocity velocity;
+    private final YAW yaw;
 
-    Velocity getVelocity();
+    BeeState(long timestamp, Position position, Velocity velocity, YAW yaw) {
+        this.timestamp = timestamp;
+        this.position = position;
+        this.velocity = velocity;
+        this.yaw = yaw;
+    }
 
-    YAW getYAW();
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-    static final BeeState START_STATE = new BeeState() {
+    public Position getPosition() {
+        return position;
+    }
 
-        @Override
-        public long getTimestamp() {
-            return 0;
+    public Velocity getVelocity() {
+        return velocity;
+    }
+
+    public YAW getYAW() {
+        return yaw;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));
+        hash = 89 * hash + Objects.hashCode(this.position);
+        hash = 89 * hash + Objects.hashCode(this.velocity);
+        hash = 89 * hash + Objects.hashCode(this.yaw);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
-
-        @Override
-        public Position getPosition() {
-            return Position.ORIGIN;
+        if (getClass() != obj.getClass()) {
+            return false;
         }
-
-        @Override
-        public Velocity getVelocity() {
-            return Velocity.ZERO;
+        final BeeState other = (BeeState) obj;
+        if (this.timestamp != other.timestamp) {
+            return false;
         }
-
-        @Override
-        public YAW getYAW() {
-            return YAW.ZERO;
+        if (!Objects.equals(this.position, other.position)) {
+            return false;
         }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 89 * hash + (int) (this.getTimestamp() ^ (this.getTimestamp() >>> 32));
-            hash = 89 * hash + Objects.hashCode(this.getPosition());
-            hash = 89 * hash + Objects.hashCode(this.getVelocity());
-            hash = 89 * hash + Objects.hashCode(this.getYAW());
-            return hash;
+        if (!Objects.equals(this.velocity, other.velocity)) {
+            return false;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (!(obj instanceof BeeState)) {
-                return false;
-            }
-            final BeeState other = (BeeState) obj;
-            if (this.getTimestamp() != other.getTimestamp()) {
-                return false;
-            }
-            if (!Objects.equals(this.getPosition(), other.getPosition())) {
-                return false;
-            }
-            if (!Objects.equals(this.getVelocity(), other.getVelocity())) {
-                return false;
-            }
-            if (Objects.equals(this.getYAW(), other.getYAW())) {
-            } else {
-                return false;
-            }
-            return true;
-        }
-
-    };
+        return Objects.equals(this.yaw, other.yaw);
+    }
 
 }

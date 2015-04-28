@@ -7,8 +7,11 @@ package com.jbee;
  */
 public interface Provider<T> {
 
-    void bootstrap(Bee bee) throws BeeBootstrapException;
-
     T get();
+
+    default void bootstrap() throws BeeBootstrapException {
+
+    }
+;
 
 }

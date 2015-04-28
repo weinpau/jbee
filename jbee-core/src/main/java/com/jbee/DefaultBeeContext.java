@@ -2,6 +2,7 @@ package com.jbee;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,20 +24,15 @@ class DefaultBeeContext implements BeeContext {
     @Override
     public Bee bootstrap() throws BeeBootstrapException {
         device.bootstrap();
-        return new BeeImpl(device);
+        return new BeeImpl(device, new StateFactory(this));
     }
 
     @Override
-    public BeeContext register(Class<?>... component) {
-
-        try {
-            for (Class c : component) {
-                if (Provider.class.isAssignableFrom(c)) {
-                    providers.add((Provider) c.newInstance());
-                }
+    public BeeContext register(Object... components) {
+        for (Object comp : components) {
+            if (comp instanceof Provider) {
+                providers.add((Provider) comp);
             }
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
         }
         return this;
     }
@@ -47,10 +43,13 @@ class DefaultBeeContext implements BeeContext {
     }
 
     @Override
-    public Collection<Provider> getProviders(Class<? extends Provider> providerType) {
-        return providers.stream().
+    public <P extends Provider> Collection<P> getProviders(Class<P> providerType) {
+        Collection<P> result = new HashSet<>();
+        providers.stream().
                 filter(p -> providerType.isAssignableFrom(p.getClass())).
-                collect(Collectors.toSet());
+                forEach(p -> result.add((P) p));
+        return result;
+
     }
 
 }

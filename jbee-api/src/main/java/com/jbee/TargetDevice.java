@@ -11,9 +11,7 @@ import java.util.concurrent.RunnableFuture;
 public interface TargetDevice {
 
     String getId();
-
-    BeeState getCurrentState();
-
+   
     RunnableFuture<CommandResult> execute(Command command);
 
     void bootstrap() throws BeeBootstrapException;

@@ -1,10 +1,13 @@
 package com.jbee.device.simulation;
 
 import com.jbee.BeeBootstrapException;
-import com.jbee.BeeState;
+import com.jbee.BeeModule;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import com.jbee.providers.PositionProvider;
+import com.jbee.providers.VelocityProvider;
+import com.jbee.providers.YAWProvider;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
 import java.util.concurrent.RunnableFuture;
@@ -13,21 +16,29 @@ import java.util.concurrent.RunnableFuture;
  *
  * @author weinpau
  */
-public class Simulation implements TargetDevice {
+public class Simulation extends BeeModule implements TargetDevice {
 
     Velocity defaultVelocity = Velocity.mps(1);
     Distance takeOffHeight = Distance.ofMeters(2);
 
     StateMachine stateMachine;
 
-    @Override
-    public String getId() {
-        return "simulation";
+    public Simulation() {
+
+        register((PositionProvider) () -> {
+            return stateMachine.getCurrentState().getPosition();
+        });
+        register((VelocityProvider) () -> {
+            return stateMachine.getCurrentState().getVelocity();
+        });
+        register((YAWProvider) () -> {
+            return stateMachine.getCurrentState().getYAW();
+        });
     }
 
     @Override
-    public BeeState getCurrentState() {
-        return stateMachine.getCurrentState();
+    public String getId() {
+        return "simulation";
     }
 
     @Override
