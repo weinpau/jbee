@@ -24,10 +24,11 @@ public class StateMachine {
 
     volatile SimulationStep step = SimulationStep.START_STEP;
     Velocity defaultVelocity;
-    Distance takeOffHeight = Distance.ofMeters(1);
+    Distance takeOffHeight;
 
-    public StateMachine(Velocity defaultVelocity) {
+    public StateMachine(Velocity defaultVelocity, Distance takeOffHeight) {
         this.defaultVelocity = defaultVelocity;
+        this.takeOffHeight = takeOffHeight;
     }
 
     public BeeState getCurrentState() {
@@ -164,9 +165,9 @@ public class StateMachine {
             case UP:
                 return p.addZ(distance);
             case FORWARD:
-                return p.withX(p.getX() * Math.cos(yaw) * distance).withY(p.getY() * Math.sin(yaw) * distance);
+                return p.withX(p.getX() + Math.cos(yaw) * distance).withY(p.getY() + Math.sin(yaw) * distance);
             case BACKWARD:
-                return p.withX(p.getX() * Math.cos(yaw) * -distance).withY(p.getY() * Math.sin(yaw) * -distance);
+                return p.withX(p.getX() + Math.cos(yaw) * -distance).withY(p.getY() + Math.sin(yaw) * -distance);
             case RIGHT:
                 return p.withX(p.getX() - Math.sin(yaw) * distance).withY(p.getY() + Math.cos(yaw) * distance);
             case LEFT:
