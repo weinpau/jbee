@@ -16,7 +16,7 @@ class BeeImpl implements Bee {
     final DefaultBeeControl control;
     final DefaultBeeMonitor monitor = new DefaultBeeMonitor();
 
-    private static final int CLOCK = 100;
+    private static final int CLOCK = 50;
 
     Timer timer = new Timer(true);
 
