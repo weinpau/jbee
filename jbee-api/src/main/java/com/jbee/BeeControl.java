@@ -37,7 +37,7 @@ public interface BeeControl {
         return onAction(onAction, Duration.ZERO, period);
     }
 
-    BeeControl onPositionChange(BiConsumer<Command, Position> positionChange, Distance deltaDistance);
+    BeeControl onPositionChanged(BiConsumer<Command, Position> positionChanged, Distance deltaDistance);
 
     CommandResult execute(Command command);
 

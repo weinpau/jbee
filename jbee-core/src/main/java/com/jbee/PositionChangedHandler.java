@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  *
  * @author weinpau
  */
-class PositionChangeHandler implements CommandHandler {
+class PositionChangedHandler implements CommandHandler {
 
     final BiConsumer<Command, Position> onPositionChange;
     final Distance deltaDistance;
@@ -19,7 +19,7 @@ class PositionChangeHandler implements CommandHandler {
 
     volatile Position currentPosition;
 
-    PositionChangeHandler(Command command, DefaultBeeMonitor monitor, BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
+    PositionChangedHandler(Command command, DefaultBeeMonitor monitor, BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
         this.monitor = monitor;
         this.onPositionChange = onPositionChange;
         this.deltaDistance = deltaDistance;

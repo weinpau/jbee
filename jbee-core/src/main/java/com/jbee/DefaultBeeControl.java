@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.RunnableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -27,8 +26,6 @@ class DefaultBeeControl implements BeeControl {
     final List<DefaultBeeControl> childs = Collections.synchronizedList(new ArrayList<>());
     Consumer<Command> failedListener, canceledListener, executeListener, completedListener;
     CommandHandlerFactory commandHandlerFactory;
-
-    volatile RunnableFuture<CommandResult> currentRunnable;
 
     DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor, DefaultBeeControl parent) {
         this.commandExecutor = commandExecutor;
@@ -93,10 +90,10 @@ class DefaultBeeControl implements BeeControl {
     }
 
     @Override
-    public BeeControl onPositionChange(BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
+    public BeeControl onPositionChanged(BiConsumer<Command, Position> onPositionChanged, Distance deltaDistance) {
         checkControl();
         DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
-        control.commandHandlerFactory = c -> new PositionChangeHandler(c, monitor, onPositionChange, deltaDistance);
+        control.commandHandlerFactory = c -> new PositionChangedHandler(c, monitor, onPositionChanged, deltaDistance);
         childs.add(control);
         return control;
     }

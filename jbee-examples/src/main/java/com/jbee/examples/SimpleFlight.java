@@ -22,7 +22,7 @@ public class SimpleFlight {
 
         BeeControl beeControl = bee.control().
                 onCanceled(c -> System.out.println("command " + c.getCommandNumber() + " canceled")).
-                onPositionChange((c, p) -> {
+                onPositionChanged((c, p) -> {
                     System.out.println("command " + c.getCommandNumber() + ": " + p);
                 },
                 Distance.ofCentimeters(50));
