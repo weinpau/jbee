@@ -1,5 +1,6 @@
 package com.jbee;
 
+import com.jbee.commands.CancelCommand;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.FlyCommand;
@@ -24,15 +25,25 @@ public interface BeeControl {
 
     BeeControl onFailed(Consumer<Command> onFailed);
 
-    BeeControl onInterrupt(Consumer<Command> onInterrupt);
+    BeeControl onCompleted(Consumer<Command> onCompleted);
 
-    BeeControl onAction(Consumer<Command> onAction, Duration period);
+    BeeControl onExecute(Consumer<Command> onExecute);
+
+    BeeControl onCanceled(Consumer<Command> onCanceled);
+
+    BeeControl onAction(Consumer<Command> onAction, Duration delay, Duration period);
+
+    default BeeControl onAction(Consumer<Command> onAction, Duration period) {
+        return onAction(onAction, Duration.ZERO, period);
+    }
 
     BeeControl onPositionChange(BiConsumer<Command, Position> positionChange, Distance deltaDistance);
-  
+
     CommandResult execute(Command command);
-    
-    CommandResult interrupt();
+
+    default CommandResult cancel() {
+        return execute(new CancelCommand());
+    }
 
     default CommandResult takeOff() {
         return execute(new TakeOffCommand());
@@ -47,11 +58,11 @@ public interface BeeControl {
     }
 
     default CommandResult rotate(YAW yaw) {
-       return execute(new RotationCommand(yaw)); 
+        return execute(new RotationCommand(yaw));
     }
 
     default CommandResult flyTo(Position position, Velocity velocity, YAW yaw) {
-        return execute(new FlyToCommand(position,velocity, yaw));
+        return execute(new FlyToCommand(position, velocity, yaw));
     }
 
     default CommandResult flyTo(Position position, Velocity velocity) {

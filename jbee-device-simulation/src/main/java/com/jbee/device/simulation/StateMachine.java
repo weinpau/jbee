@@ -1,12 +1,11 @@
 package com.jbee.device.simulation;
 
-import com.jbee.BeeState;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.FlyCommand;
 import com.jbee.commands.FlyToCommand;
 import com.jbee.commands.HoverCommand;
-import com.jbee.commands.InterruptCommand;
+import com.jbee.commands.CancelCommand;
 import com.jbee.commands.LandCommand;
 import com.jbee.commands.RotationCommand;
 import com.jbee.commands.TakeOffCommand;
@@ -53,8 +52,8 @@ public class StateMachine {
             if (command instanceof HoverCommand) {
                 simulationStep = exec((HoverCommand) command);
             }
-            if (command instanceof InterruptCommand) {
-                simulationStep = exec((InterruptCommand) command);
+            if (command instanceof CancelCommand) {
+                simulationStep = exec((CancelCommand) command);
             }
             if (command instanceof FlyCommand) {
                 simulationStep = exec((FlyCommand) command);
@@ -142,7 +141,7 @@ public class StateMachine {
 
     }
 
-    SimulationStep exec(InterruptCommand command) {
+    SimulationStep exec(CancelCommand command) {
         State startState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
         State followingState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
 

@@ -12,24 +12,25 @@ import java.util.function.Consumer;
  */
 class PositionChangeHandler implements CommandHandler {
 
-    private final BiConsumer<Command, Position> onPositionChange;
-    private final Distance deltaDistance;
-    private final DefaultBeeMonitor monitor;
-    private Command command;
+    final BiConsumer<Command, Position> onPositionChange;
+    final Distance deltaDistance;
+    final DefaultBeeMonitor monitor;
+    final Command command;
 
-    private volatile Position currentPosition;
+    volatile Position currentPosition;
 
-    PositionChangeHandler(DefaultBeeMonitor monitor, BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
+    PositionChangeHandler(Command command, DefaultBeeMonitor monitor, BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
         this.monitor = monitor;
         this.onPositionChange = onPositionChange;
         this.deltaDistance = deltaDistance;
+        this.command = command;
 
         currentPosition = monitor.getLastKnownState().getPosition();
     }
 
     @Override
-    public void start(Command command) {
-        this.command = command;
+    public void start() {
+
         currentPosition = monitor.getLastKnownState().getPosition();
         monitor.onStateChange(stateListener);
 
@@ -38,7 +39,6 @@ class PositionChangeHandler implements CommandHandler {
     @Override
     public void stop() {
         monitor.removeStateChangeListener(stateListener);
-        currentPosition = null;
     }
 
     @SuppressWarnings("Convert2Lambda")

@@ -29,7 +29,7 @@ class DefaultBeeContext implements BeeContext {
             throw new BeeBootstrapException("Bee has already been created.");
         }
         device.bootstrap();
-        bee = new BeeImpl(device, new StateFactory(this));
+        bee = new DefaultBee(device, new StateFactory(this));
         return bee;
     }
 

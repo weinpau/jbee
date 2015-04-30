@@ -3,12 +3,11 @@ package com.jbee;
 import com.jbee.commands.*;
 import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
-import java.lang.ref.WeakReference;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RunnableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -19,51 +18,76 @@ import java.util.function.Consumer;
  */
 class DefaultBeeControl implements BeeControl {
 
-    boolean closed = false;
-    List<DefaultBeeControl> childs = new ArrayList<>();
-
-    final ExecutorService commandExecutor;
-    final TargetDevice device;
+    final DefaultBeeControl parent;
+    final CommandExecutor commandExecutor;
     final DefaultBeeMonitor monitor;
 
-    List<Consumer<Command>> failedListeners = new ArrayList<>();
-    List<Consumer<Command>> interruptListeners = new ArrayList<>();
-    List<CommandHandler> commandHandlers = new ArrayList<>();
+    volatile boolean closed = false;
 
-    WeakReference<Command> currentCommand;
+    final List<DefaultBeeControl> childs = Collections.synchronizedList(new ArrayList<>());
+    Consumer<Command> failedListener, canceledListener, executeListener, completedListener;
+    CommandHandlerFactory commandHandlerFactory;
 
-    DefaultBeeControl(ExecutorService commandExecutor, TargetDevice device, DefaultBeeMonitor monitor) {
+    volatile RunnableFuture<CommandResult> currentRunnable;
+
+    DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor, DefaultBeeControl parent) {
         this.commandExecutor = commandExecutor;
-        this.device = device;
         this.monitor = monitor;
+        this.parent = parent;
+    }
+
+    DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor) {
+        this(commandExecutor, monitor, null);
     }
 
     @Override
     public BeeControl onFailed(Consumer<Command> onFailed) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, device, monitor);
-        control.failedListeners.addAll(failedListeners);
-        control.failedListeners.add(onFailed);
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        control.failedListener = onFailed;
         childs.add(control);
         return control;
     }
 
     @Override
-    public BeeControl onInterrupt(Consumer<Command> onInterrupt) {
+    public BeeControl onExecute(Consumer<Command> onExecute) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, device, monitor);
-        control.interruptListeners.addAll(interruptListeners);
-        control.interruptListeners.add(onInterrupt);
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        control.executeListener = onExecute;
         childs.add(control);
         return control;
     }
 
     @Override
-    public BeeControl onAction(Consumer<Command> onAction, Duration period) {
+    public BeeControl onCompleted(Consumer<Command> onCompleted) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, device, monitor);
-        control.commandHandlers.addAll(commandHandlers);
-        control.commandHandlers.add(new ActionHandler(onAction, period));
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        control.completedListener = onCompleted;
+        childs.add(control);
+        return control;
+    }
+
+    @Override
+    public BeeControl onCanceled(Consumer<Command> onCanceled) {
+        checkControl();
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        control.canceledListener = onCanceled;
+        childs.add(control);
+        return control;
+    }
+
+    @Override
+    public BeeControl onAction(Consumer<Command> onAction, Duration delay, Duration period) {
+        if (delay.isNegative()) {
+            throw new IllegalArgumentException("The delay must be greater or equal to zero.");
+        }
+        if (period.isZero() || period.isNegative()) {
+            throw new IllegalArgumentException("The period must be greater than zero.");
+        }
+        checkControl();
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        control.commandHandlerFactory = c -> new ActionHandler(c, onAction, delay, period);
+
         childs.add(control);
         return control;
     }
@@ -71,9 +95,8 @@ class DefaultBeeControl implements BeeControl {
     @Override
     public BeeControl onPositionChange(BiConsumer<Command, Position> onPositionChange, Distance deltaDistance) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, device, monitor);
-        control.commandHandlers.addAll(commandHandlers);
-        control.commandHandlers.add(new PositionChangeHandler(monitor, onPositionChange, deltaDistance));
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        control.commandHandlerFactory = c -> new PositionChangeHandler(c, monitor, onPositionChange, deltaDistance);
         childs.add(control);
         return control;
     }
@@ -81,70 +104,95 @@ class DefaultBeeControl implements BeeControl {
     @Override
     public CommandResult execute(Command command) {
         checkControl();
-        if (currentCommand != null) {
-            clearCommand();
-        }
-        currentCommand = new WeakReference<>(command);
-        command.init(monitor.newCommandNumber());
-        startHandlers(command);
-        CommandResult result = runByExecutor(command);
+
+        command.init(commandExecutor.newCommandNumber());
+
+        List<CommandHandler> handlers = startHandlers(command);
+        postExecute(command);
+        CommandResult result = commandExecutor.execute(command);
         if (CommandResult.FAILED.equals(result)) {
-            failedListeners.forEach(listener -> listener.accept(currentCommand.get()));
+            postFailed(command);
         }
-        stopHandlers();
+        if (CommandResult.CANCELLED.equals(result)) {
+            postCanceled(command);
+        }
+        if (CommandResult.COMPLETED.equals(result)) {
+            postCompleted(command);
+        }
+        handlers.forEach(h -> h.stop());
+
         return result;
     }
 
-    @Override
-    public CommandResult interrupt() {
-        checkControl();
-        if (currentCommand == null) {
-            return CommandResult.NOT_EXECUTED;
+    protected void postExecute(Command command) {
+        if (executeListener != null) {
+            executeListener.accept(command);
         }
-        CommandResult result = execute(new InterruptCommand());
-        stopHandlers();
-        if (CommandResult.FAILED.equals(result)) {
-            failedListeners.forEach(listener -> listener.accept(currentCommand.get()));
+        if (parent != null) {
+            parent.postExecute(command);
         }
-        clearCommand();
-        return result;
+    }
+
+    protected void postFailed(Command command) {
+        if (failedListener != null) {
+            failedListener.accept(command);
+        }
+        if (parent != null) {
+            parent.postFailed(command);
+        }
+    }
+
+    protected void postCanceled(Command command) {
+        if (canceledListener != null) {
+            canceledListener.accept(command);
+        }
+        if (parent != null) {
+            parent.postCanceled(command);
+        }
+    }
+
+    protected void postCompleted(Command command) {
+        if (completedListener != null) {
+            completedListener.accept(command);
+        }
+        if (parent != null) {
+            parent.postCompleted(command);
+        }
     }
 
     public void close() {
         childs.forEach(c -> c.close());
-        stopHandlers();
-        currentCommand = null;
         closed = true;
     }
 
-    private CommandResult runByExecutor(Command command) {
+    private List<CommandHandler> startHandlers(Command command) {
+        List<CommandHandler> handlers = new ArrayList<>();
+        createHandlers(command, handlers);
+        handlers.forEach(h -> h.start());
+        return handlers;
+    }
 
-        try {
-            RunnableFuture<CommandResult> future = device.execute(command);
-            commandExecutor.execute(future);
-            return future.get();
-        } catch (InterruptedException | ExecutionException ex) {
-            return CommandResult.FAILED;
+    protected void createHandlers(Command command, Collection<CommandHandler> handlers) {
+
+        if (commandHandlerFactory != null) {
+            handlers.add(commandHandlerFactory.create(command));
         }
-
-    }
-
-    private void startHandlers(Command command) {
-        commandHandlers.forEach(h -> h.start(command));
-    }
-
-    private void stopHandlers() {
-        commandHandlers.forEach(handler -> handler.stop());
-    }
-
-    private void clearCommand() {
-        interruptListeners.forEach(listener -> listener.accept(currentCommand.get()));
-        currentCommand = null;
+        if (parent != null) {
+            parent.createHandlers(command, handlers);
+        }
     }
 
     private void checkControl() {
         if (closed) {
             throw new RuntimeException("Illegal call, the control is already closed.");
+        }
+    }
+
+    protected DefaultBeeControl root() {
+        if (parent == null) {
+            return this;
+        } else {
+            return parent.root();
         }
     }
 

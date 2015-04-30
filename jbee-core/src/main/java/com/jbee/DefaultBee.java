@@ -9,24 +9,25 @@ import java.util.concurrent.Executors;
  *
  * @author weinpau
  */
-class BeeImpl implements Bee {
+class DefaultBee implements Bee {
 
     final TargetDevice device;
 
-    final ExecutorService commandExecutor = Executors.newFixedThreadPool(1);
+    final CommandExecutor commandExecutor;
     final BeeWorld world = new BeeWorldImpl();
     final DefaultBeeControl control;
     final DefaultBeeMonitor monitor = new DefaultBeeMonitor();
 
     private static final int CLOCK = 50;
 
-    Timer timer = new Timer(true);
+    Timer stateListener = new Timer("state-listener", true);
 
-    public BeeImpl(TargetDevice device, StateFactory stateFactory) {
+    public DefaultBee(TargetDevice device, StateFactory stateFactory) {
         this.device = device;
-        control = new DefaultBeeControl(commandExecutor, device, monitor);
+        commandExecutor = new CommandExecutor(device);
+        control = new DefaultBeeControl(commandExecutor, monitor);
 
-        timer.scheduleAtFixedRate(new TimerTask() {
+        stateListener.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 monitor.changeState(stateFactory.getCurrentState());
@@ -52,7 +53,7 @@ class BeeImpl implements Bee {
     @Override
     public void close() {
         device.disconnect();
-        timer.cancel();
+        stateListener.cancel();
         commandExecutor.shutdown();
         control.close();
     }

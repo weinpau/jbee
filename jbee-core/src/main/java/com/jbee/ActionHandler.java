@@ -14,35 +14,32 @@ class ActionHandler implements CommandHandler {
 
     private final Consumer<Command> actionListener;
     private final Duration period;
+    private final Duration delay;
+    final TimerTask task;
+    final Timer timer;
 
-    private Timer timer;
-
-    ActionHandler(Consumer<Command> listener, Duration period) {
+    ActionHandler(Command command, Consumer<Command> listener, Duration delay, Duration period) {
         this.actionListener = listener;
         this.period = period;
-    }
-
-    @Override
-    public void start(Command command) {
-        stop();
-        timer = new Timer(true);
-
-        timer.scheduleAtFixedRate(new TimerTask() {
+        this.delay = delay;
+        timer = new Timer("action-handler-" + command.getCommandNumber(), true);
+        task = new TimerTask() {
 
             @Override
             public void run() {
                 actionListener.accept(command);
             }
-        }, 0, period.toMillis());
+        };
+    }
 
+    @Override
+    public void start() {
+        timer.scheduleAtFixedRate(task, delay.toMillis(), period.toMillis());
     }
 
     @Override
     public void stop() {
-        if (timer != null) {
-            timer.cancel();
-        }
-        timer = null;
+        task.cancel();
     }
 
 }
