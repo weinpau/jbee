@@ -3,7 +3,6 @@ package com.jbee;
 import com.jbee.positioning.Position;
 import com.jbee.units.Velocity;
 import com.jbee.units.Angle;
-import java.util.Objects;
 
 /**
  *
@@ -11,18 +10,21 @@ import java.util.Objects;
  */
 public class BeeState {
 
-    public static final BeeState START_STATE = new BeeState(0, Position.ORIGIN, Velocity.ZERO, Angle.ZERO);
+    public static final BeeState START_STATE = new BeeState(0, Position.ORIGIN, Velocity.ZERO, Angle.ZERO, new BatteryState(1, false));
 
     private final long timestamp;
     private final Position position;
     private final Velocity velocity;
     private final Angle yaw;
+    private final BatteryState batteryState;
 
-    BeeState(long timestamp, Position position, Velocity velocity, Angle yaw) {
+    BeeState(long timestamp, Position position, Velocity velocity, Angle yaw, BatteryState batteryState) {
         this.timestamp = timestamp;
         this.position = position;
         this.velocity = velocity;
+       
         this.yaw = yaw;
+        this.batteryState = batteryState;
     }
 
     public long getTimestamp() {
@@ -41,13 +43,16 @@ public class BeeState {
         return yaw;
     }
 
+    public BatteryState getBatteryState() {
+        return batteryState;
+    }
+    
+    
+
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 89 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));
-        hash = 89 * hash + Objects.hashCode(this.position);
-        hash = 89 * hash + Objects.hashCode(this.velocity);
-        hash = 89 * hash + Objects.hashCode(this.yaw);
+        int hash = 7;
+        hash = 17 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));
         return hash;
     }
 
@@ -60,16 +65,7 @@ public class BeeState {
             return false;
         }
         final BeeState other = (BeeState) obj;
-        if (this.timestamp != other.timestamp) {
-            return false;
-        }
-        if (!Objects.equals(this.position, other.position)) {
-            return false;
-        }
-        if (!Objects.equals(this.velocity, other.velocity)) {
-            return false;
-        }
-        return Objects.equals(this.yaw, other.yaw);
+        return this.timestamp == other.timestamp;
     }
 
 }

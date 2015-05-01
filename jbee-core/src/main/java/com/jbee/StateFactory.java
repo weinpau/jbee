@@ -1,9 +1,7 @@
 package com.jbee;
 
 import com.jbee.positioning.Position;
-import com.jbee.providers.PositionProvider;
-import com.jbee.providers.VelocityProvider;
-import com.jbee.providers.YAWProvider;
+import com.jbee.providers.*;
 import com.jbee.units.Velocity;
 import com.jbee.units.Angle;
 
@@ -16,6 +14,7 @@ class StateFactory {
     PositionProvider positionProvider;
     YAWProvider yawProvider;
     VelocityProvider velocityProvider;
+    BatteryStateProvider batteryStateProvider;
 
     public StateFactory(BeeContext context) {
 
@@ -31,13 +30,18 @@ class StateFactory {
                 findAny().
                 orElseThrow(() -> new RuntimeException("A velocity provider is missing."));
 
+        batteryStateProvider = context.getProviders(BatteryStateProvider.class).stream().
+                findAny().
+                orElseThrow(() -> new RuntimeException("A battery state provider is missing."));
+
     }
 
     public BeeState getCurrentState() {
         Position position = positionProvider.get();
         Angle yaw = yawProvider.get();
         Velocity velocity = velocityProvider.get();
-        return new BeeState(System.currentTimeMillis(), position, velocity, yaw);
+        BatteryState batteryState = batteryStateProvider.get();
+        return new BeeState(System.currentTimeMillis(), position, velocity, yaw, batteryState);
     }
 
 }

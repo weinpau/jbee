@@ -1,10 +1,12 @@
 package com.jbee.device.simulation;
 
+import com.jbee.BatteryState;
 import com.jbee.BeeBootstrapException;
 import com.jbee.BeeModule;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import com.jbee.providers.BatteryStateProvider;
 import com.jbee.providers.PositionProvider;
 import com.jbee.providers.VelocityProvider;
 import com.jbee.providers.YAWProvider;
@@ -20,7 +22,7 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     Velocity defaultVelocity = Velocity.mps(1);
     Distance takeOffHeight = Distance.ofMeters(2);
-
+    BatteryState batteryState = new BatteryState(.99, false);
     StateMachine stateMachine;
 
     public Simulation() {
@@ -34,6 +36,10 @@ public class Simulation extends BeeModule implements TargetDevice {
         register((YAWProvider) () -> {
             return stateMachine.getCurrentState().getYAW();
         });
+        register((BatteryStateProvider) () -> {
+            return batteryState;
+        });
+
     }
 
     @Override
@@ -69,6 +75,14 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     public void setTakeOffHeight(Distance takeOffHeight) {
         this.takeOffHeight = takeOffHeight;
+    }
+
+    public void setBatteryState(BatteryState batteryState) {
+        this.batteryState = batteryState;
+    }
+
+    public BatteryState getBatteryState() {
+        return batteryState;
     }
 
 }
