@@ -1,6 +1,6 @@
 package com.jbee.commands;
 
-import com.jbee.units.YAW;
+import com.jbee.units.Angle;
 
 /**
  *
@@ -8,13 +8,13 @@ import com.jbee.units.YAW;
  */
 public class RotationCommand extends AbstractCommand {
 
-    private final YAW yaw;
+    private final Angle yaw;
 
-    public RotationCommand(YAW yaw) {
+    public RotationCommand(Angle yaw) {
         this.yaw = yaw;
     }
 
-    public YAW getYAW() {
+    public Angle getYAW() {
         return yaw;
     }
 

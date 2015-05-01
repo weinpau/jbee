@@ -5,7 +5,7 @@ import com.jbee.providers.PositionProvider;
 import com.jbee.providers.VelocityProvider;
 import com.jbee.providers.YAWProvider;
 import com.jbee.units.Velocity;
-import com.jbee.units.YAW;
+import com.jbee.units.Angle;
 
 /**
  *
@@ -35,7 +35,7 @@ class StateFactory {
 
     public BeeState getCurrentState() {
         Position position = positionProvider.get();
-        YAW yaw = yawProvider.get();
+        Angle yaw = yawProvider.get();
         Velocity velocity = velocityProvider.get();
         return new BeeState(System.currentTimeMillis(), position, velocity, yaw);
     }

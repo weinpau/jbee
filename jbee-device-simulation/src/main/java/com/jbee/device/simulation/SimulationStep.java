@@ -5,7 +5,7 @@ import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.positioning.Position;
 import com.jbee.units.Velocity;
-import com.jbee.units.YAW;
+import com.jbee.units.Angle;
 
 /**
  *
@@ -64,7 +64,7 @@ public class SimulationStep {
                 normalize().
                 multiply(velocity.mps() * (t / 1000d)).
                 add(startState.getPosition());        
-        YAW yaw = followingState.getYAW().
+        Angle yaw = followingState.getYAW().
                 sub(startState.getYAW()).
                 multiply(1d / (timeSpent)).
                 multiply(t).

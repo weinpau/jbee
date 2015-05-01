@@ -12,7 +12,7 @@ import com.jbee.commands.TakeOffCommand;
 import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
-import com.jbee.units.YAW;
+import com.jbee.units.Angle;
 import java.time.Duration;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -57,11 +57,11 @@ public interface BeeControl {
         return execute(new HoverCommand(duration));
     }
 
-    default CommandResult rotate(YAW yaw) {
+    default CommandResult rotate(Angle yaw) {
         return execute(new RotationCommand(yaw));
     }
 
-    default CommandResult flyTo(Position position, Velocity velocity, YAW yaw) {
+    default CommandResult flyTo(Position position, Velocity velocity, Angle yaw) {
         return execute(new FlyToCommand(position, velocity, yaw));
     }
 

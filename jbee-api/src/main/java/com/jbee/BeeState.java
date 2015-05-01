@@ -2,7 +2,7 @@ package com.jbee;
 
 import com.jbee.positioning.Position;
 import com.jbee.units.Velocity;
-import com.jbee.units.YAW;
+import com.jbee.units.Angle;
 import java.util.Objects;
 
 /**
@@ -11,14 +11,14 @@ import java.util.Objects;
  */
 public class BeeState {
 
-    public static final BeeState START_STATE = new BeeState(0, Position.ORIGIN, Velocity.ZERO, YAW.ZERO);
+    public static final BeeState START_STATE = new BeeState(0, Position.ORIGIN, Velocity.ZERO, Angle.ZERO);
 
     private final long timestamp;
     private final Position position;
     private final Velocity velocity;
-    private final YAW yaw;
+    private final Angle yaw;
 
-    BeeState(long timestamp, Position position, Velocity velocity, YAW yaw) {
+    BeeState(long timestamp, Position position, Velocity velocity, Angle yaw) {
         this.timestamp = timestamp;
         this.position = position;
         this.velocity = velocity;
@@ -37,7 +37,7 @@ public class BeeState {
         return velocity;
     }
 
-    public YAW getYAW() {
+    public Angle getYAW() {
         return yaw;
     }
 

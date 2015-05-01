@@ -2,7 +2,7 @@ package com.jbee.device.simulation;
 
 import com.jbee.positioning.Position;
 import com.jbee.units.Velocity;
-import com.jbee.units.YAW;
+import com.jbee.units.Angle;
 
 /**
  *
@@ -10,13 +10,13 @@ import com.jbee.units.YAW;
  */
 public class State {
 
-    public static final State START_STATE = new State(Position.ORIGIN, Velocity.ZERO, YAW.ZERO);
+    public static final State START_STATE = new State(Position.ORIGIN, Velocity.ZERO, Angle.ZERO);
 
     private final Position position;
     private final Velocity velocity;
-    private final YAW yaw;
+    private final Angle yaw;
 
-    public State(Position position, Velocity velocity, YAW yaw) {
+    public State(Position position, Velocity velocity, Angle yaw) {
 
         this.position = position;
         this.velocity = velocity;
@@ -31,7 +31,7 @@ public class State {
         return velocity;
     }
 
-    public YAW getYAW() {
+    public Angle getYAW() {
         return yaw;
     }
 
