@@ -21,15 +21,18 @@ import java.util.logging.Logger;
  */
 public class NavDataClient extends Thread {
 
+    
+      static final byte[] TRIGGER_BYTES = {0x01, 0x00, 0x00, 0x00};
+      
     List<Consumer<NavData>> navDataConsumers = new ArrayList<>();
 
     DatagramChannel channel;
     Selector selector;
 
     InetAddress inetAddress;
-    int port, timeout;
-
-    static final byte[] TRIGGER_BYTES = {0x01, 0x00, 0x00, 0x00};
+    int port, timeout;  
+    
+    NavDataParser parser = new NavDataParser();
 
     byte[] buffer = new byte[8192];
 
@@ -77,7 +80,7 @@ public class NavDataClient extends Thread {
 
             try {
                 int length = readDataBlock(buffer);
-                NavData data = NavData.parse(ByteBuffer.wrap(buffer, 0, length));
+                NavData data = parser.parse(ByteBuffer.wrap(buffer, 0, length));
                 newNavDataReceived(data);
             } catch (IOException | NavDataParseException ex) {
                 Logger.getLogger(NavDataClient.class.getName()).log(Level.SEVERE, null, ex);
