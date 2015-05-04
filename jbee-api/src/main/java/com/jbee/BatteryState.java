@@ -7,19 +7,19 @@ package com.jbee;
 public final class BatteryState implements Comparable<BatteryState> {
     
     private final boolean tooLow;
-    private final double percent;
+    private final double level;
 
-    public BatteryState(double percent, boolean tooLow) {
-        if (percent < 0 || percent > 1) {
-            throw new IllegalArgumentException("Battery state of charge must be between 0 and 1.");
+    public BatteryState(double level, boolean tooLow) {
+        if (level < 0 || level > 1) {
+            throw new IllegalArgumentException("Battery level must be between 0 and 1.");
         }
 
         this.tooLow = tooLow;
-        this.percent = percent;
+        this.level = level;
     }
 
-    public double getPercent() {
-        return percent;
+    public double getLevel() {
+        return level;
     }
 
     public boolean isTooLow() {
@@ -30,7 +30,7 @@ public final class BatteryState implements Comparable<BatteryState> {
     public int hashCode() {
         int hash = 3;
         hash = 19 * hash + (this.tooLow ? 1 : 0);
-        hash = 19 * hash + (int) (Double.doubleToLongBits(this.percent) ^ (Double.doubleToLongBits(this.percent) >>> 32));
+        hash = 19 * hash + (int) (Double.doubleToLongBits(this.level) ^ (Double.doubleToLongBits(this.level) >>> 32));
         return hash;
     }
 
@@ -46,12 +46,12 @@ public final class BatteryState implements Comparable<BatteryState> {
         if (this.tooLow != other.tooLow) {
             return false;
         }
-        return Double.doubleToLongBits(this.percent) == Double.doubleToLongBits(other.percent);
+        return Double.doubleToLongBits(this.level) == Double.doubleToLongBits(other.level);
     }
 
     @Override
     public int compareTo(BatteryState o) {
-        return Double.compare(percent, o.percent);
+        return Double.compare(level, o.level);
     }
 
 }

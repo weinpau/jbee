@@ -12,5 +12,9 @@ public interface PositionProvider extends Provider<Position> {
     default boolean isOnly2D() {
         return false;
     }
+    
+    default boolean isRelative() {
+        return false;
+    }
 
 }
