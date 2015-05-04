@@ -1,6 +1,6 @@
 package com.jbee.device.ardrone2;
 
-import com.jbee.device.ardrone2.commands.AT_Command;
+import com.jbee.device.ardrone2.internal.commands.AT_Command;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

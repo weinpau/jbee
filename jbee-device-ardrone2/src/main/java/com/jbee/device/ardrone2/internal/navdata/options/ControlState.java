@@ -1,4 +1,4 @@
-package com.jbee.device.ardrone2.navdata.options;
+package com.jbee.device.ardrone2.internal.navdata.options;
 
 /**
  *

@@ -1,5 +1,5 @@
 
-package com.jbee.device.ardrone2.navdata;
+package com.jbee.device.ardrone2.internal.navdata;
 
 /**
  *

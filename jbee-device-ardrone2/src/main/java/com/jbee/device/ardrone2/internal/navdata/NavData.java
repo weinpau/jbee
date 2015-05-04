@@ -1,6 +1,6 @@
-package com.jbee.device.ardrone2.navdata;
+package com.jbee.device.ardrone2.internal.navdata;
 
-import com.jbee.device.ardrone2.navdata.options.Option;
+import com.jbee.device.ardrone2.internal.navdata.options.Option;
 import java.util.HashMap;
 import java.util.Map;
 

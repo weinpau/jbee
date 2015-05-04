@@ -1,7 +1,7 @@
 package com.jbee.device.ardrone2;
 
-import com.jbee.device.ardrone2.navdata.NavData;
-import com.jbee.device.ardrone2.navdata.NavDataParser;
+import com.jbee.device.ardrone2.internal.navdata.NavData;
+import com.jbee.device.ardrone2.internal.navdata.NavDataParser;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

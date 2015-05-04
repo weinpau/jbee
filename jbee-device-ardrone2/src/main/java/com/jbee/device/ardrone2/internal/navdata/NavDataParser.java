@@ -1,7 +1,7 @@
-package com.jbee.device.ardrone2.navdata;
+package com.jbee.device.ardrone2.internal.navdata;
 
-import com.jbee.device.ardrone2.navdata.options.Option;
-import com.jbee.device.ardrone2.navdata.options.OptionId;
+import com.jbee.device.ardrone2.internal.navdata.options.Option;
+import com.jbee.device.ardrone2.internal.navdata.options.OptionId;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 

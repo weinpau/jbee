@@ -1,4 +1,4 @@
-package com.jbee.device.ardrone2.commands;
+package com.jbee.device.ardrone2.internal.commands;
 
 /**
  *
