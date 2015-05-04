@@ -50,21 +50,32 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     @Override
     public RunnableFuture<CommandResult> execute(Command command) {
-        if (command instanceof TakeOffCommand) {
-            controlState = ControlState.TAKING_OFF;
-        } else if (command instanceof LandCommand) {
-            controlState = ControlState.LANDING;
-        } else {
-            controlState = ControlState.FLYING;
-        }
 
         return new FutureTask<>(() -> {
-            CommandResult result = stateMachine.execute(command);            
+            if (command instanceof TakeOffCommand) {
+
+                if (controlState != ControlState.READY_FOR_TAKE_OFF) {
+                    return CommandResult.NOT_EXECUTED;
+                }
+                controlState = ControlState.TAKING_OFF;
+            } else if (command instanceof LandCommand) {
+
+                if (controlState != ControlState.FLYING) {
+                    return CommandResult.NOT_EXECUTED;
+                }
+
+                controlState = ControlState.LANDING;
+            } else {
+                controlState = ControlState.FLYING;
+            }
+
+            CommandResult result = stateMachine.execute(command);
             if (command instanceof LandCommand) {
                 controlState = ControlState.READY_FOR_TAKE_OFF;
-            }            
-            if (command instanceof TakeOffCommand)
-                controlState = ControlState.FLYING;            
+            }
+            if (command instanceof TakeOffCommand) {
+                controlState = ControlState.FLYING;
+            }
             return result;
 
         });
