@@ -10,21 +10,28 @@ import com.jbee.units.Angle;
  */
 public class BeeState {
 
-    public static final BeeState START_STATE = new BeeState(0, Position.ORIGIN, Velocity.ZERO, Angle.ZERO, new BatteryState(1, false));
+    public static final BeeState START_STATE = new BeeState(0, 
+            Position.ORIGIN, 
+            Velocity.ZERO, 
+            Angle.ZERO, 
+            new BatteryState(1, false), 
+            ControlState.DISCONNECTED);
 
     private final long timestamp;
     private final Position position;
     private final Velocity velocity;
     private final Angle yaw;
     private final BatteryState batteryState;
+    private final ControlState controlState;
 
-    BeeState(long timestamp, Position position, Velocity velocity, Angle yaw, BatteryState batteryState) {
+    BeeState(long timestamp, Position position, Velocity velocity, Angle yaw, BatteryState batteryState, ControlState controlState) {
         this.timestamp = timestamp;
         this.position = position;
         this.velocity = velocity;
        
         this.yaw = yaw;
         this.batteryState = batteryState;
+        this.controlState = controlState;
     }
 
     public long getTimestamp() {
@@ -46,8 +53,11 @@ public class BeeState {
     public BatteryState getBatteryState() {
         return batteryState;
     }
-    
-    
+
+    public ControlState getControlState() {
+        return controlState;
+    }
+        
 
     @Override
     public int hashCode() {

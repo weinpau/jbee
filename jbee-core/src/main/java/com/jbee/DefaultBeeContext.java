@@ -59,6 +59,11 @@ class DefaultBeeContext implements BeeContext {
     }
 
     @Override
+    public TargetDevice getTargetDevice() {
+        return device;
+    }
+
+    @Override
     public void close() {
         if (bee == null) {
             throw new RuntimeException("Context can not be closed.");

@@ -14,9 +14,11 @@ class StateFactory {
     PositionProvider positionProvider;
     YAWProvider yawProvider;
     VelocityProvider velocityProvider;
-    BatteryStateProvider batteryStateProvider;
+    BeeContext context;
 
     public StateFactory(BeeContext context) {
+
+        this.context = context;
 
         positionProvider = context.getProviders(PositionProvider.class).stream().
                 findAny().
@@ -30,18 +32,15 @@ class StateFactory {
                 findAny().
                 orElseThrow(() -> new RuntimeException("A velocity provider is missing."));
 
-        batteryStateProvider = context.getProviders(BatteryStateProvider.class).stream().
-                findAny().
-                orElseThrow(() -> new RuntimeException("A battery state provider is missing."));
-
     }
 
     public BeeState getCurrentState() {
         Position position = positionProvider.get();
         Angle yaw = yawProvider.get();
         Velocity velocity = velocityProvider.get();
-        BatteryState batteryState = batteryStateProvider.get();
-        return new BeeState(System.currentTimeMillis(), position, velocity, yaw, batteryState);
+        BatteryState batteryState = context.getTargetDevice().getBatteryState();
+        ControlState controlState = context.getTargetDevice().getControlState();
+        return new BeeState(System.currentTimeMillis(), position, velocity, yaw, batteryState, controlState);
     }
 
 }

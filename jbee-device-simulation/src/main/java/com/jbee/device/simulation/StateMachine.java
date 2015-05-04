@@ -34,41 +34,41 @@ public class StateMachine {
         return step.simulateState(System.currentTimeMillis());
     }
 
-    public RunnableFuture<CommandResult> execute(Command command) {
-        return new FutureTask<>(() -> {
-            SimulationStep simulationStep = null;
-            if (command instanceof TakeOffCommand) {
-                simulationStep = exec((TakeOffCommand) command);
-            }
-            if (command instanceof LandCommand) {
-                simulationStep = exec((LandCommand) command);
-            }
-            if (command instanceof FlyToCommand) {
-                simulationStep = exec((FlyToCommand) command);
-            }
-            if (command instanceof RotationCommand) {
-                simulationStep = exec((RotationCommand) command);
-            }
-            if (command instanceof HoverCommand) {
-                simulationStep = exec((HoverCommand) command);
-            }
-            if (command instanceof CancelCommand) {
-                simulationStep = exec((CancelCommand) command);
-            }
-            if (command instanceof FlyCommand) {
-                simulationStep = exec((FlyCommand) command);
-            }
+    public CommandResult execute(Command command) throws InterruptedException {
 
-            if (simulationStep == null) {
-                throw new RuntimeException("unknown command");
-            }
+        SimulationStep simulationStep = null;
+        if (command instanceof TakeOffCommand) {
+            simulationStep = exec((TakeOffCommand) command);
+        }
+        if (command instanceof LandCommand) {
+            simulationStep = exec((LandCommand) command);
+        }
+        if (command instanceof FlyToCommand) {
+            simulationStep = exec((FlyToCommand) command);
+        }
+        if (command instanceof RotationCommand) {
+            simulationStep = exec((RotationCommand) command);
+        }
+        if (command instanceof HoverCommand) {
+            simulationStep = exec((HoverCommand) command);
+        }
+        if (command instanceof CancelCommand) {
+            simulationStep = exec((CancelCommand) command);
+        }
+        if (command instanceof FlyCommand) {
+            simulationStep = exec((FlyCommand) command);
+        }
 
-            if (simulationStep.getResult().equals(CommandResult.COMPLETED)) {
-                step = simulationStep;
-            }
-            Thread.sleep(simulationStep.getTimeSpent());
-            return simulationStep.getResult();
-        });
+        if (simulationStep == null) {
+            throw new RuntimeException("unknown command");
+        }
+
+        if (simulationStep.getResult().equals(CommandResult.COMPLETED)) {
+            step = simulationStep;
+        }
+        Thread.sleep(simulationStep.getTimeSpent());
+        return simulationStep.getResult();
+
     }
 
     SimulationStep exec(TakeOffCommand command) {

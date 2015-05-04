@@ -17,5 +17,9 @@ public interface TargetDevice {
     void bootstrap() throws BeeBootstrapException;
 
     void disconnect();
+    
+    ControlState getControlState();
+    
+    BatteryState getBatteryState();
 
 }
