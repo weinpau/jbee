@@ -63,7 +63,6 @@ public class CommandSender extends Thread {
         while (!done) {
             try {
                 AT_Command command = commandQueue.take();
-                System.out.println(command.encode(sequenceNumber));
                 byte[] data = command.toBytes(sequenceNumber++);
                 DatagramPacket p = new DatagramPacket(data, data.length, inetAddress, port);
                 socket.send(p);
