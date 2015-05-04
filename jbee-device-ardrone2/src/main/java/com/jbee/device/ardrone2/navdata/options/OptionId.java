@@ -6,8 +6,8 @@ package com.jbee.device.ardrone2.navdata.options;
  */
 public enum OptionId {
 
-    CHECKSUM(65535),
-    DEMO(1),
+    CHECKSUM(-1),
+    DEMO(0, Demo.class),
     TIME(1),
     RAW_MEASURES(2),
     PHYS_MEASURES(3),

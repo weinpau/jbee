@@ -21,17 +21,17 @@ import java.util.logging.Logger;
  */
 public class NavDataClient extends Thread {
 
-    
-      static final byte[] TRIGGER_BYTES = {0x01, 0x00, 0x00, 0x00};
-      
+    static final byte[] TRIGGER_BYTES = {0x01, 0x00, 0x00, 0x00};
+
     List<Consumer<NavData>> navDataConsumers = new ArrayList<>();
 
     DatagramChannel channel;
     Selector selector;
 
     InetAddress inetAddress;
-    int port, timeout;  
-    
+    int port, timeout;
+    boolean done;
+
     NavDataParser parser = new NavDataParser();
 
     byte[] buffer = new byte[8192];
@@ -44,6 +44,7 @@ public class NavDataClient extends Thread {
     }
 
     public void connect() throws IOException {
+        done = false;
         channel = DatagramChannel.open();
         channel.configureBlocking(false);
         channel.socket().bind(new InetSocketAddress(port));
@@ -58,7 +59,8 @@ public class NavDataClient extends Thread {
     }
 
     public void disconnect() throws IOException {
-        if (!isInterrupted()) {
+        done = true;
+        if (isAlive()) {
             interrupt();
         }
         if (selector.isOpen()) {
@@ -74,15 +76,18 @@ public class NavDataClient extends Thread {
     }
 
     @Override
+    @SuppressWarnings("UseSpecificCatch")
     public void run() {
 
-        while (true) {
+        while (!done) {
 
             try {
                 int length = readDataBlock(buffer);
-                NavData data = parser.parse(ByteBuffer.wrap(buffer, 0, length));
-                newNavDataReceived(data);
-            } catch (IOException | NavDataParseException ex) {
+                if (length > 0) {
+                    NavData data = parser.parse(ByteBuffer.wrap(buffer, 0, length));
+                    newNavDataReceived(data);
+                }
+            } catch (Exception ex) {
                 Logger.getLogger(NavDataClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

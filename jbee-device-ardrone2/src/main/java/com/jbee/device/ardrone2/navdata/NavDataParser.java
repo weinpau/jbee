@@ -3,6 +3,7 @@ package com.jbee.device.ardrone2.navdata;
 import com.jbee.device.ardrone2.navdata.options.Option;
 import com.jbee.device.ardrone2.navdata.options.OptionId;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  *
@@ -11,8 +12,9 @@ import java.nio.ByteBuffer;
 public class NavDataParser {
 
     public NavData parse(ByteBuffer buffer) throws NavDataParseException {
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        
         int expectedChecksum = checksum(buffer);
-
         int header = buffer.getInt();
         if (header != 0x55667788) {
             throw new NavDataParseException("Invalid header: " + Integer.toHexString(header));
@@ -56,11 +58,13 @@ public class NavDataParser {
         return data;
     }
 
-    int checksum(ByteBuffer buffer) {
+    int checksum(ByteBuffer buffer) {        
         int checksum = 0;
-        for (byte b : buffer.array()) {
-            checksum += b;
+        while (buffer.remaining() > 48) {
+            byte b = buffer.get();
+            checksum += b & 0xFF;
         }
+        buffer.position(0);
         return checksum;
     }
 
