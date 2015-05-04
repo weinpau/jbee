@@ -1,5 +1,9 @@
 package com.jbee.device.ardrone2.commands;
 
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author weinpau
@@ -12,6 +16,14 @@ public abstract class AT_Command {
 
     public String encode(int sequenceNumber) {
         return "AT*" + getId() + "=" + sequenceNumber + encodedParameters() + "\r";
+    }
+
+    public byte[] toBytes(int sequenceNumber) {
+        try {
+            return encode(sequenceNumber).getBytes("ASCII");
+        } catch (UnsupportedEncodingException ex) {
+            return null;
+        }
     }
 
     private String encodedParameters() {
