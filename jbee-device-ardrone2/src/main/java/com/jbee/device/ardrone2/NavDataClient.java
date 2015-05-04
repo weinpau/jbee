@@ -1,5 +1,7 @@
-package com.jbee.device.ardrone2.navdata;
+package com.jbee.device.ardrone2;
 
+import com.jbee.device.ardrone2.navdata.NavData;
+import com.jbee.device.ardrone2.navdata.NavDataParser;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -20,7 +22,7 @@ import java.util.logging.Logger;
  *
  * @author weinpau
  */
-public class NavDataClient extends Thread {
+class NavDataClient extends Thread {
 
     static final byte[] TRIGGER_BYTES = {0x01, 0x00, 0x00, 0x00};
 

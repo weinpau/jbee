@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author weinpau
  */
-public class CommandSender extends Thread {
+class CommandSender extends Thread {
 
     BlockingQueue<AT_Command> commandQueue = new LinkedBlockingDeque<>();
 
