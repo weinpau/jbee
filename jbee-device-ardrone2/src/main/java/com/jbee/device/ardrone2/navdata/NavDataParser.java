@@ -60,7 +60,7 @@ public class NavDataParser {
 
     int checksum(ByteBuffer buffer) {        
         int checksum = 0;
-        while (buffer.remaining() > 48) {
+        while (buffer.remaining() > 8) {
             byte b = buffer.get();
             checksum += b & 0xFF;
         }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -30,6 +31,7 @@ public class NavDataClient extends Thread {
 
     InetAddress inetAddress;
     int port, timeout;
+
     boolean done;
 
     NavDataParser parser = new NavDataParser();
@@ -44,7 +46,6 @@ public class NavDataClient extends Thread {
     }
 
     public void connect() throws IOException {
-        done = false;
         channel = DatagramChannel.open();
         channel.configureBlocking(false);
         channel.socket().bind(new InetSocketAddress(port));
@@ -54,13 +55,14 @@ public class NavDataClient extends Thread {
         channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
         if (channel.isConnected()) {
+            done = false;
             start();
         }
     }
 
     public void disconnect() throws IOException {
-        done = true;
-        if (isAlive()) {
+        if (!done) {
+            done = true;
             interrupt();
         }
         if (selector.isOpen()) {
@@ -78,7 +80,6 @@ public class NavDataClient extends Thread {
     @Override
     @SuppressWarnings("UseSpecificCatch")
     public void run() {
-
         while (!done) {
 
             try {
@@ -105,7 +106,12 @@ public class NavDataClient extends Thread {
     int readDataBlock(byte[] buffer) throws IOException {
         int length = 0;
         selector.select(timeout);
-        Set<SelectionKey> readyKeys = selector.selectedKeys();
+        Set<SelectionKey> readyKeys = null;
+        try {
+            readyKeys = selector.selectedKeys();
+        } catch (ClosedSelectorException e) {
+            return 0;
+        }
         Iterator<SelectionKey> iterator = readyKeys.iterator();
 
         while (iterator.hasNext()) {
