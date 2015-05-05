@@ -1,8 +1,6 @@
 package com.jbee.device.ardrone2.internal.commands;
 
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -26,7 +24,7 @@ public abstract class AT_Command {
         }
     }
 
-    private String encodedParameters() {
+    String encodedParameters() {
         StringBuilder sb = new StringBuilder();
         for (Object p : getParameters()) {
             sb.append(",").append(encodeParameter(p));
@@ -35,7 +33,7 @@ public abstract class AT_Command {
         return sb.toString();
     }
 
-    private String encodeParameter(Object parameter) {
+    String encodeParameter(Object parameter) {
         if (parameter instanceof Integer) {
             return parameter.toString();
         }
