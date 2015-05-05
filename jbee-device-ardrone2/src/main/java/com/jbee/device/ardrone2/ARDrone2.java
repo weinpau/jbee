@@ -6,13 +6,28 @@ import com.jbee.ControlState;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.concurrent.RunnableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author weinpau
  */
 public class ARDrone2 implements TargetDevice {
+
+    CommandSender commandSender;
+    NavDataClient navdataClient;
+
+    volatile ControlState controlState = ControlState.DISCONNECTED;
+    volatile BatteryState batteryState = new BatteryState(.99, false);
+
+    int timeout = 1000;
+    int navdataPort = 5554;
+    int controlPort = 5556;
+    String host = "192.168.1.1";
 
     @Override
     public String getId() {
@@ -26,23 +41,43 @@ public class ARDrone2 implements TargetDevice {
 
     @Override
     public void bootstrap() throws BeeBootstrapException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (controlState != ControlState.DISCONNECTED) {
+            throw new RuntimeException("Drone is not disconnected");
+        }
+
+        try {
+            commandSender = new CommandSender(InetAddress.getByName(host), controlPort);
+            commandSender.connect();
+
+            navdataClient = new NavDataClient(InetAddress.getByName(host), navdataPort, timeout);
+            navdataClient.connect();
+
+            controlState = ControlState.READY_FOR_TAKE_OFF;
+
+        } catch (IOException ex) {
+            Logger.getLogger(ARDrone2.class.getName()).log(Level.SEVERE, null, ex);
+            throw new BeeBootstrapException(ex);
+        }
     }
 
     @Override
-    public void disconnect() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void disconnect() throws IOException {
+        if (controlState != ControlState.READY_FOR_TAKE_OFF) {
+            throw new RuntimeException("Drone is not connected");
+        }
+        navdataClient.disconnect();
+        commandSender.disconnect();
+        controlState = ControlState.DISCONNECTED;
     }
 
     @Override
     public ControlState getControlState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return controlState;
     }
 
     @Override
     public BatteryState getBatteryState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return batteryState;
     }
-    
 
 }

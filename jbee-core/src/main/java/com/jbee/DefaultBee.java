@@ -1,5 +1,6 @@
 package com.jbee;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -50,7 +51,11 @@ class DefaultBee implements Bee {
 
     @Override
     public void close() {
-        device.disconnect();
+        try {
+            device.disconnect();
+        } catch (IOException iOException) {
+        }
+        
         stateListener.cancel();
         commandExecutor.shutdown();
         control.close();

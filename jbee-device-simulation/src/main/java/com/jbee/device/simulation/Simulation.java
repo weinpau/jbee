@@ -14,6 +14,7 @@ import com.jbee.providers.VelocityProvider;
 import com.jbee.providers.YAWProvider;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
+import java.io.IOException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
 
@@ -84,13 +85,12 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     @Override
     public void bootstrap() throws BeeBootstrapException {
-        controlState = ControlState.BOOTSTRAP;
         stateMachine = new StateMachine(defaultVelocity, takeOffHeight);
         controlState = ControlState.READY_FOR_TAKE_OFF;
     }
 
     @Override
-    public void disconnect() {
+    public void disconnect() throws IOException {
         controlState = ControlState.DISCONNECTED;
     }
 

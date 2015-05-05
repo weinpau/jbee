@@ -1,10 +1,12 @@
 package com.jbee;
 
+import java.io.IOException;
+
 /**
  *
  * @author weinpau
  */
-public class BeeBootstrapException extends Exception {
+public class BeeBootstrapException extends IOException {
 
     public BeeBootstrapException() {
     }

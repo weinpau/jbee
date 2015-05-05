@@ -12,8 +12,6 @@ import com.jbee.commands.TakeOffCommand;
 import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.RunnableFuture;
 
 /**
  *
