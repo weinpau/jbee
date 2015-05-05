@@ -7,7 +7,6 @@ package com.jbee;
 public enum ControlState {
 
     DISCONNECTED,
-    BOOTSTRAP,
     READY_FOR_TAKE_OFF,
     TAKING_OFF,
     FLYING,
