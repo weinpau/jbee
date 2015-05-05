@@ -17,19 +17,19 @@ import com.jbee.units.Velocity;
  *
  * @author weinpau
  */
-public class StateMachine {
+class StateMachine {
 
     volatile SimulationStep step = SimulationStep.START_STEP;
     Velocity defaultVelocity;
     Distance takeOffHeight;
 
-    public StateMachine(Velocity defaultVelocity, Distance takeOffHeight) {
+     StateMachine(Velocity defaultVelocity, Distance takeOffHeight) {
         this.defaultVelocity = defaultVelocity;
         this.takeOffHeight = takeOffHeight;
     }
 
-    public State getCurrentState() {
-        return step.simulateState(System.currentTimeMillis());
+    public SimulationStep getCurrentStep() {
+        return step;
     }
 
     public CommandResult execute(Command command) throws InterruptedException {

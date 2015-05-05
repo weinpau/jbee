@@ -2,6 +2,7 @@ package com.jbee;
 
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import com.jbee.units.Frequency;
 import java.io.IOException;
 import java.util.concurrent.RunnableFuture;
 
@@ -22,5 +23,7 @@ public interface TargetDevice {
     ControlState getControlState();
     
     BatteryState getBatteryState();
+    
+    Frequency getTransmissionRate();
 
 }

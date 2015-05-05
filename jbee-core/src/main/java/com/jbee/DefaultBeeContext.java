@@ -17,10 +17,11 @@ class DefaultBeeContext implements BeeContext {
 
     final TargetDevice device;
 
-    final Set<Provider> providers = new LinkedHashSet<>();
+    final Set<Bus> buses = new LinkedHashSet<>();
 
     DefaultBeeContext(TargetDevice device) {
         this.device = device;
+        register(new PositionEstimator());
     }
 
     @Override
@@ -29,31 +30,31 @@ class DefaultBeeContext implements BeeContext {
             throw new BeeBootstrapException("Bee has already been created.");
         }
         device.bootstrap();
-        bee = new DefaultBee(device, new StateFactory(this));
+        bee = new DefaultBee(device, new BeeStateBus(this));
         return bee;
     }
 
     @Override
-    public BeeContext register(Object... components) {
+    public final BeeContext register(Object... components) {
         for (Object comp : components) {
-            if (comp instanceof Provider) {
-                providers.add((Provider) comp);
+            if (comp instanceof Bus) {
+                buses.add((Bus) comp);
             }
         }
         return this;
     }
 
     @Override
-    public Collection<Provider> getAllProviders() {
-        return Collections.unmodifiableSet(providers);
+    public Collection<Bus> getAllBuses() {
+        return Collections.unmodifiableSet(buses);
     }
 
     @Override
-    public <P extends Provider> Collection<P> getProviders(Class<P> providerType) {
-        Collection<P> result = new HashSet<>();
-        providers.stream().
-                filter(p -> providerType.isAssignableFrom(p.getClass())).
-                forEach(p -> result.add((P) p));
+    public <T extends Bus> Collection<T> getBus(Class<T> busType) {
+        Collection<T> result = new HashSet<>();
+        buses.stream().
+                filter(b -> busType.isAssignableFrom(b.getClass())).
+                forEach(b -> result.add((T) b));
         return result;
 
     }

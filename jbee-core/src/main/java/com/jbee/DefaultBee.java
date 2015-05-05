@@ -1,8 +1,6 @@
 package com.jbee;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  *
@@ -17,21 +15,12 @@ class DefaultBee implements Bee {
     final DefaultBeeControl control;
     final DefaultBeeMonitor monitor = new DefaultBeeMonitor();
 
-    private static final int CLOCK = 50;
-
-    Timer stateListener = new Timer("state-listener", true);
-
-    public DefaultBee(TargetDevice device, StateFactory stateFactory) {
+    public DefaultBee(TargetDevice device, BeeStateBus beeStateBus) {
         this.device = device;
         commandExecutor = new CommandExecutor(device);
         control = new DefaultBeeControl(commandExecutor, monitor);
 
-        stateListener.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                monitor.changeState(stateFactory.getCurrentState());
-            }
-        }, CLOCK, CLOCK);
+        beeStateBus.subscripe(state -> monitor.changeState(state));
     }
 
     @Override
@@ -55,8 +44,6 @@ class DefaultBee implements Bee {
             device.disconnect();
         } catch (IOException iOException) {
         }
-        
-        stateListener.cancel();
         commandExecutor.shutdown();
         control.close();
     }

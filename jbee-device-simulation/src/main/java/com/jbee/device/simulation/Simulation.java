@@ -4,17 +4,21 @@ import com.jbee.BatteryState;
 import com.jbee.BeeBootstrapException;
 import com.jbee.BeeModule;
 import com.jbee.ControlState;
+import com.jbee.Priority;
 import com.jbee.TargetDevice;
+import com.jbee.buses.PositionBus;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.LandCommand;
 import com.jbee.commands.TakeOffCommand;
-import com.jbee.providers.PositionProvider;
-import com.jbee.providers.VelocityProvider;
-import com.jbee.providers.YAWProvider;
+import com.jbee.buses.TranslationalVelocityBus;
+import com.jbee.buses.YAWBus;
 import com.jbee.units.Distance;
+import com.jbee.units.Frequency;
 import com.jbee.units.Velocity;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
 
@@ -24,23 +28,37 @@ import java.util.concurrent.RunnableFuture;
  */
 public class Simulation extends BeeModule implements TargetDevice {
 
+    Frequency transmissionRate = Frequency.ofHz(20);
+
     Velocity defaultVelocity = Velocity.mps(1);
     Distance takeOffHeight = Distance.ofMeters(2);
     BatteryState batteryState = new BatteryState(.99, false);
     ControlState controlState = ControlState.DISCONNECTED;
     StateMachine stateMachine;
 
+    TranslationalVelocityBus velocityBus = new TranslationalVelocityBus();
+    YAWBus yawBus = new YAWBus();
+    PositionBus positionBus = new PositionBus(Priority.HIGH);
+
+    Timer stateListener = new Timer("simulation-state-listener", true);
+
+    TimerTask stateTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            long time = System.currentTimeMillis();
+            SimulationStep step = stateMachine.getCurrentStep();
+
+            velocityBus.publish(step.simulateTranslationalVelocity(time));
+            yawBus.publish(step.simulateYAW(time));
+            positionBus.publish(step.simulatePosition(time));
+        }
+    };
+
     public Simulation() {
 
-        register((PositionProvider) () -> {
-            return stateMachine.getCurrentState().getPosition();
-        });
-        register((VelocityProvider) () -> {
-            return stateMachine.getCurrentState().getVelocity();
-        });
-        register((YAWProvider) () -> {
-            return stateMachine.getCurrentState().getYAW();
-        });
+        register(velocityBus);
+        register(yawBus);
+        register(positionBus);
 
     }
 
@@ -87,11 +105,15 @@ public class Simulation extends BeeModule implements TargetDevice {
     public void bootstrap() throws BeeBootstrapException {
         stateMachine = new StateMachine(defaultVelocity, takeOffHeight);
         controlState = ControlState.READY_FOR_TAKE_OFF;
+        stateListener.scheduleAtFixedRate(stateTimerTask, 0, 
+                transmissionRate.toCycleDuration().toMillis());
+
     }
 
     @Override
     public void disconnect() throws IOException {
         controlState = ControlState.DISCONNECTED;
+        stateTimerTask.cancel();
     }
 
     public Velocity getDefaultVelocity() {
@@ -122,6 +144,15 @@ public class Simulation extends BeeModule implements TargetDevice {
     @Override
     public ControlState getControlState() {
         return controlState;
+    }
+
+    @Override
+    public Frequency getTransmissionRate() {
+        return transmissionRate;
+    }
+
+    public void setTransmissionRate(Frequency transmissionRate) {
+        this.transmissionRate = transmissionRate;
     }
 
 }

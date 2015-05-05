@@ -6,6 +6,7 @@ import com.jbee.ControlState;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import com.jbee.units.Frequency;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.concurrent.RunnableFuture;
@@ -17,6 +18,8 @@ import java.util.logging.Logger;
  * @author weinpau
  */
 public class ARDrone2 implements TargetDevice {
+
+    Frequency transmissionRate = Frequency.ofHz(15);
 
     CommandSender commandSender;
     NavDataClient navdataClient;
@@ -78,6 +81,11 @@ public class ARDrone2 implements TargetDevice {
     @Override
     public BatteryState getBatteryState() {
         return batteryState;
+    }
+
+    @Override
+    public Frequency getTransmissionRate() {
+        return transmissionRate;
     }
 
 }

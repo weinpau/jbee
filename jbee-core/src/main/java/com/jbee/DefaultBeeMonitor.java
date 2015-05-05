@@ -1,8 +1,7 @@
 package com.jbee;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -13,7 +12,7 @@ class DefaultBeeMonitor implements BeeMonitor {
 
     volatile long startTime = System.currentTimeMillis();
     volatile BeeState lastKnownState = BeeState.START_STATE;
-    List<Consumer<BeeState>> beeStateChangeListeners = Collections.synchronizedList(new ArrayList<>());
+    List<Consumer<BeeState>> beeStateChangeListeners = new CopyOnWriteArrayList<>();
 
     @Override
     public long getCurrentTimestamp() {
@@ -32,7 +31,7 @@ class DefaultBeeMonitor implements BeeMonitor {
     public synchronized void changeState(BeeState state) {
         if (!lastKnownState.equals(state)) {
             lastKnownState = state;
-            new ArrayList<>(beeStateChangeListeners).forEach(l -> l.accept(state));
+            beeStateChangeListeners.forEach(l -> l.accept(state));
         }
     }
 
@@ -41,6 +40,5 @@ class DefaultBeeMonitor implements BeeMonitor {
         return lastKnownState;
     }
 
- 
 
 }

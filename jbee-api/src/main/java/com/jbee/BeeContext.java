@@ -14,9 +14,9 @@ public interface BeeContext {
 
     BeeContext register(Object... component);
 
-    Collection<Provider> getAllProviders();
+    Collection<Bus> getAllBuses();
 
-    <P extends Provider> Collection<P> getProviders(Class<P> providerType);
+    <T extends Bus> Collection<T> getBus(Class<T> busType);
     
     void close();
     

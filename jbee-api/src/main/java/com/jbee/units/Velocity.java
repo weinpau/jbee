@@ -33,6 +33,26 @@ public final class Velocity implements Comparable<Velocity> {
         return mps * kn2mpsFactor;
     }
 
+    public Velocity multiply(double factor) {
+        return Velocity.mps(mps * factor);
+    }
+
+    public Velocity multiply(Velocity velocity) {
+        return Velocity.mps(mps * velocity.mps);
+    }
+
+    public Velocity add(Velocity velocity) {
+        return Velocity.mps(mps + velocity.mps);
+    }
+
+    public Velocity sub(Velocity velocity) {
+        return Velocity.mps(mps - velocity.mps);
+    }
+
+    public Velocity abs() {
+        return Velocity.mps(Math.abs(mps));
+    }
+
     public static Velocity mps(double mps) {
         return new Velocity(mps);
     }
