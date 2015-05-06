@@ -10,26 +10,26 @@ import com.jbee.units.Velocity3D;
  */
 public class BeeState {
 
-    public static final BeeState START_STATE = new BeeState(0, 
-            Position.ORIGIN, 
-            Velocity3D.ZERO, 
-            Angle.ZERO, 
-            new BatteryState(1, false), 
+    public static final BeeState START_STATE = new BeeState(0,
+            Position.ORIGIN,
+            Velocity3D.ZERO,
+            PrincipalAxes.ZERO,
+            new BatteryState(1, false),
             ControlState.DISCONNECTED);
 
     private final long timestamp;
     private final Position position;
     private final Velocity3D translationalVelocity;
-    private final Angle yaw;
+    private final PrincipalAxes principalAxes;
     private final BatteryState batteryState;
     private final ControlState controlState;
 
-    BeeState(long timestamp, Position position, Velocity3D translationalVelocity, Angle yaw, BatteryState batteryState, ControlState controlState) {
+    BeeState(long timestamp, Position position, Velocity3D translationalVelocity, PrincipalAxes principalAxes, BatteryState batteryState, ControlState controlState) {
         this.timestamp = timestamp;
         this.position = position;
         this.translationalVelocity = translationalVelocity;
-       
-        this.yaw = yaw;
+
+        this.principalAxes = principalAxes;
         this.batteryState = batteryState;
         this.controlState = controlState;
     }
@@ -46,8 +46,8 @@ public class BeeState {
         return translationalVelocity;
     }
 
-    public Angle getYAW() {
-        return yaw;
+    public PrincipalAxes getPrincipalAxes() {
+        return principalAxes;
     }
 
     public BatteryState getBatteryState() {
@@ -57,7 +57,6 @@ public class BeeState {
     public ControlState getControlState() {
         return controlState;
     }
-        
 
     @Override
     public int hashCode() {

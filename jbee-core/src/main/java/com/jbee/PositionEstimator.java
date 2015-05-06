@@ -3,7 +3,7 @@ package com.jbee;
 import com.jbee.buses.AltitudeBus;
 import com.jbee.buses.PositionBus;
 import com.jbee.buses.TranslationalVelocityBus;
-import com.jbee.buses.YAWBus;
+import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
 import com.jbee.units.Velocity3D;

@@ -4,13 +4,15 @@ import com.jbee.BatteryState;
 import com.jbee.BeeBootstrapException;
 import com.jbee.BeeModule;
 import com.jbee.ControlState;
+import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.LandCommand;
 import com.jbee.commands.TakeOffCommand;
 import com.jbee.buses.TranslationalVelocityBus;
-import com.jbee.buses.YAWBus;
+import com.jbee.buses.PrincipalAxesBus;
+import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
 import com.jbee.units.Velocity;
@@ -35,7 +37,7 @@ public class Simulation extends BeeModule implements TargetDevice {
     StateMachine stateMachine;
 
     TranslationalVelocityBus velocityBus = new TranslationalVelocityBus();
-    YAWBus yawBus = new YAWBus();
+    PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
 
     Timer stateListener = new Timer("simulation-state-listener", true);
 
@@ -46,13 +48,13 @@ public class Simulation extends BeeModule implements TargetDevice {
             SimulationStep step = stateMachine.getCurrentStep();
 
             velocityBus.publish(step.simulateTranslationalVelocity(time));
-            yawBus.publish(step.simulateYAW(time));
+            principalAxesBus.publish(new PrincipalAxes(step.simulateYAW(time), Angle.ZERO, Angle.ZERO));
         }
     };
 
     public Simulation() {
         register(velocityBus);
-        register(yawBus);
+        register(principalAxesBus);
     }
 
     @Override

@@ -1,10 +1,9 @@
 package com.jbee;
 
 import com.jbee.buses.PositionBus;
-import com.jbee.buses.YAWBus;
+import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.buses.TranslationalVelocityBus;
 import com.jbee.positioning.Position;
-import com.jbee.units.Angle;
 import com.jbee.units.Velocity3D;
 
 /**
@@ -15,7 +14,7 @@ class BeeStateBus extends Bus<BeeState> {
 
     Position position = Position.ORIGIN;
     Velocity3D translationalVelocity = Velocity3D.ZERO;
-    Angle yaw = Angle.ZERO;
+    PrincipalAxes principalAxes = PrincipalAxes.ZERO;
 
     TargetDevice device;
 
@@ -24,10 +23,10 @@ class BeeStateBus extends Bus<BeeState> {
         
         device = context.getTargetDevice();
 
-        context.getBus(YAWBus.class).
-                orElseThrow(() -> new RuntimeException("A YAW bus is missing.")).
-                subscripe(y -> {
-                    yaw = y;
+        context.getBus(PrincipalAxesBus.class).
+                orElseThrow(() -> new RuntimeException("A principal axes bus is missing.")).
+                subscripe(pa -> {
+                    principalAxes = pa;
                     publish(createBeeState());
                 });
 
@@ -47,7 +46,7 @@ class BeeStateBus extends Bus<BeeState> {
     }
 
     final BeeState createBeeState() {
-        return new BeeState(System.currentTimeMillis(), position, translationalVelocity, yaw,
+        return new BeeState(System.currentTimeMillis(), position, translationalVelocity, principalAxes,
                 device.getBatteryState(),
                 device.getControlState());
     }
