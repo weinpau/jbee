@@ -8,13 +8,13 @@ import com.jbee.units.Distance;
  *
  * @author weinpau
  */
-public class HeightBus extends Bus<Distance> {
+public class AltitudeBus extends Bus<Distance> {
 
-    public HeightBus() {
+    public AltitudeBus() {
         super(Priority.MEDIUM);
     }
 
-    public HeightBus(Priority priority) {
+    public AltitudeBus(Priority priority) {
         super(priority);
     }
 

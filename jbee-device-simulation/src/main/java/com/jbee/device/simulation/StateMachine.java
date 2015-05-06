@@ -1,5 +1,6 @@
 package com.jbee.device.simulation;
 
+import com.jbee.RotationDirection;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.FlyCommand;
@@ -10,6 +11,7 @@ import com.jbee.commands.LandCommand;
 import com.jbee.commands.RotationCommand;
 import com.jbee.commands.TakeOffCommand;
 import com.jbee.positioning.Position;
+import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.Velocity;
 
@@ -23,7 +25,7 @@ class StateMachine {
     Velocity defaultVelocity;
     Distance takeOffHeight;
 
-     StateMachine(Velocity defaultVelocity, Distance takeOffHeight) {
+    StateMachine(Velocity defaultVelocity, Distance takeOffHeight) {
         this.defaultVelocity = defaultVelocity;
         this.takeOffHeight = takeOffHeight;
     }
@@ -97,8 +99,7 @@ class StateMachine {
 
     SimulationStep exec(FlyToCommand command) {
         State startState = new State(lastState().getPosition(), command.getVelocity(), lastState().getYAW());
-        State followingState = new State(command.getPosition(), Velocity.ZERO,
-                command.getYAW() == null ? lastState().getYAW() : command.getYAW());
+        State followingState = new State(command.getPosition(), Velocity.ZERO, lastState().getYAW());
 
         if (lastState().equals(State.START_STATE)) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
@@ -112,13 +113,25 @@ class StateMachine {
 
     SimulationStep exec(RotationCommand command) {
         State startState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
-        State followingState = new State(lastState().getPosition(), Velocity.ZERO, command.getYAW());
+
+        Angle difference = Angle.ofDegrees(50);
+        Angle followingYAW;
+        if (command.isAbsolute()) {
+            followingYAW = command.getAngle();
+        } else {
+            if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
+                followingYAW = startState.getYAW().add(command.getAngle());
+            } else {
+                followingYAW = startState.getYAW().sub(command.getAngle());
+            }
+        }
+        State followingState = new State(lastState().getPosition(), Velocity.ZERO, followingYAW);
 
         if (lastState().getPosition().getZ() <= 0) {
-            return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
+            return new SimulationStep(command, CommandResult.FAILED, startState, followingState, command.getRotationDirection(), 0);
         } else {
-            int timeSpent = (int) (100 * command.getYAW().sub(lastState().getYAW()).abs().toRadians());
-            return new SimulationStep(command, CommandResult.COMPLETED, startState, followingState, timeSpent);
+            int timeSpent = (int) (100 * difference.abs().toRadians());
+            return new SimulationStep(command, CommandResult.COMPLETED, startState, followingState, command.getRotationDirection(), timeSpent);
         }
     }
 
@@ -153,7 +166,7 @@ class StateMachine {
 
     Position calculatePosition(FlyCommand command) {
         Position p = lastState().getPosition();
-        double yaw = lastState().getYAW().toDegrees();
+        double yaw = lastState().getYAW().toRadians();
         double distance = command.getDistance().toMeters();
 
         switch (command.getDirection()) {

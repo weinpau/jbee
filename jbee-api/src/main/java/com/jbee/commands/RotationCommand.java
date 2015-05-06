@@ -1,5 +1,6 @@
 package com.jbee.commands;
 
+import com.jbee.RotationDirection;
 import com.jbee.units.Angle;
 
 /**
@@ -8,14 +9,28 @@ import com.jbee.units.Angle;
  */
 public class RotationCommand extends AbstractCommand {
 
-    private final Angle yaw;
+    private final Angle angle;
+    private final RotationDirection rotationDirection;
+    private final boolean absolute;
 
-    public RotationCommand(Angle yaw) {
-        this.yaw = yaw;
+    public RotationCommand(Angle angle, RotationDirection rotationDirection, boolean absolute) {
+        this.angle = angle;
+        this.rotationDirection = rotationDirection;
+        this.absolute = absolute;
     }
 
-    public Angle getYAW() {
-        return yaw;
+    public Angle getAngle() {
+        return angle;
     }
+
+    public RotationDirection getRotationDirection() {
+        return rotationDirection;
+    }
+
+    public boolean isAbsolute() {
+        return absolute;
+    }
+    
+    
 
 }

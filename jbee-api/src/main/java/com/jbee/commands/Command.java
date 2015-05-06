@@ -9,5 +9,5 @@ public interface Command {
     void init(int commandNumber);
 
     int getCommandNumber();
-
+    
 }

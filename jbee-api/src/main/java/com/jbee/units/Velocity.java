@@ -34,6 +34,9 @@ public final class Velocity implements Comparable<Velocity> {
     }
 
     public Velocity multiply(double factor) {
+        if (!Double.isFinite(factor)) {
+            throw new IllegalArgumentException("The factor must be a finite number.");
+        }
         return Velocity.mps(mps * factor);
     }
 
@@ -54,6 +57,9 @@ public final class Velocity implements Comparable<Velocity> {
     }
 
     public static Velocity mps(double mps) {
+        if (!Double.isFinite(mps)) {
+            throw new IllegalArgumentException("The velocity must be a finite number.");
+        }
         return new Velocity(mps);
     }
 

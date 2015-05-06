@@ -2,6 +2,7 @@ package com.jbee;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -16,10 +17,14 @@ public interface BeeContext {
 
     Collection<Bus> getAllBuses();
 
-    <T extends Bus> Collection<T> getBus(Class<T> busType);
-    
+    <T extends Bus> Collection<T> getBuses(Class<T> busType);
+
+    default <T extends Bus> Optional<T> getBus(Class<T> busType) {
+        return getBuses(busType).stream().sorted().findFirst();
+    }
+
     void close();
-    
+
     TargetDevice getTargetDevice();
 
     @SuppressWarnings("UseSpecificCatch")

@@ -1,5 +1,6 @@
 package com.jbee.device.simulation;
 
+import com.jbee.RotationDirection;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.positioning.Position;
@@ -20,17 +21,24 @@ class SimulationStep {
 
     final State startState, followingState;
 
+    final RotationDirection rotationDirection;
+
     final int timeSpent;
 
     final long timestamp;
 
-    SimulationStep(Command command, CommandResult result, State startState, State followingState, int timeSpent) {
+    SimulationStep(Command command, CommandResult result, State startState, State followingState, RotationDirection rotationDirection, int timeSpent) {
         this.command = command;
         this.result = result;
         this.startState = startState;
         this.followingState = followingState;
         this.timeSpent = timeSpent;
+        this.rotationDirection = rotationDirection;
         this.timestamp = System.currentTimeMillis();
+    }
+
+    SimulationStep(Command command, CommandResult result, State startState, State followingState, int timeSpent) {
+        this(command, result, startState, followingState, RotationDirection.CLOCKWISE, timeSpent);
     }
 
     public Command getCommand() {
@@ -53,19 +61,11 @@ class SimulationStep {
         return timeSpent;
     }
 
-    public Position simulatePosition(long timestamp) {
-
-        double t = timestamp - this.timestamp;
-        Velocity v = startState.getVelocity();
-
-        return followingState.getPosition().
-                sub(startState.getPosition()).
-                normalize().
-                multiply(v.mps() * (t / 1000d)).
-                add(startState.getPosition());
-    }
-
     public Angle simulateYAW(long timestamp) {
+
+        if (timeSpent == 0) {
+            return startState.getYAW();
+        }
 
         double t = timestamp - this.timestamp;
         return followingState.getYAW().
@@ -77,15 +77,15 @@ class SimulationStep {
     }
 
     public Velocity3D simulateTranslationalVelocity(long timestamp) {
-     
-        Velocity v = startState.getVelocity();        
+
+        Velocity v = startState.getVelocity();
         Position p = followingState.getPosition().
                 sub(startState.getPosition()).
                 normalize().
                 multiply(v.mps());
-               
+
         return new Velocity3D(
-                Velocity.mps(p.getX()), 
+                Velocity.mps(p.getX()),
                 Velocity.mps(p.getY()),
                 Velocity.mps(p.getZ()));
     }

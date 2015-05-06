@@ -3,6 +3,8 @@ package com.jbee.positioning;
 import com.jbee.units.Distance;
 import static java.lang.Math.*;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  *
@@ -90,8 +92,9 @@ public class Position {
 
     @Override
     public String toString() {
-        DecimalFormat df = new DecimalFormat("#.###");
-        return "Position{" + "x=" + df.format(x) + ", y=" + df.format(y) + ", z=" + df.format(z) + '}';
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        nf.setMaximumFractionDigits(3);
+        return "P(" + nf.format(x) + ", " + nf.format(y) + ", " + nf.format(z) + ")";
     }
 
     @Override

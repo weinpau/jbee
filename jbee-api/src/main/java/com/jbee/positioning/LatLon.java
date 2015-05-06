@@ -1,5 +1,8 @@
 package com.jbee.positioning;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  *
  * @author weinpau
@@ -20,6 +23,13 @@ public class LatLon {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    @Override
+    public String toString() {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        nf.setMaximumFractionDigits(3);
+        return "(" + nf.format(latitude) + ", " + nf.format(longitude) + ")";
     }
 
     @Override
@@ -45,6 +55,4 @@ public class LatLon {
         return Double.doubleToLongBits(this.longitude) == Double.doubleToLongBits(other.longitude);
     }
 
-    
-    
 }

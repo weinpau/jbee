@@ -4,9 +4,7 @@ import com.jbee.BatteryState;
 import com.jbee.BeeBootstrapException;
 import com.jbee.BeeModule;
 import com.jbee.ControlState;
-import com.jbee.Priority;
 import com.jbee.TargetDevice;
-import com.jbee.buses.PositionBus;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.LandCommand;
@@ -38,7 +36,6 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     TranslationalVelocityBus velocityBus = new TranslationalVelocityBus();
     YAWBus yawBus = new YAWBus();
-    PositionBus positionBus = new PositionBus(Priority.HIGH);
 
     Timer stateListener = new Timer("simulation-state-listener", true);
 
@@ -50,16 +47,12 @@ public class Simulation extends BeeModule implements TargetDevice {
 
             velocityBus.publish(step.simulateTranslationalVelocity(time));
             yawBus.publish(step.simulateYAW(time));
-            positionBus.publish(step.simulatePosition(time));
         }
     };
 
     public Simulation() {
-
         register(velocityBus);
         register(yawBus);
-        register(positionBus);
-
     }
 
     @Override
@@ -105,7 +98,7 @@ public class Simulation extends BeeModule implements TargetDevice {
     public void bootstrap() throws BeeBootstrapException {
         stateMachine = new StateMachine(defaultVelocity, takeOffHeight);
         controlState = ControlState.READY_FOR_TAKE_OFF;
-        stateListener.scheduleAtFixedRate(stateTimerTask, 0, 
+        stateListener.scheduleAtFixedRate(stateTimerTask, 0,
                 transmissionRate.toCycleDuration().toMillis());
 
     }

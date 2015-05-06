@@ -1,6 +1,8 @@
 package com.jbee.units;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  *
@@ -58,8 +60,9 @@ public final class Distance implements Comparable<Distance> {
 
     @Override
     public String toString() {
-        DecimalFormat df = new DecimalFormat("#.###");
-        return df.format(mm / 1000d)  + " m";
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        nf.setMaximumFractionDigits(3);
+        return nf.format(toMeters()) + " m";
     }
 
     @Override

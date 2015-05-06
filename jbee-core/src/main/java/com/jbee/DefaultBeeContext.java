@@ -21,7 +21,7 @@ class DefaultBeeContext implements BeeContext {
 
     DefaultBeeContext(TargetDevice device) {
         this.device = device;
-        register(new PositionEstimator());
+        register(new PositionEstimator(this));
     }
 
     @Override
@@ -30,8 +30,16 @@ class DefaultBeeContext implements BeeContext {
             throw new BeeBootstrapException("Bee has already been created.");
         }
         device.bootstrap();
+        bootstrapBuses();
+
         bee = new DefaultBee(device, new BeeStateBus(this));
         return bee;
+    }
+
+    void bootstrapBuses() throws BeeBootstrapException {
+        for (Bus b : getAllBuses()) {
+            b.bootstrap();
+        }
     }
 
     @Override
@@ -50,7 +58,7 @@ class DefaultBeeContext implements BeeContext {
     }
 
     @Override
-    public <T extends Bus> Collection<T> getBus(Class<T> busType) {
+    public <T extends Bus> Collection<T> getBuses(Class<T> busType) {
         Collection<T> result = new HashSet<>();
         buses.stream().
                 filter(b -> busType.isAssignableFrom(b.getClass())).

@@ -1,5 +1,8 @@
 package com.jbee.units;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  *
  * @author weinpau
@@ -31,6 +34,9 @@ public final class Angle {
     }
 
     public Angle multiply(double factor) {
+        if (!Double.isFinite(factor)) {
+            throw new IllegalArgumentException("The factor must be a finite number.");
+        }
         return new Angle(radians * factor);
     }
 
@@ -46,7 +52,36 @@ public final class Angle {
         return Math.toDegrees(radians);
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.radians) ^ (Double.doubleToLongBits(this.radians) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Angle other = (Angle) obj;
+        return Double.doubleToLongBits(this.radians) == Double.doubleToLongBits(other.radians);
+    }
+
+    @Override
+    public String toString() {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        nf.setMaximumFractionDigits(3);
+        return nf.format(toDegrees()) + "\u00b0";
+    }
+
     public static Angle ofRadians(double radians) {
+        if (!Double.isFinite(radians)) {
+            throw new IllegalArgumentException("The angle must be a finite number.");
+        }
         return new Angle(radians);
     }
 

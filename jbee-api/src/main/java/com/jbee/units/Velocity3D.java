@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Velocity3D {
 
     public static final Velocity3D ZERO = new Velocity3D(Velocity.ZERO, Velocity.ZERO, Velocity.ZERO);
-    
+
     private final Velocity x;
     private final Velocity y;
     private final Velocity z;
@@ -52,6 +52,11 @@ public class Velocity3D {
 
     public Velocity totalVelocity() {
         return Velocity.mps(sqrt(pow(x.mps(), 2) + pow(y.mps(), 2) + pow(z.mps(), 2)));
+    }
+
+    @Override
+    public String toString() {
+        return "x=" + x + ", y=" + y + ", z=" + z + ", total=" + totalVelocity();
     }
 
     @Override

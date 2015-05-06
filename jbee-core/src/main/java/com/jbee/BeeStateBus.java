@@ -24,27 +24,21 @@ class BeeStateBus extends Bus<BeeState> {
         
         device = context.getTargetDevice();
 
-        context.getBus(YAWBus.class).stream().
-                sorted().
-                findFirst().
+        context.getBus(YAWBus.class).
                 orElseThrow(() -> new RuntimeException("A YAW bus is missing.")).
                 subscripe(y -> {
                     yaw = y;
                     publish(createBeeState());
                 });
 
-        context.getBus(TranslationalVelocityBus.class).stream().
-                sorted().
-                findFirst().
-                orElseThrow(() -> new RuntimeException("A velocity bus is missing.")).
+        context.getBus(TranslationalVelocityBus.class).
+                orElseThrow(() -> new RuntimeException("A translational velocity bus is missing.")).
                 subscripe(v -> {
                     translationalVelocity = v;
                     publish(createBeeState());
                 });
 
-        context.getBus(PositionBus.class).stream().
-                sorted().
-                findFirst().
+        context.getBus(PositionBus.class).
                 orElseThrow(() -> new RuntimeException("A position bus is missing.")).
                 subscripe(p -> {
                     position = p;

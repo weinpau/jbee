@@ -1,6 +1,8 @@
 package com.jbee.units;
 
+import java.text.NumberFormat;
 import java.time.Duration;
+import java.util.Locale;
 
 /**
  *
@@ -10,9 +12,8 @@ public class Frequency implements Comparable<Frequency> {
 
     public static final Frequency ZERO = new Frequency(0);
 
-    
-    private static final long second2NanoFactor = 1000_000_000_000L;
-    
+    static final long NANOS_PER_SECOND = 1000_000_000L;
+
     private final long mHz;
 
     private Frequency(long mHz) {
@@ -28,27 +29,29 @@ public class Frequency implements Comparable<Frequency> {
     }
 
     public Frequency multiply(double factor) {
+        if (!Double.isFinite(factor)) {
+            throw new IllegalArgumentException("The factor must be a finite number.");
+        }
         return new Frequency(StrictMath.toIntExact(StrictMath.round(factor * (double) mHz)));
     }
 
     public int toHz() {
         return (int) mHz / 1000;
     }
-    
+
     public long toMilliHz() {
         return mHz;
     }
 
     public Duration toCycleDuration() {
-        if (mHz > second2NanoFactor || mHz < -second2NanoFactor) {
+        if (mHz > 1000 * NANOS_PER_SECOND || mHz < -1000 * NANOS_PER_SECOND) {
             return Duration.ZERO;
         }
         long millis = (1_000_000 / mHz);
-        long nanos = ((second2NanoFactor / mHz) - millis * 1_000_000L) % 1000_000_000L;
-        
+        long nanos = ((1000 * NANOS_PER_SECOND / mHz) - millis * 1_000_000L) % NANOS_PER_SECOND;
+
         return Duration.ofMillis(millis).plusNanos(nanos);
     }
-   
 
     @Override
     public int compareTo(Frequency o) {
@@ -74,13 +77,18 @@ public class Frequency implements Comparable<Frequency> {
         return this.mHz == other.mHz;
     }
 
-   
+    @Override
+    public String toString() {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        nf.setMaximumFractionDigits(3);
+        return nf.format(toHz()) + " Hz";
+    }
 
     public static Frequency ofHz(int Hz) {
         return new Frequency(StrictMath.multiplyExact(Hz, 1000L));
     }
-    
-      public static Frequency ofMilliHz(long mHz) {
+
+    public static Frequency ofMilliHz(long mHz) {
         return new Frequency(mHz);
     }
 
