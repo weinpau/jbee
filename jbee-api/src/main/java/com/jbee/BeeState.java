@@ -1,7 +1,6 @@
 package com.jbee;
 
 import com.jbee.positioning.Position;
-import com.jbee.units.Angle;
 
 /**
  *
@@ -41,7 +40,7 @@ public class BeeState {
         return position;
     }
 
-    public Velocity getTranslationalVelocity() {
+    public Velocity getVelocity() {
         return velocity;
     }
 
