@@ -76,10 +76,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
 
                 Demo demo = n.getOption(Demo.class);
                 if (demo != null) {
-                    velocityBus.publish(new Velocity(
-                            Speed.mps(demo.getXVelocity() / 1000d),
-                            Speed.mps(demo.getYVelocity() / 1000d),
-                            Speed.mps(demo.getZVelocity() / 1000d)));
+                    handleVelocityBus(demo);
 
                     principalAxesBus.publish(new PrincipalAxes(
                             Angle.ofDegrees(demo.getYaw()),
@@ -103,6 +100,18 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
             Logger.getLogger(ARDrone2.class.getName()).log(Level.SEVERE, null, ex);
             throw new BeeBootstrapException(ex);
         }
+    }
+
+    void handleVelocityBus(Demo demo) {
+        double x = demo.getSpeedX() / 1000d;
+        double y = demo.getSpeedY() / 1000d;
+
+        double phi = Math.toRadians(demo.getYaw());
+
+        velocityBus.publish(new Velocity(
+                Speed.mps(x * Math.cos(phi) - y * Math.sin(phi)),
+                Speed.mps(x * Math.sin(phi) + y * Math.cos(phi)),
+                Speed.mps(demo.getSpeedZ() / 1000d)));
     }
 
     @Override

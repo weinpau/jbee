@@ -13,7 +13,7 @@ public class Demo implements Option {
     int batteryPercentage;
     float pitch, roll, yaw; //[degree]
     int altitude; //[mm]
-    float xVelocity, yVelocity, zVelocity; //[mm/s]
+    float speedX, speedY, speedZ; //[mm/s]
     int frameIndex;
     float[][] detectionCameraRotation;
     float[] detectionCameraTranslation;
@@ -55,16 +55,16 @@ public class Demo implements Option {
         return altitude;
     }
 
-    public float getXVelocity() {
-        return xVelocity;
+    public float getSpeedX() {
+        return speedX;
     }
 
-    public float getYVelocity() {
-        return yVelocity;
+    public float getSpeedY() {
+        return speedY;
     }
 
-    public float getZVelocity() {
-        return zVelocity;
+    public float getSpeedZ() {
+        return speedZ;
     }
 
     public int getFrameIndex() {
@@ -107,9 +107,9 @@ public class Demo implements Option {
         roll = buffer.getFloat() / 1000;
         yaw = buffer.getFloat() / 1000;
         altitude = buffer.getInt();
-        xVelocity = buffer.getFloat();
-        yVelocity = buffer.getFloat();
-        zVelocity = buffer.getFloat();
+        speedX = buffer.getFloat();
+        speedY = buffer.getFloat();
+        speedZ = buffer.getFloat();
         frameIndex = buffer.getInt();
         detectionCameraRotation = matrix(buffer);
         detectionCameraTranslation = vector(buffer);
