@@ -7,11 +7,11 @@ import static org.junit.Assert.*;
  *
  * @author weinpau
  */
-public class VelocityTest {
+public class SpeedTest {
 
     @Test
     public void testMps() {
-        Velocity instance = Velocity.mps(12.5);
+        Speed instance = Speed.mps(12.5);
         double result = instance.mps();
         assertEquals(12.5, result, 0.0);
 
@@ -19,14 +19,14 @@ public class VelocityTest {
 
     @Test
     public void testKmph() {
-        Velocity instance = Velocity.kmph(12.5);
+        Speed instance = Speed.kmph(12.5);
         double result = instance.kmph();
         assertEquals(12.5, result, 0.0);
     }
 
     @Test
     public void testKn() {
-        Velocity instance = Velocity.kn(12.5);
+        Speed instance = Speed.kn(12.5);
         double result = instance.kn();
         assertEquals(12.5, result, 0.0);
 
@@ -34,15 +34,15 @@ public class VelocityTest {
 
     @Test
     public void testMps_To_Kmps() {        
-        Velocity velocity = Velocity.mps(5);
-        assertEquals(18, velocity.kmph(), 0.0);
+        Speed speed = Speed.mps(5);
+        assertEquals(18, speed.kmph(), 0.0);
 
     }
 
     @Test
     public void testMps_To_Kn() {
-        Velocity velocity = Velocity.mps(5);
-        assertEquals(9.71922, velocity.kn(), 0.00001);
+        Speed speed = Speed.mps(5);
+        assertEquals(9.71922, speed.kn(), 0.00001);
 
     }
 

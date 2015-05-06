@@ -2,9 +2,8 @@ package com.jbee;
 
 import com.jbee.buses.PositionBus;
 import com.jbee.buses.PrincipalAxesBus;
-import com.jbee.buses.TranslationalVelocityBus;
+import com.jbee.buses.VelocityBus;
 import com.jbee.positioning.Position;
-import com.jbee.units.Velocity3D;
 
 /**
  *
@@ -13,7 +12,7 @@ import com.jbee.units.Velocity3D;
 class BeeStateBus extends Bus<BeeState> {
 
     Position position = Position.ORIGIN;
-    Velocity3D translationalVelocity = Velocity3D.ZERO;
+    Velocity velocity = Velocity.ZERO;
     PrincipalAxes principalAxes = PrincipalAxes.ZERO;
 
     TargetDevice device;
@@ -30,10 +29,10 @@ class BeeStateBus extends Bus<BeeState> {
                     publish(createBeeState());
                 });
 
-        context.getBus(TranslationalVelocityBus.class).
-                orElseThrow(() -> new RuntimeException("A translational velocity bus is missing.")).
+        context.getBus(VelocityBus.class).
+                orElseThrow(() -> new RuntimeException("A velocity bus is missing.")).
                 subscripe(v -> {
-                    translationalVelocity = v;
+                    velocity = v;
                     publish(createBeeState());
                 });
 
@@ -46,7 +45,7 @@ class BeeStateBus extends Bus<BeeState> {
     }
 
     final BeeState createBeeState() {
-        return new BeeState(System.currentTimeMillis(), position, translationalVelocity, principalAxes,
+        return new BeeState(System.currentTimeMillis(), position, velocity, principalAxes,
                 device.getBatteryState(),
                 device.getControlState());
     }

@@ -2,7 +2,6 @@ package com.jbee;
 
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
-import com.jbee.units.Velocity3D;
 
 /**
  *
@@ -12,22 +11,22 @@ public class BeeState {
 
     public static final BeeState START_STATE = new BeeState(0,
             Position.ORIGIN,
-            Velocity3D.ZERO,
+            Velocity.ZERO,
             PrincipalAxes.ZERO,
             new BatteryState(1, false),
             ControlState.DISCONNECTED);
 
     private final long timestamp;
     private final Position position;
-    private final Velocity3D translationalVelocity;
+    private final Velocity velocity;
     private final PrincipalAxes principalAxes;
     private final BatteryState batteryState;
     private final ControlState controlState;
 
-    BeeState(long timestamp, Position position, Velocity3D translationalVelocity, PrincipalAxes principalAxes, BatteryState batteryState, ControlState controlState) {
+    BeeState(long timestamp, Position position, Velocity velocity, PrincipalAxes principalAxes, BatteryState batteryState, ControlState controlState) {
         this.timestamp = timestamp;
         this.position = position;
-        this.translationalVelocity = translationalVelocity;
+        this.velocity = velocity;
 
         this.principalAxes = principalAxes;
         this.batteryState = batteryState;
@@ -42,8 +41,8 @@ public class BeeState {
         return position;
     }
 
-    public Velocity3D getTranslationalVelocity() {
-        return translationalVelocity;
+    public Velocity getTranslationalVelocity() {
+        return velocity;
     }
 
     public PrincipalAxes getPrincipalAxes() {

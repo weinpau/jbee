@@ -13,7 +13,7 @@ import com.jbee.commands.TakeOffCommand;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
-import com.jbee.units.Velocity;
+import com.jbee.units.Speed;
 
 /**
  *
@@ -22,10 +22,10 @@ import com.jbee.units.Velocity;
 class StateMachine {
 
     volatile SimulationStep step = SimulationStep.START_STEP;
-    Velocity defaultVelocity;
+    Speed defaultVelocity;
     Distance takeOffHeight;
 
-    StateMachine(Velocity defaultVelocity, Distance takeOffHeight) {
+    StateMachine(Speed defaultVelocity, Distance takeOffHeight) {
         this.defaultVelocity = defaultVelocity;
         this.takeOffHeight = takeOffHeight;
     }
@@ -73,7 +73,7 @@ class StateMachine {
 
     SimulationStep exec(TakeOffCommand command) {
         State startState = new State(lastState().getPosition(), defaultVelocity, lastState().getYAW());
-        State followingState = new State(startState.getPosition().withZ(takeOffHeight.toMeters()), Velocity.ZERO, startState.getYAW());
+        State followingState = new State(startState.getPosition().withZ(takeOffHeight.toMeters()), Speed.ZERO, startState.getYAW());
 
         if (!lastState().equals(State.START_STATE)) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
@@ -87,7 +87,7 @@ class StateMachine {
     SimulationStep exec(LandCommand command) {
         State startState = new State(lastState().getPosition(), defaultVelocity, lastState().getYAW());
         Position newPos = startState.getPosition().withZ(0);
-        State followingState = new State(newPos, Velocity.ZERO, startState.getYAW());
+        State followingState = new State(newPos, Speed.ZERO, startState.getYAW());
 
         if (lastState().equals(State.START_STATE)) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
@@ -99,7 +99,7 @@ class StateMachine {
 
     SimulationStep exec(FlyToCommand command) {
         State startState = new State(lastState().getPosition(), command.getVelocity(), lastState().getYAW());
-        State followingState = new State(command.getPosition(), Velocity.ZERO, lastState().getYAW());
+        State followingState = new State(command.getPosition(), Speed.ZERO, lastState().getYAW());
 
         if (lastState().equals(State.START_STATE)) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
@@ -112,7 +112,7 @@ class StateMachine {
     }
 
     SimulationStep exec(RotationCommand command) {
-        State startState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
+        State startState = new State(lastState().getPosition(), Speed.ZERO, lastState().getYAW());
 
         Angle difference = Angle.ofDegrees(50);
         Angle followingYAW;
@@ -125,7 +125,7 @@ class StateMachine {
                 followingYAW = startState.getYAW().sub(command.getAngle());
             }
         }
-        State followingState = new State(lastState().getPosition(), Velocity.ZERO, followingYAW);
+        State followingState = new State(lastState().getPosition(), Speed.ZERO, followingYAW);
 
         if (lastState().getPosition().getZ() <= 0) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, command.getRotationDirection(), 0);
@@ -136,8 +136,8 @@ class StateMachine {
     }
 
     SimulationStep exec(HoverCommand command) {
-        State startState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
-        State followingState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
+        State startState = new State(lastState().getPosition(), Speed.ZERO, lastState().getYAW());
+        State followingState = new State(lastState().getPosition(), Speed.ZERO, lastState().getYAW());
 
         if (lastState().getPosition().getZ() <= 0) {
             return new SimulationStep(command, CommandResult.FAILED, startState, followingState, 0);
@@ -153,8 +153,8 @@ class StateMachine {
     }
 
     SimulationStep exec(CancelCommand command) {
-        State startState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
-        State followingState = new State(lastState().getPosition(), Velocity.ZERO, lastState().getYAW());
+        State startState = new State(lastState().getPosition(), Speed.ZERO, lastState().getYAW());
+        State followingState = new State(lastState().getPosition(), Speed.ZERO, lastState().getYAW());
 
         return new SimulationStep(command, CommandResult.COMPLETED, startState, followingState, 0);
 
@@ -186,7 +186,7 @@ class StateMachine {
         return p;
     }
 
-    static int calculateTimeSpent(Velocity velocity, Distance distance) {
+    static int calculateTimeSpent(Speed velocity, Distance distance) {
         return (int) (1000 * distance.toMeters() / velocity.mps());
     }
 

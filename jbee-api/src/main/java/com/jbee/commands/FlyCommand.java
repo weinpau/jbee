@@ -2,7 +2,7 @@ package com.jbee.commands;
 
 import com.jbee.Direction;
 import com.jbee.units.Distance;
-import com.jbee.units.Velocity;
+import com.jbee.units.Speed;
 
 /**
  *
@@ -12,9 +12,9 @@ public class FlyCommand extends AbstractCommand {
 
     private final Direction direction;
     private final Distance distance;
-    private final Velocity velocity;
+    private final Speed velocity;
 
-    public FlyCommand(Direction direction, Distance distance, Velocity velocity) {
+    public FlyCommand(Direction direction, Distance distance, Speed velocity) {
         this.direction = direction;
         this.distance = distance;
         this.velocity = velocity;
@@ -28,7 +28,7 @@ public class FlyCommand extends AbstractCommand {
         return distance;
     }
 
-    public Velocity getVelocity() {
+    public Speed getVelocity() {
         return velocity;
     }
 

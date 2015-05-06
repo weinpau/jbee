@@ -2,13 +2,8 @@ package com.jbee;
 
 import com.jbee.buses.AltitudeBus;
 import com.jbee.buses.PositionBus;
-import com.jbee.buses.TranslationalVelocityBus;
-import com.jbee.buses.PrincipalAxesBus;
+import com.jbee.buses.VelocityBus;
 import com.jbee.positioning.Position;
-import com.jbee.units.Angle;
-import com.jbee.units.Velocity3D;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 
 /**
  *
@@ -18,7 +13,7 @@ final class PositionEstimator extends PositionBus {
 
     static final long NANOS_PER_SECOND = 1000_000_000L;
 
-    Velocity3D translationalVelocity = Velocity3D.ZERO;
+    Velocity velocity = Velocity.ZERO;
   
     long lastTime;
     double x, y, z;
@@ -36,10 +31,10 @@ final class PositionEstimator extends PositionBus {
 
     @Override
     public void bootstrap() throws BeeBootstrapException {
-        context.getBus(TranslationalVelocityBus.class).
+        context.getBus(VelocityBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A translational velocity bus is missing.")).
                 subscripe(v -> {
-                    translationalVelocity = v;
+                    velocity = v;
                     publish(estimatePosition());
                 });
 
@@ -57,9 +52,9 @@ final class PositionEstimator extends PositionBus {
             return Position.ORIGIN;
         }
         double dt = (now - lastTime) / (double) NANOS_PER_SECOND;
-        double vx = translationalVelocity.getXVelocity().mps();
-        double vy = translationalVelocity.getYVelocity().mps();
-        double vz = translationalVelocity.getZVelocity().mps();
+        double vx = velocity.getX().mps();
+        double vy = velocity.getY().mps();
+        double vz = velocity.getZ().mps();
 
         x += dt * vx;
         y += dt * vy;

@@ -5,8 +5,8 @@ import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
-import com.jbee.units.Velocity3D;
-import com.jbee.units.Velocity;
+import com.jbee.Velocity;
+import com.jbee.units.Speed;
 
 /**
  *
@@ -76,18 +76,18 @@ class SimulationStep {
 
     }
 
-    public Velocity3D simulateTranslationalVelocity(long timestamp) {
+    public Velocity simulateVelocity(long timestamp) {
 
-        Velocity v = startState.getVelocity();
+        Speed v = startState.getSpeed();
         Position p = followingState.getPosition().
                 sub(startState.getPosition()).
                 normalize().
                 multiply(v.mps());
 
-        return new Velocity3D(
-                Velocity.mps(p.getX()),
-                Velocity.mps(p.getY()),
-                Velocity.mps(p.getZ()));
+        return new Velocity(
+                Speed.mps(p.getX()),
+                Speed.mps(p.getY()),
+                Speed.mps(p.getZ()));
     }
 
 }

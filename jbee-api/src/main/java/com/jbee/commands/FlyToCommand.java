@@ -1,7 +1,7 @@
 package com.jbee.commands;
 
 import com.jbee.positioning.Position;
-import com.jbee.units.Velocity;
+import com.jbee.units.Speed;
 
 /**
  *
@@ -11,9 +11,9 @@ public class FlyToCommand extends AbstractCommand {
 
     private final Position position;
 
-    private final Velocity velocity;
+    private final Speed velocity;
 
-    public FlyToCommand(Position position, Velocity velocity) {
+    public FlyToCommand(Position position, Speed velocity) {
         this.position = position;
         this.velocity = velocity;
     }
@@ -22,7 +22,7 @@ public class FlyToCommand extends AbstractCommand {
         return position;
     }
 
-    public Velocity getVelocity() {
+    public Speed getVelocity() {
         return velocity;
     }
 

@@ -5,7 +5,7 @@ import com.jbee.commands.CommandResult;
 import com.jbee.commands.Commands;
 import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
-import com.jbee.units.Velocity;
+import com.jbee.units.Speed;
 import com.jbee.units.Angle;
 import java.time.Duration;
 import java.util.function.BiConsumer;
@@ -59,36 +59,36 @@ public interface BeeControl {
         return execute(Commands.rotateTo(angle, rotationDirection));
     }
     
-    default CommandResult flyTo(Position position, Velocity velocity) {
-        return execute(Commands.flyTo(position, velocity));
+    default CommandResult flyTo(Position position, Speed speed) {
+        return execute(Commands.flyTo(position, speed));
     }
     
-    default CommandResult fly(Direction direction, Distance distance, Velocity velocity) {
-        return execute(Commands.fly(direction, distance, velocity));
+    default CommandResult fly(Direction direction, Distance distance, Speed speed) {
+        return execute(Commands.fly(direction, distance, speed));
     }
     
-    default CommandResult forward(Distance distance, Velocity velocity) {
-        return fly(Direction.FORWARD, distance, velocity);
+    default CommandResult forward(Distance distance, Speed speed) {
+        return fly(Direction.FORWARD, distance, speed);
     }
     
-    default CommandResult right(Distance distance, Velocity velocity) {
-        return fly(Direction.RIGHT, distance, velocity);
+    default CommandResult right(Distance distance, Speed speed) {
+        return fly(Direction.RIGHT, distance, speed);
     }
     
-    default CommandResult left(Distance distance, Velocity velocity) {
-        return fly(Direction.LEFT, distance, velocity);
+    default CommandResult left(Distance distance, Speed speed) {
+        return fly(Direction.LEFT, distance, speed);
     }
     
-    default CommandResult backward(Distance distance, Velocity velocity) {
-        return fly(Direction.BACKWARD, distance, velocity);
+    default CommandResult backward(Distance distance, Speed speed) {
+        return fly(Direction.BACKWARD, distance, speed);
     }
     
-    default CommandResult up(Distance distance, Velocity velocity) {
-        return fly(Direction.UP, distance, velocity);
+    default CommandResult up(Distance distance, Speed speed) {
+        return fly(Direction.UP, distance, speed);
     }
     
-    default CommandResult down(Distance distance, Velocity velocity) {
-        return fly(Direction.DOWN, distance, velocity);
+    default CommandResult down(Distance distance, Speed speed) {
+        return fly(Direction.DOWN, distance, speed);
     }
     
 }

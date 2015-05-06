@@ -10,12 +10,12 @@ import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.LandCommand;
 import com.jbee.commands.TakeOffCommand;
-import com.jbee.buses.TranslationalVelocityBus;
+import com.jbee.buses.VelocityBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
-import com.jbee.units.Velocity;
+import com.jbee.units.Speed;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,13 +30,13 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     Frequency transmissionRate = Frequency.ofHz(20);
 
-    Velocity defaultVelocity = Velocity.mps(1);
+    Speed defaultSpeed = Speed.mps(1);
     Distance takeOffHeight = Distance.ofMeters(2);
     BatteryState batteryState = new BatteryState(.99, false);
     ControlState controlState = ControlState.DISCONNECTED;
     StateMachine stateMachine;
 
-    TranslationalVelocityBus velocityBus = new TranslationalVelocityBus();
+    VelocityBus velocityBus = new VelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
 
     Timer stateListener = new Timer("simulation-state-listener", true);
@@ -47,7 +47,7 @@ public class Simulation extends BeeModule implements TargetDevice {
             long time = System.currentTimeMillis();
             SimulationStep step = stateMachine.getCurrentStep();
 
-            velocityBus.publish(step.simulateTranslationalVelocity(time));
+            velocityBus.publish(step.simulateVelocity(time));
             principalAxesBus.publish(new PrincipalAxes(step.simulateYAW(time), Angle.ZERO, Angle.ZERO));
         }
     };
@@ -98,7 +98,7 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     @Override
     public void bootstrap() throws BeeBootstrapException {
-        stateMachine = new StateMachine(defaultVelocity, takeOffHeight);
+        stateMachine = new StateMachine(defaultSpeed, takeOffHeight);
         controlState = ControlState.READY_FOR_TAKE_OFF;
         stateListener.scheduleAtFixedRate(stateTimerTask, 0,
                 transmissionRate.toCycleDuration().toMillis());
@@ -111,14 +111,15 @@ public class Simulation extends BeeModule implements TargetDevice {
         stateTimerTask.cancel();
     }
 
-    public Velocity getDefaultVelocity() {
-        return defaultVelocity;
+    public Speed getDefaultSpeed() {
+        return defaultSpeed;
     }
 
-    public void setDefaultVelocity(Velocity defaultVelocity) {
-        this.defaultVelocity = defaultVelocity;
+    public void setDefaultSpeed(Speed defaultSpeed) {
+        this.defaultSpeed = defaultSpeed;
     }
 
+  
     public Distance getTakeOffHeight() {
         return takeOffHeight;
     }

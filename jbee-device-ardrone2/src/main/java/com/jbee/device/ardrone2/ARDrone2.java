@@ -7,7 +7,7 @@ import com.jbee.ControlState;
 import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
 import com.jbee.buses.AltitudeBus;
-import com.jbee.buses.TranslationalVelocityBus;
+import com.jbee.buses.VelocityBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
@@ -15,8 +15,8 @@ import com.jbee.device.ardrone2.internal.navdata.options.Demo;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
-import com.jbee.units.Velocity;
-import com.jbee.units.Velocity3D;
+import com.jbee.units.Speed;
+import com.jbee.Velocity;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.concurrent.RunnableFuture;
@@ -32,7 +32,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     Frequency transmissionRate = Frequency.ofHz(15);
 
     AltitudeBus altitudeBus = new AltitudeBus();
-    TranslationalVelocityBus velocityBus = new TranslationalVelocityBus();
+    VelocityBus velocityBus = new VelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
 
     CommandSender commandSender;
@@ -76,10 +76,10 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
 
                 Demo demo = n.getOption(Demo.class);
                 if (demo != null) {
-                    velocityBus.publish(new Velocity3D(
-                            Velocity.mps(demo.getXVelocity() / 1000d),
-                            Velocity.mps(demo.getYVelocity() / 1000d),
-                            Velocity.mps(demo.getZVelocity() / 1000d)));
+                    velocityBus.publish(new Velocity(
+                            Speed.mps(demo.getXVelocity() / 1000d),
+                            Speed.mps(demo.getYVelocity() / 1000d),
+                            Speed.mps(demo.getZVelocity() / 1000d)));
 
                     principalAxesBus.publish(new PrincipalAxes(
                             Angle.ofDegrees(demo.getYaw()),

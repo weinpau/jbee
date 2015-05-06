@@ -4,20 +4,20 @@ package com.jbee.units;
  *
  * @author weinpau
  */
-public final class Velocity implements Comparable<Velocity> {
+public final class Speed implements Comparable<Speed> {
 
-    public static Velocity ZERO = new Velocity(0);
+    public static Speed ZERO = new Speed(0);
 
     private static final double kmph2mpsFactor = 3.6d;
     private static final double kn2mpsFactor = 900d / 463d;
 
     private final double mps;
 
-    private Velocity() {
+    private Speed() {
         this(0);
     }
 
-    private Velocity(double mps) {
+    private Speed(double mps) {
         this.mps = mps;
     }
 
@@ -33,46 +33,46 @@ public final class Velocity implements Comparable<Velocity> {
         return mps * kn2mpsFactor;
     }
 
-    public Velocity multiply(double factor) {
+    public Speed multiply(double factor) {
         if (!Double.isFinite(factor)) {
             throw new IllegalArgumentException("The factor must be a finite number.");
         }
-        return Velocity.mps(mps * factor);
+        return Speed.mps(mps * factor);
     }
 
-    public Velocity multiply(Velocity velocity) {
-        return Velocity.mps(mps * velocity.mps);
+    public Speed multiply(Speed speed) {
+        return Speed.mps(mps * speed.mps);
     }
 
-    public Velocity add(Velocity velocity) {
-        return Velocity.mps(mps + velocity.mps);
+    public Speed add(Speed speed) {
+        return Speed.mps(mps + speed.mps);
     }
 
-    public Velocity sub(Velocity velocity) {
-        return Velocity.mps(mps - velocity.mps);
+    public Speed sub(Speed speed) {
+        return Speed.mps(mps - speed.mps);
     }
 
-    public Velocity abs() {
-        return Velocity.mps(Math.abs(mps));
+    public Speed abs() {
+        return Speed.mps(Math.abs(mps));
     }
 
-    public static Velocity mps(double mps) {
+    public static Speed mps(double mps) {
         if (!Double.isFinite(mps)) {
-            throw new IllegalArgumentException("The velocity must be a finite number.");
+            throw new IllegalArgumentException("The speed must be a finite number.");
         }
-        return new Velocity(mps);
+        return new Speed(mps);
     }
 
-    public static Velocity kmph(double kmph) {
+    public static Speed kmph(double kmph) {
         return mps(kmph / kmph2mpsFactor);
     }
 
-    public static Velocity kn(double kn) {
+    public static Speed kn(double kn) {
         return mps(kn / kn2mpsFactor);
     }
 
     @Override
-    public int compareTo(Velocity o) {
+    public int compareTo(Speed o) {
         if (o == null) {
             return 0;
         }
@@ -99,7 +99,7 @@ public final class Velocity implements Comparable<Velocity> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Velocity other = (Velocity) obj;
+        final Speed other = (Speed) obj;
         return Double.doubleToLongBits(this.mps) == Double.doubleToLongBits(other.mps);
     }
 
