@@ -1,0 +1,68 @@
+package com.jbee.units;
+
+import java.util.Objects;
+
+/**
+ *
+ * @author weinpau
+ */
+public class AngularSpeed implements Comparable<AngularSpeed> {
+
+    public static AngularSpeed ZERO = new AngularSpeed(Angle.ZERO);
+
+    private final Angle degreesPerSecond;
+
+    private AngularSpeed(Angle degreesPerSecond) {
+        this.degreesPerSecond = degreesPerSecond;
+    }
+
+    public Angle toDegreesPerSecond() {
+        return degreesPerSecond;
+    }
+
+    public RotationalSpeed toRotationalSpeed() {
+        return RotationalSpeed.ofAngularSpeed(this);
+    }
+
+    public AngularSpeed abs() {
+        return new AngularSpeed(degreesPerSecond.abs());
+    }
+
+    @Override
+    public int compareTo(AngularSpeed o) {
+        return degreesPerSecond.compareTo(o.degreesPerSecond);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.degreesPerSecond);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AngularSpeed other = (AngularSpeed) obj;
+        return Objects.equals(this.degreesPerSecond, other.degreesPerSecond);
+    }
+
+    @Override
+    public String toString() {
+        return degreesPerSecond + "/s";
+    }
+
+    public static AngularSpeed ofDegreesPerSecond(Angle degreesPerSecond) {
+        return new AngularSpeed(degreesPerSecond);
+    }
+
+    public static AngularSpeed ofRotationalSpeed(RotationalSpeed rotationalSpeed) {
+        return new AngularSpeed(Angle.ofDegrees(rotationalSpeed.rps() * 360));
+    }
+
+}

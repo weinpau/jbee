@@ -7,22 +7,18 @@ import java.util.Locale;
  *
  * @author weinpau
  */
-public final class Angle {
+public final class Angle implements Comparable<Angle> {
 
     public static final Angle ZERO = new Angle(0);
 
     private final double radians;
 
-    private Angle() {
-        this.radians = 0;
-    }
-
     private Angle(double radians) {
-        this.radians = radians % (2 * Math.PI);
+        this.radians = radians;
     }
 
     public Angle turnRound() {
-        return ofRadians(radians + Math.PI);
+        return normalize().add(ofRadians(Math.PI));
     }
 
     public Angle add(Angle yaw) {
@@ -40,6 +36,11 @@ public final class Angle {
         return new Angle(radians * factor);
     }
 
+    public Angle normalize() {
+        double normalized = radians / Math.PI;
+        return new Angle((normalized - (int) normalized) * Math.PI);
+    }
+
     public Angle abs() {
         return new Angle(Math.abs(radians));
     }
@@ -50,6 +51,11 @@ public final class Angle {
 
     public double toDegrees() {
         return Math.toDegrees(radians);
+    }
+
+    @Override
+    public int compareTo(Angle o) {
+        return Double.compare(radians, o.radians);
     }
 
     @Override
