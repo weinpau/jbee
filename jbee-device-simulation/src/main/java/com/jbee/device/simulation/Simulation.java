@@ -15,6 +15,7 @@ import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
+import com.jbee.units.RotationalSpeed;
 import com.jbee.units.Speed;
 import java.io.IOException;
 import java.util.Timer;
@@ -31,6 +32,9 @@ public class Simulation extends BeeModule implements TargetDevice {
     Frequency transmissionRate = Frequency.ofHz(20);
 
     Speed defaultSpeed = Speed.mps(1);
+    Speed maxSpeed = Speed.mps(10);
+    RotationalSpeed defaultRotationalSpeed = RotationalSpeed.rps(.25);
+    RotationalSpeed maxRotationalSpeed = RotationalSpeed.rps(5);
     Distance takeOffHeight = Distance.ofMeters(2);
     BatteryState batteryState = new BatteryState(.99, false);
     ControlState controlState = ControlState.DISCONNECTED;
@@ -111,6 +115,7 @@ public class Simulation extends BeeModule implements TargetDevice {
         stateTimerTask.cancel();
     }
 
+    @Override
     public Speed getDefaultSpeed() {
         return defaultSpeed;
     }
@@ -119,7 +124,15 @@ public class Simulation extends BeeModule implements TargetDevice {
         this.defaultSpeed = defaultSpeed;
     }
 
-  
+    @Override
+    public RotationalSpeed getDefaultRotationalSpeed() {
+        return defaultRotationalSpeed;
+    }
+
+    public void setDefaultRotationalSpeed(RotationalSpeed defaultRotationalSpeed) {
+        this.defaultRotationalSpeed = defaultRotationalSpeed;
+    }
+
     public Distance getTakeOffHeight() {
         return takeOffHeight;
     }
@@ -149,6 +162,24 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     public void setTransmissionRate(Frequency transmissionRate) {
         this.transmissionRate = transmissionRate;
+    }
+
+    @Override
+    public Speed getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(Speed maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    @Override
+    public RotationalSpeed getMaxRotationalSpeed() {
+        return maxRotationalSpeed;
+    }
+
+    public void setMaxRotationalSpeed(RotationalSpeed maxRotationalSpeed) {
+        this.maxRotationalSpeed = maxRotationalSpeed;
     }
 
 }

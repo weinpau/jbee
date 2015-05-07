@@ -8,6 +8,7 @@ import com.jbee.RotationDirection;
 import com.jbee.device.simulation.Simulation;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
+import com.jbee.units.RotationalSpeed;
 import com.jbee.units.Speed;
 import java.time.Duration;
 
@@ -22,6 +23,7 @@ public class SimpleFlight {
         Bee bee = BeeContext.of(new Simulation()).bootstrap();
 
         BeeControl beeControl = bee.control().
+                defaultSpeed(Speed.mps(2)).
                 onCanceled(c -> System.out.println("command " + c.getCommandNumber() + " canceled")).
                 onPositionChanged((c, p) -> {
                     System.out.println("command " + c.getCommandNumber() + ": " + p);
@@ -29,9 +31,10 @@ public class SimpleFlight {
                 Distance.ofCentimeters(50));
 
         beeControl.takeOff();
-        beeControl.up(Distance.ofMeters(5), Speed.mps(4));
-        beeControl.rotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE);
-        beeControl.forward(Distance.ofMeters(2), Speed.mps(1));
+        
+        beeControl.up(Distance.ofMeters(5));
+        beeControl.rotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE, RotationalSpeed.rpm(.3));
+        beeControl.forward(Distance.ofMeters(2));
         beeControl.onAction(c -> beeControl.cancel(), Duration.ofSeconds(1)).hover(Duration.ofSeconds(10));
         beeControl.land();
 

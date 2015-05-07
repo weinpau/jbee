@@ -57,8 +57,16 @@ public class AngularSpeed implements Comparable<AngularSpeed> {
         return degreesPerSecond + "/s";
     }
 
-    public static AngularSpeed ofDegreesPerSecond(Angle degreesPerSecond) {
-        return new AngularSpeed(degreesPerSecond);
+    public static AngularSpeed ofAnglePerSecond(Angle anglePerSecond) {
+        return new AngularSpeed(anglePerSecond);
+    }
+
+    public static AngularSpeed ofRadiansPerSecond(double radians) {
+        return ofAnglePerSecond(Angle.ofRadians(radians));
+    }
+
+    public static AngularSpeed ofDegreesPerSecond(double degrees) {
+        return ofAnglePerSecond(Angle.ofDegrees(degrees));
     }
 
     public static AngularSpeed ofRotationalSpeed(RotationalSpeed rotationalSpeed) {

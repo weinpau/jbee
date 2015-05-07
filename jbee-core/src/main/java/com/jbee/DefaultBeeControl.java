@@ -3,6 +3,8 @@ package com.jbee;
 import com.jbee.commands.*;
 import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
+import com.jbee.units.RotationalSpeed;
+import com.jbee.units.Speed;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +22,8 @@ class DefaultBeeControl implements BeeControl {
     final DefaultBeeControl parent;
     final CommandExecutor commandExecutor;
     final DefaultBeeMonitor monitor;
+    Speed defaultSpeed;
+    RotationalSpeed defaultRotationalSpeed;
 
     volatile boolean closed = false;
 
@@ -27,49 +31,75 @@ class DefaultBeeControl implements BeeControl {
     Consumer<Command> failedListener, canceledListener, executeListener, completedListener;
     CommandHandlerFactory commandHandlerFactory;
 
-    DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor, DefaultBeeControl parent) {
+    DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor,
+            Speed defaultSpeed, RotationalSpeed defaultRotationalSpeed, DefaultBeeControl parent) {
         this.commandExecutor = commandExecutor;
         this.monitor = monitor;
+        this.defaultSpeed = defaultSpeed;
+        this.defaultRotationalSpeed = defaultRotationalSpeed;
         this.parent = parent;
     }
 
-    DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor) {
-        this(commandExecutor, monitor, null);
+    DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor, Speed defaultSpeed, RotationalSpeed defaultRotationalSpeed) {
+        this(commandExecutor, monitor, defaultSpeed, defaultRotationalSpeed, null);
+    }
+
+    @Override
+    public BeeControl defaultSpeed(Speed speed) {
+        checkControl();
+        DefaultBeeControl control = createChildControl();
+        control.defaultSpeed = speed;
+        return control;
+
+    }
+
+    @Override
+    public Speed getDefaultSpeed() {
+        return defaultSpeed;
+    }
+
+    @Override
+    public BeeControl defaultRotationalSpeed(RotationalSpeed rotationalSpeed) {
+        checkControl();
+        DefaultBeeControl control = createChildControl();
+        control.defaultRotationalSpeed = rotationalSpeed;
+        return control;
+    }
+
+    @Override
+    public RotationalSpeed getDefaultRotationalSpeed() {
+        return defaultRotationalSpeed;
     }
 
     @Override
     public BeeControl onFailed(Consumer<Command> onFailed) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        DefaultBeeControl control = createChildControl();
         control.failedListener = onFailed;
-        childs.add(control);
         return control;
     }
 
     @Override
     public BeeControl onExecute(Consumer<Command> onExecute) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        DefaultBeeControl control = createChildControl();
         control.executeListener = onExecute;
-        childs.add(control);
         return control;
     }
 
     @Override
     public BeeControl onCompleted(Consumer<Command> onCompleted) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        DefaultBeeControl control = createChildControl();
         control.completedListener = onCompleted;
-        childs.add(control);
         return control;
     }
 
     @Override
     public BeeControl onCanceled(Consumer<Command> onCanceled) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        DefaultBeeControl control = createChildControl();
         control.canceledListener = onCanceled;
-        childs.add(control);
         return control;
     }
 
@@ -82,19 +112,16 @@ class DefaultBeeControl implements BeeControl {
             throw new IllegalArgumentException("The period must be greater than zero.");
         }
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        DefaultBeeControl control = createChildControl();
         control.commandHandlerFactory = c -> new ActionHandler(c, onAction, delay, period);
-
-        childs.add(control);
         return control;
     }
 
     @Override
     public BeeControl onPositionChanged(BiConsumer<Command, Position> onPositionChanged, Distance deltaDistance) {
         checkControl();
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, this);
+        DefaultBeeControl control = createChildControl();
         control.commandHandlerFactory = c -> new PositionChangedHandler(c, monitor, onPositionChanged, deltaDistance);
-        childs.add(control);
         return control;
     }
 
@@ -160,6 +187,12 @@ class DefaultBeeControl implements BeeControl {
     public void close() {
         childs.forEach(c -> c.close());
         closed = true;
+    }
+
+    private DefaultBeeControl createChildControl() {
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, defaultSpeed, defaultRotationalSpeed, this);
+        childs.add(control);
+        return control;
     }
 
     private List<CommandHandler> startHandlers(Command command) {

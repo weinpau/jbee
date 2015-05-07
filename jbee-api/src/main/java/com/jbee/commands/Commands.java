@@ -5,6 +5,7 @@ import com.jbee.RotationDirection;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
+import com.jbee.units.RotationalSpeed;
 import com.jbee.units.Speed;
 import java.time.Duration;
 
@@ -33,12 +34,12 @@ public class Commands {
         return new HoverCommand(duration);
     }
 
-    public static Command rotate(Angle angle, RotationDirection rotationDirection) {
-        return new RotationCommand(angle, rotationDirection, false);
+    public static Command rotate(Angle angle, RotationDirection rotationDirection, RotationalSpeed speed) {
+        return new RotationCommand(angle, rotationDirection, speed, false);
     }
 
-    public static Command rotateTo(Angle angle, RotationDirection rotationDirection) {
-        return new RotationCommand(angle, rotationDirection, true);
+    public static Command rotateTo(Angle angle, RotationDirection rotationDirection, RotationalSpeed speed) {
+        return new RotationCommand(angle, rotationDirection, speed, true);
     }
 
     public static Command flyTo(Position position, Speed velocity) {

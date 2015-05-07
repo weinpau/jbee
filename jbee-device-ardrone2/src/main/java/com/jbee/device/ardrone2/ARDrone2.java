@@ -17,6 +17,7 @@ import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
 import com.jbee.units.Speed;
 import com.jbee.Velocity;
+import com.jbee.units.RotationalSpeed;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.concurrent.RunnableFuture;
@@ -137,6 +138,26 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     @Override
     public Frequency getTransmissionRate() {
         return transmissionRate;
+    }
+
+    @Override
+    public Speed getMaxSpeed() {
+        return Speed.mps(3);
+    }
+
+    @Override
+    public Speed getDefaultSpeed() {
+        return Speed.mps(1);
+    }
+
+    @Override
+    public RotationalSpeed getMaxRotationalSpeed() {
+        return RotationalSpeed.rps(1);
+    }
+
+    @Override
+    public RotationalSpeed getDefaultRotationalSpeed() {
+        return RotationalSpeed.rps(.25);
     }
 
 }

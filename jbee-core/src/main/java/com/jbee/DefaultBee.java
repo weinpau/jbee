@@ -18,7 +18,7 @@ class DefaultBee implements Bee {
     public DefaultBee(TargetDevice device, BeeStateBus beeStateBus) {
         this.device = device;
         commandExecutor = new CommandExecutor(device);
-        control = new DefaultBeeControl(commandExecutor, monitor);
+        control = new DefaultBeeControl(commandExecutor, monitor, device.getDefaultSpeed(), device.getDefaultRotationalSpeed());
 
         beeStateBus.subscripe(state -> monitor.changeState(state));
     }
