@@ -1,6 +1,7 @@
 package com.jbee.units;
 
 import java.text.NumberFormat;
+import java.time.Duration;
 import java.util.Locale;
 
 /**
@@ -43,6 +44,18 @@ public final class Angle implements Comparable<Angle> {
 
     public Angle abs() {
         return new Angle(Math.abs(radians));
+    }
+
+    public Duration divide(AngularSpeed speed) {
+        double seconds = radians / speed.toDegreesPerSecond().toRadians();
+        long millis = (long) seconds * 1000;
+        long nanos = (long) ((seconds - Math.floor(seconds)) * 1000_000_000L);
+        return Duration.ofMillis(millis).plusNanos(nanos);
+
+    }
+
+    public boolean isZero() {
+        return radians == 0;
     }
 
     public double toRadians() {

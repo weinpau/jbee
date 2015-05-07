@@ -1,7 +1,7 @@
 package com.jbee.units;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.Duration;
 import java.util.Locale;
 
 /**
@@ -36,6 +36,26 @@ public final class Distance implements Comparable<Distance> {
 
     public Distance add(Distance distance) {
         return new Distance(StrictMath.addExact(mm, distance.mm));
+    }
+
+    public Duration divide(Speed speed) {
+        double seconds = toMeters() / speed.mps();
+        long millis = (long) seconds * 1000;
+        long nanos = (long) ((seconds - Math.floor(seconds)) * 1000_000_000L);
+        return Duration.ofMillis(millis).plusNanos(nanos);
+
+    }
+
+    public boolean lessThan(Distance distance) {
+        return mm < distance.mm;
+    }
+
+    public boolean greaterThan(Distance distance) {
+        return mm > distance.mm;
+    }
+
+    public boolean isZero() {
+        return mm == 0;
     }
 
     public static Distance ofMilimeters(int milimeters) {

@@ -2,7 +2,6 @@ package com.jbee.positioning;
 
 import com.jbee.units.Distance;
 import static java.lang.Math.*;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -84,6 +83,14 @@ public class Position {
             return new Position(0, 0, 0);
         }
         return multiply(1d / length);
+    }
+
+    public boolean nearlyEqual(Position position, Distance epsilon) {
+        return distance(position).lessThan(epsilon);
+    }
+
+    public boolean isOrigin() {
+        return ORIGIN.equals(this);
     }
 
     public Distance distance(Position position) {
