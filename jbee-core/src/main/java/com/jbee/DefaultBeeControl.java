@@ -22,8 +22,8 @@ class DefaultBeeControl implements BeeControl {
     final DefaultBeeControl parent;
     final CommandExecutor commandExecutor;
     final DefaultBeeMonitor monitor;
-    Speed defaultSpeed;
-    RotationalSpeed defaultRotationalSpeed;
+    Speed speed;
+    RotationalSpeed rotationalSpeed;
 
     volatile boolean closed = false;
 
@@ -32,43 +32,43 @@ class DefaultBeeControl implements BeeControl {
     CommandHandlerFactory commandHandlerFactory;
 
     DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor,
-            Speed defaultSpeed, RotationalSpeed defaultRotationalSpeed, DefaultBeeControl parent) {
+            Speed speed, RotationalSpeed rotationalSpeed, DefaultBeeControl parent) {
         this.commandExecutor = commandExecutor;
         this.monitor = monitor;
-        this.defaultSpeed = defaultSpeed;
-        this.defaultRotationalSpeed = defaultRotationalSpeed;
+        this.speed = speed;
+        this.rotationalSpeed = rotationalSpeed;
         this.parent = parent;
     }
 
-    DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor, Speed defaultSpeed, RotationalSpeed defaultRotationalSpeed) {
-        this(commandExecutor, monitor, defaultSpeed, defaultRotationalSpeed, null);
+    DefaultBeeControl(CommandExecutor commandExecutor, DefaultBeeMonitor monitor, Speed speed, RotationalSpeed rotationalSpeed) {
+        this(commandExecutor, monitor, speed, rotationalSpeed, null);
     }
 
     @Override
-    public BeeControl defaultSpeed(Speed speed) {
+    public BeeControl speed(Speed speed) {
         checkControl();
         DefaultBeeControl control = createChildControl();
-        control.defaultSpeed = speed;
+        control.speed = speed;
         return control;
 
     }
 
     @Override
-    public Speed getDefaultSpeed() {
-        return defaultSpeed;
+    public Speed getSpeed() {
+        return speed;
     }
 
     @Override
-    public BeeControl defaultRotationalSpeed(RotationalSpeed rotationalSpeed) {
+    public BeeControl rotationalSpeed(RotationalSpeed rotationalSpeed) {
         checkControl();
         DefaultBeeControl control = createChildControl();
-        control.defaultRotationalSpeed = rotationalSpeed;
+        control.rotationalSpeed = rotationalSpeed;
         return control;
     }
 
     @Override
-    public RotationalSpeed getDefaultRotationalSpeed() {
-        return defaultRotationalSpeed;
+    public RotationalSpeed getRotationalSpeed() {
+        return rotationalSpeed;
     }
 
     @Override
@@ -127,10 +127,8 @@ class DefaultBeeControl implements BeeControl {
 
     @Override
     public CommandResult execute(Command command) {
-        checkControl();
-
-        command.init(commandExecutor.newCommandNumber());
-
+        checkControl();              
+        command.init(commandExecutor.newCommandNumber(), this);
         List<CommandHandler> handlers = startHandlers(command);
         postExecute(command);
         CommandResult result = commandExecutor.execute(command);
@@ -190,7 +188,7 @@ class DefaultBeeControl implements BeeControl {
     }
 
     private DefaultBeeControl createChildControl() {
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, defaultSpeed, defaultRotationalSpeed, this);
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, speed, rotationalSpeed, this);
         childs.add(control);
         return control;
     }

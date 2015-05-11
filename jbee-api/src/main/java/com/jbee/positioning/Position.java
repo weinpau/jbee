@@ -94,7 +94,7 @@ public class Position {
     }
 
     public Distance distance(Position position) {
-        return Distance.ofMilimeters((int) (1000 * sqrt(pow(x - position.x, 2) + pow(y - position.y, 2) + pow(z - position.z, 2))));
+        return Distance.ofMeters(sqrt(pow(x - position.x, 2) + pow(y - position.y, 2) + pow(z - position.z, 2)));
     }
 
     @Override

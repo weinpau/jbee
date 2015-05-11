@@ -12,62 +12,73 @@ public final class Distance implements Comparable<Distance> {
 
     public static final Distance ZERO = new Distance(0);
 
-    private final int mm;
+    private final double meters;
 
     private Distance() {
         this(0);
     }
 
-    private Distance(int mm) {
-        this.mm = mm;
+    private Distance(double meters) {
+        this.meters = meters;
+
     }
 
-    public int toMilimeters() {
-        return mm;
+    public double toMillimeters() {
+        return meters * 1000d;
     }
 
     public double toCentimeters() {
-        return mm / 10d;
+        return meters * 100d;
     }
 
     public double toMeters() {
-        return mm / 1000d;
+        return meters;
     }
 
     public Distance add(Distance distance) {
-        return new Distance(StrictMath.addExact(mm, distance.mm));
+        return new Distance(meters + distance.meters);
+    }
+
+    public Distance sub(Distance distance) {
+        return add(distance.multiply(-1));
+    }
+
+    public Distance multiply(double factor) {
+        if (!Double.isFinite(factor)) {
+            throw new IllegalArgumentException("The factor must be a finite number.");
+        }
+        return ofMeters(meters * factor);
     }
 
     public Duration divide(Speed speed) {
-        double seconds = toMeters() / speed.mps();
-        long millis = (long) seconds * 1000;
-        long nanos = (long) ((seconds - Math.floor(seconds)) * 1000_000_000L);
-        return Duration.ofMillis(millis).plusNanos(nanos);
-
+        double seconds = meters / speed.mps();
+        long ms = (long) seconds * 1000;
+        long ns = (long) ((seconds - Math.floor(seconds)) * 1000_000_000L);
+        return Duration.ofMillis(ms).plusNanos(ns);
     }
 
     public boolean lessThan(Distance distance) {
-        return mm < distance.mm;
+        return compareTo(distance) == -1;
     }
 
     public boolean greaterThan(Distance distance) {
-        return mm > distance.mm;
+        return compareTo(distance) == 1;
     }
 
     public boolean isZero() {
-        return mm == 0;
+        return meters == 0;
     }
 
-    public static Distance ofMilimeters(int milimeters) {
-        return new Distance(milimeters);
+    public static Distance ofMeters(double meters) {
+        return new Distance(meters);
     }
 
-    public static Distance ofCentimeters(int centimeters) {
-        return new Distance(StrictMath.multiplyExact(centimeters, 10));
+    public static Distance ofCentimeters(double centimeters) {
+        return new Distance(centimeters / 100d);
     }
 
-    public static Distance ofMeters(int meters) {
-        return new Distance(StrictMath.multiplyExact(meters, 1000));
+    public static Distance ofMillimeters(double millimeters) {
+        return new Distance(millimeters / 1000d);
     }
 
     @Override
@@ -75,7 +86,7 @@ public final class Distance implements Comparable<Distance> {
         if (o == null) {
             return 0;
         }
-        return Integer.compare(mm, o.mm);
+        return Double.compare(meters, o.meters);
     }
 
     @Override
@@ -87,8 +98,8 @@ public final class Distance implements Comparable<Distance> {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 17 * hash + this.mm;
+        int hash = 7;
+        hash = 53 * hash + (int) (Double.doubleToLongBits(this.meters) ^ (Double.doubleToLongBits(this.meters) >>> 32));
         return hash;
     }
 
@@ -101,7 +112,7 @@ public final class Distance implements Comparable<Distance> {
             return false;
         }
         final Distance other = (Distance) obj;
-        return this.mm == other.mm;
+        return Double.doubleToLongBits(this.meters) == Double.doubleToLongBits(other.meters);
     }
 
 }

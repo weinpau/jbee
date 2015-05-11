@@ -5,8 +5,6 @@ import com.jbee.RotationDirection;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
-import com.jbee.units.RotationalSpeed;
-import com.jbee.units.Speed;
 import java.time.Duration;
 
 /**
@@ -34,43 +32,44 @@ public class Commands {
         return new HoverCommand(duration);
     }
 
-    public static Command rotate(Angle angle, RotationDirection rotationDirection, RotationalSpeed speed) {
-        return new RotationCommand(angle, rotationDirection, speed, false);
+    public static FlyCommandBuilder.RotationalSpeedStep rotate(Angle angle, RotationDirection rotationDirection) {
+        return new FlyCommandBuilder().rotate(angle, rotationDirection);
     }
 
-    public static Command rotateTo(Angle angle, RotationDirection rotationDirection, RotationalSpeed speed) {
-        return new RotationCommand(angle, rotationDirection, speed, true);
+    public static FlyCommandBuilder.RotationalSpeedStep rotateTo(Angle angle, RotationDirection rotationDirection) {
+        return new FlyCommandBuilder().rotateTo(angle, rotationDirection);
     }
 
-    public static Command flyTo(Position position, Speed velocity) {
-        return new FlyToCommand(position, velocity);
+    public static FlyCommandBuilder.SpeedStep flyTo(Position position) {
+        return new FlyCommandBuilder().flyTo(position);
     }
 
-    public static Command fly(Direction direction, Distance distance, Speed velocity) {
-        return new FlyCommand(direction, distance, velocity);
+    public static FlyCommandBuilder.RelativePositionStep fly(Direction direction, Distance distance) {
+        return new FlyCommandBuilder().fly(direction, distance);
     }
 
-    public static Command forward(Distance distance, Speed velocity) {
-        return fly(Direction.FORWARD, distance, velocity);
+    public static FlyCommandBuilder.RelativePositionStep forward(Distance distance) {
+        return new FlyCommandBuilder().forward(distance);
     }
 
-    public static Command right(Distance distance, Speed velocity) {
-        return fly(Direction.RIGHT, distance, velocity);
+    public static FlyCommandBuilder.RelativePositionStep right(Distance distance) {
+        return new FlyCommandBuilder().right(distance);
     }
 
-    public static Command left(Distance distance, Speed velocity) {
-        return fly(Direction.LEFT, distance, velocity);
+    public static FlyCommandBuilder.RelativePositionStep left(Distance distance) {
+        return new FlyCommandBuilder().left(distance);
     }
 
-    public static Command backward(Distance distance, Speed velocity) {
-        return fly(Direction.BACKWARD, distance, velocity);
+    public static FlyCommandBuilder.RelativePositionStep backward(Distance distance) {
+        return new FlyCommandBuilder().backward(distance);
     }
 
-    public static Command up(Distance distance, Speed velocity) {
-        return fly(Direction.UP, distance, velocity);
+    public static FlyCommandBuilder.RelativePositionStep up(Distance distance) {
+        return new FlyCommandBuilder().up(distance);
     }
 
-    public static Command down(Distance distance, Speed velocity) {
-        return fly(Direction.DOWN, distance, velocity);
+    public static FlyCommandBuilder.RelativePositionStep down(Distance distance) {
+        return new FlyCommandBuilder().down(distance);
     }
+
 }

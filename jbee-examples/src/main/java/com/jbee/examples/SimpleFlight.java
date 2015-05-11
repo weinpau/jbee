@@ -5,6 +5,7 @@ import com.jbee.BeeBootstrapException;
 import com.jbee.BeeContext;
 import com.jbee.BeeControl;
 import com.jbee.RotationDirection;
+import com.jbee.commands.Commands;
 import com.jbee.device.simulation.Simulation;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
@@ -23,17 +24,22 @@ public class SimpleFlight {
         Bee bee = BeeContext.of(new Simulation()).bootstrap();
 
         BeeControl beeControl = bee.control().
-                defaultSpeed(Speed.mps(2)).
+                speed(Speed.mps(2)).
                 onCanceled(c -> System.out.println("command " + c.getCommandNumber() + " canceled")).
                 onPositionChanged((c, p) -> {
                     System.out.println("command " + c.getCommandNumber() + ": " + p);
                 },
-                Distance.ofCentimeters(50));
+                Distance.ofCentimeters(10));
 
         beeControl.takeOff();
-        
-        beeControl.up(Distance.ofMeters(5));
-        beeControl.rotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE, RotationalSpeed.rpm(.3));
+
+        beeControl.execute(Commands.
+                forward(Distance.ofMeters(5)).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                build());
+        beeControl.forward(Distance.ofMeters(5));
+
+        beeControl.rotate(Angle.ofDegrees(90), RotationDirection.COUNTERCLOCKWISE);
         beeControl.forward(Distance.ofMeters(2));
         beeControl.onAction(c -> beeControl.cancel(), Duration.ofSeconds(1)).hover(Duration.ofSeconds(10));
         beeControl.land();

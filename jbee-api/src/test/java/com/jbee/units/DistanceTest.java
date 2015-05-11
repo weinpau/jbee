@@ -9,29 +9,37 @@ import static org.junit.Assert.*;
  */
 public class DistanceTest {
 
+    static final double EPSILON = 0;
+
     @Test
     public void testToMilimeters() {
-        assertEquals(10, Distance.ofMilimeters(10).toMilimeters());
-        assertEquals(100, Distance.ofCentimeters(10).toMilimeters());
-        assertEquals(1000, Distance.ofMeters(1).toMilimeters());
+        assertEquals(10, Distance.ofMeters(0.01).toMillimeters(), EPSILON);
+        assertEquals(100, Distance.ofMeters(.1).toMillimeters(), EPSILON);
+        assertEquals(1000, Distance.ofMeters(1).toMillimeters(), EPSILON);
+        assertEquals(-1000, Distance.ofMeters(-1).toMillimeters(), EPSILON);
+        assertEquals(0, Distance.ofMeters(0).toMillimeters(), EPSILON);
     }
 
     @Test
     public void testToCentimeters() {
-        assertEquals(1, Distance.ofMilimeters(10).toCentimeters(), 0.0);
-        assertEquals(10, Distance.ofCentimeters(10).toCentimeters(), 0.0);
-        assertEquals(100, Distance.ofMeters(1).toCentimeters(), 0.0);
+        assertEquals(1000, Distance.ofMeters(10).toCentimeters(), EPSILON);
+        assertEquals(100, Distance.ofMeters(1).toCentimeters(), EPSILON);
+        assertEquals(10, Distance.ofMeters(.1).toCentimeters(), EPSILON);
+        assertEquals(-10, Distance.ofMeters(-.1).toCentimeters(), EPSILON);
+        assertEquals(0, Distance.ofMeters(0).toCentimeters(), EPSILON);
     }
 
     @Test
     public void testToMeters() {
-        assertEquals(0.01, Distance.ofMilimeters(10).toMeters(), 0.0001);
-        assertEquals(0.1, Distance.ofCentimeters(10).toMeters(), 0.0001);
-        assertEquals(1, Distance.ofMeters(1).toMeters(), 0.0);
+        assertEquals(10, Distance.ofMeters(10).toMeters(), EPSILON);
+        assertEquals(1, Distance.ofMeters(1).toMeters(), EPSILON);
+        assertEquals(.1, Distance.ofMeters(.1).toMeters(), EPSILON);
+        assertEquals(-.1, Distance.ofMeters(-.1).toMeters(), EPSILON);
+        assertEquals(0, Distance.ofMeters(0).toMeters(), EPSILON);
     }
 
     @Test
     public void testAdd() {
-        assertEquals(150, Distance.ofMeters(1).add(Distance.ofCentimeters(50)).toCentimeters(), 0.0);
+        assertEquals(1.2, Distance.ofMeters(1).add(Distance.ofMeters(.2)).toMeters(), EPSILON);
     }
 }

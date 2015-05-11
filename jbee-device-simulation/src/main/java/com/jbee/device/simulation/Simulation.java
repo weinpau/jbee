@@ -33,9 +33,9 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     Speed defaultSpeed = Speed.mps(1);
     Speed maxSpeed = Speed.mps(10);
-    RotationalSpeed defaultRotationalSpeed = RotationalSpeed.rps(.25);
+    RotationalSpeed defaultRotationalSpeed = RotationalSpeed.rps(1);
     RotationalSpeed maxRotationalSpeed = RotationalSpeed.rps(5);
-    Distance takeOffHeight = Distance.ofMeters(2);
+    Distance takeOffAltitude = Distance.ofMeters(2);
     BatteryState batteryState = new BatteryState(.99, false);
     ControlState controlState = ControlState.DISCONNECTED;
     StateMachine stateMachine;
@@ -48,11 +48,10 @@ public class Simulation extends BeeModule implements TargetDevice {
     TimerTask stateTimerTask = new TimerTask() {
         @Override
         public void run() {
-            long time = System.currentTimeMillis();
-            SimulationStep step = stateMachine.getCurrentStep();
 
-            velocityBus.publish(step.simulateVelocity(time));
-            principalAxesBus.publish(new PrincipalAxes(step.simulateYAW(time), Angle.ZERO, Angle.ZERO));
+            State state = stateMachine.getCurrentState();
+            velocityBus.publish(state.getVelocity());
+            principalAxesBus.publish(new PrincipalAxes(state.getYAW(), Angle.ZERO, Angle.ZERO));
         }
     };
 
@@ -102,7 +101,7 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     @Override
     public void bootstrap() throws BeeBootstrapException {
-        stateMachine = new StateMachine(defaultSpeed, takeOffHeight);
+        stateMachine = new StateMachine(defaultSpeed, takeOffAltitude);
         controlState = ControlState.READY_FOR_TAKE_OFF;
         stateListener.scheduleAtFixedRate(stateTimerTask, 0,
                 transmissionRate.toCycleDuration().toMillis());
@@ -133,12 +132,12 @@ public class Simulation extends BeeModule implements TargetDevice {
         this.defaultRotationalSpeed = defaultRotationalSpeed;
     }
 
-    public Distance getTakeOffHeight() {
-        return takeOffHeight;
+    public Distance getTakeOffAltitude() {
+        return takeOffAltitude;
     }
 
-    public void setTakeOffHeight(Distance takeOffHeight) {
-        this.takeOffHeight = takeOffHeight;
+    public void setTakeOffAltitude(Distance takeOffAltitude) {
+        this.takeOffAltitude = takeOffAltitude;
     }
 
     public void setBatteryState(BatteryState batteryState) {

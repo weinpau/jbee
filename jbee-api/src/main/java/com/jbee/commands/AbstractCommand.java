@@ -1,5 +1,7 @@
 package com.jbee.commands;
 
+import com.jbee.BeeControl;
+
 /**
  *
  * @author weinpau
@@ -9,7 +11,7 @@ public class AbstractCommand implements Command {
     private int commandNumber;
 
     @Override
-    public void init(int commandNumber) {
+    public void init(int commandNumber, BeeControl executiveControl) {
         this.commandNumber = commandNumber;
     }
 

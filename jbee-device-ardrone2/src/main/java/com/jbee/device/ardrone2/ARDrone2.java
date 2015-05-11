@@ -84,7 +84,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
                             Angle.ofDegrees(demo.getRoll()),
                             Angle.ofDegrees(demo.getPitch())));
 
-                    altitudeBus.publish(Distance.ofMilimeters(demo.getAltitude()));
+                    altitudeBus.publish(Distance.ofMillimeters(demo.getAltitude()));
 
                     batteryState = new BatteryState(demo.getBatteryPercentage() / 100d, n.getState().isBatteryTooLow());
 

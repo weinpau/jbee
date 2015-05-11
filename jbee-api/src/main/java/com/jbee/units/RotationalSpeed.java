@@ -33,6 +33,10 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
         return AngularSpeed.ofRotationalSpeed(this);
     }
 
+    public boolean isZero() {
+        return rpm == 0;
+    }
+
     @Override
     public String toString() {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);

@@ -1,5 +1,7 @@
 package com.jbee.units;
 
+import java.time.Duration;
+
 /**
  *
  * @author weinpau
@@ -44,6 +46,11 @@ public final class Speed implements Comparable<Speed> {
         return Speed.mps(mps * speed.mps);
     }
 
+    public Distance multiply(Duration duration) {
+        double meters = mps * duration.getSeconds() + mps * duration.getNano() / 1000_000_000d;
+        return Distance.ofMeters(meters);
+    }
+
     public Speed add(Speed speed) {
         return Speed.mps(mps + speed.mps);
     }
@@ -54,6 +61,10 @@ public final class Speed implements Comparable<Speed> {
 
     public Speed abs() {
         return Speed.mps(Math.abs(mps));
+    }
+
+    public boolean isZero() {
+        return mps == 0;
     }
 
     public static Speed mps(double mps) {
