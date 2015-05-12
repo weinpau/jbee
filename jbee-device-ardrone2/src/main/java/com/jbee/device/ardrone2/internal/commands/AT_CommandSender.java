@@ -1,6 +1,5 @@
-package com.jbee.device.ardrone2;
+package com.jbee.device.ardrone2.internal.commands;
 
-import com.jbee.device.ardrone2.internal.commands.AT_Command;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -14,7 +13,7 @@ import java.util.logging.Logger;
  *
  * @author weinpau
  */
-class CommandSender extends Thread {
+public class AT_CommandSender extends Thread {
 
     BlockingQueue<AT_Command> commandQueue = new LinkedBlockingDeque<>();
 
@@ -26,7 +25,7 @@ class CommandSender extends Thread {
 
     boolean done;
 
-    public CommandSender(InetAddress inetAddress, int port) {
+    public AT_CommandSender(InetAddress inetAddress, int port) {
         setName("CommandSender");
         this.inetAddress = inetAddress;
         this.port = port;
@@ -67,7 +66,7 @@ class CommandSender extends Thread {
                 DatagramPacket p = new DatagramPacket(data, data.length, inetAddress, port);
                 socket.send(p);
             } catch (IOException ex) {
-                Logger.getLogger(CommandSender.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AT_CommandSender.class.getName()).log(Level.SEVERE, null, ex);
             } catch (InterruptedException ex) {
             }
 

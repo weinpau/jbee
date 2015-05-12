@@ -1,10 +1,13 @@
 package com.jbee.device.ardrone2;
 
+import com.jbee.device.ardrone2.internal.commands.AT_CommandSender;
+import com.jbee.device.ardrone2.internal.navdata.NavDataClient;
 import com.jbee.BatteryState;
 import com.jbee.BeeBootstrapException;
 import com.jbee.BeeModule;
 import com.jbee.BusRegistry;
 import com.jbee.ControlState;
+import com.jbee.ControlStateMachine;
 import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
 import com.jbee.buses.AltitudeBus;
@@ -18,9 +21,13 @@ import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
 import com.jbee.units.Speed;
 import com.jbee.Velocity;
+import com.jbee.buses.PositionBus;
+import com.jbee.device.ardrone2.internal.CommandDispatcher;
 import com.jbee.units.RotationalSpeed;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,10 +44,12 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     VelocityBus velocityBus = new VelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
 
-    CommandSender commandSender;
+    AT_CommandSender commandSender;
     NavDataClient navdataClient;
+    CommandDispatcher commandDispatcher;
 
-    volatile ControlState controlState = ControlState.DISCONNECTED;
+    ControlStateMachine controlStateMachine = ControlStateMachine.init(ControlState.DISCONNECTED);
+
     volatile BatteryState batteryState = new BatteryState(.99, false);
 
     int timeout = 1000;
@@ -62,46 +71,64 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
 
     @Override
     public RunnableFuture<CommandResult> execute(Command command) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new FutureTask<>(() -> {
+            return commandDispatcher.dispatch(command);
+        });
+
     }
 
     @Override
-    public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {        
-        if (controlState != ControlState.DISCONNECTED) {
-            throw new RuntimeException("Drone is not disconnected");
+    public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
+        if (controlStateMachine.getControlState() != ControlState.DISCONNECTED) {
+            throw new RuntimeException("Drone is already connected.");
         }
 
+        busRegistry.get(PositionBus.class).
+                orElseThrow(() -> new BeeBootstrapException("A position bus is missing."));
+
         try {
-            navdataClient = new NavDataClient(InetAddress.getByName(host), navdataPort, timeout);
-            navdataClient.connect();
-            navdataClient.onNavDataReceived(n -> {
+            initNavClient();
+            initCommandSender();
+            initCommandDispatcher();
 
-                Demo demo = n.getOption(Demo.class);
-                if (demo != null) {
-                    handleVelocityBus(demo);
-
-                    principalAxesBus.publish(new PrincipalAxes(
-                            Angle.ofDegrees(demo.getYaw()),
-                            Angle.ofDegrees(demo.getRoll()),
-                            Angle.ofDegrees(demo.getPitch())));
-
-                    altitudeBus.publish(Distance.ofMillimeters(demo.getAltitude()));
-
-                    batteryState = new BatteryState(demo.getBatteryPercentage() / 100d, n.getState().isBatteryTooLow());
-
-                }
-
-            });
-
-            commandSender = new CommandSender(InetAddress.getByName(host), controlPort);
-            commandSender.connect();
-
-            controlState = ControlState.READY_FOR_TAKE_OFF;
+            controlStateMachine.changeState(ControlState.READY_FOR_TAKE_OFF);
 
         } catch (IOException ex) {
             Logger.getLogger(ARDrone2.class.getName()).log(Level.SEVERE, null, ex);
             throw new BeeBootstrapException(ex);
         }
+    }
+
+    void initCommandDispatcher() {
+        commandDispatcher = new CommandDispatcher(commandSender, navdataClient, controlStateMachine);
+    }
+
+    void initCommandSender() throws IOException, UnknownHostException {
+        commandSender = new AT_CommandSender(InetAddress.getByName(host), controlPort);
+        commandSender.connect();
+    }
+
+    void initNavClient() throws UnknownHostException, IOException {
+        navdataClient = new NavDataClient(InetAddress.getByName(host), navdataPort, timeout);
+        navdataClient.connect();
+        navdataClient.onNavDataReceived("main", n -> {
+
+            Demo demo = n.getOption(Demo.class);
+            if (demo != null) {
+                handleVelocityBus(demo);
+
+                principalAxesBus.publish(new PrincipalAxes(
+                        Angle.ofDegrees(demo.getYaw()),
+                        Angle.ofDegrees(demo.getRoll()),
+                        Angle.ofDegrees(demo.getPitch())));
+
+                altitudeBus.publish(Distance.ofMillimeters(demo.getAltitude()));
+
+                batteryState = new BatteryState(demo.getBatteryPercentage() / 100d, n.getState().isBatteryTooLow());
+
+            }
+
+        });
     }
 
     void handleVelocityBus(Demo demo) {
@@ -118,17 +145,17 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
 
     @Override
     public void disconnect() throws IOException {
-        if (controlState != ControlState.READY_FOR_TAKE_OFF) {
+        if (!controlStateMachine.changeState(ControlState.DISCONNECTED)) {
             throw new RuntimeException("Drone is not connected");
         }
         navdataClient.disconnect();
         commandSender.disconnect();
-        controlState = ControlState.DISCONNECTED;
+
     }
 
     @Override
     public ControlState getControlState() {
-        return controlState;
+        return controlStateMachine.getControlState();
     }
 
     @Override

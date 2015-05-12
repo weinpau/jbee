@@ -9,8 +9,6 @@ import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
-import com.jbee.commands.LandCommand;
-import com.jbee.commands.TakeOffCommand;
 import com.jbee.buses.VelocityBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.units.Angle;
@@ -18,6 +16,9 @@ import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
 import com.jbee.units.RotationalSpeed;
 import com.jbee.units.Speed;
+import com.jbee.ControlStateMachine;
+import com.jbee.commands.LandCommand;
+import com.jbee.commands.TakeOffCommand;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,13 +39,15 @@ public class Simulation extends BeeModule implements TargetDevice {
     RotationalSpeed maxRotationalSpeed = RotationalSpeed.rps(5);
     Distance takeOffAltitude = Distance.ofMeters(2);
     BatteryState batteryState = new BatteryState(.99, false);
-    ControlState controlState = ControlState.DISCONNECTED;
+
     CommandDispatcher dispatcher;
 
     VelocityBus velocityBus = new VelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
 
     Timer stateListener = new Timer("simulation-state-listener", true);
+
+    ControlStateMachine controlStateMachine = ControlStateMachine.init(ControlState.DISCONNECTED);
 
     TimerTask stateTimerTask = new TimerTask() {
         @Override
@@ -71,28 +74,26 @@ public class Simulation extends BeeModule implements TargetDevice {
 
         return new FutureTask<>(() -> {
             if (command instanceof TakeOffCommand) {
-
-                if (controlState != ControlState.READY_FOR_TAKE_OFF) {
+                if (!controlStateMachine.changeState(ControlState.TAKING_OFF)) {
                     return CommandResult.NOT_EXECUTED;
                 }
-                controlState = ControlState.TAKING_OFF;
             } else if (command instanceof LandCommand) {
-
-                if (controlState != ControlState.FLYING) {
+                if (!controlStateMachine.changeState(ControlState.LANDING)) {
                     return CommandResult.NOT_EXECUTED;
                 }
-
-                controlState = ControlState.LANDING;
             } else {
-                controlState = ControlState.FLYING;
+                if (!controlStateMachine.changeState(ControlState.FLYING)) {
+                    return CommandResult.NOT_EXECUTED;
+                }
             }
 
             CommandResult result = dispatcher.execute(command);
+
             if (command instanceof LandCommand) {
-                controlState = ControlState.READY_FOR_TAKE_OFF;
+                controlStateMachine.changeState(ControlState.READY_FOR_TAKE_OFF);
             }
             if (command instanceof TakeOffCommand) {
-                controlState = ControlState.FLYING;
+                controlStateMachine.changeState(ControlState.FLYING);
             }
             return result;
 
@@ -102,8 +103,12 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     @Override
     public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
+        if (controlStateMachine.getControlState() != ControlState.DISCONNECTED) {
+            throw new RuntimeException("Simulation is already connected.");
+        }
+
         dispatcher = new CommandDispatcher(defaultSpeed, takeOffAltitude);
-        controlState = ControlState.READY_FOR_TAKE_OFF;
+        controlStateMachine.changeState(ControlState.READY_FOR_TAKE_OFF);
         stateListener.scheduleAtFixedRate(stateTimerTask, 0,
                 transmissionRate.toCycleDuration().toMillis());
 
@@ -111,7 +116,9 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     @Override
     public void disconnect() throws IOException {
-        controlState = ControlState.DISCONNECTED;
+        if (!controlStateMachine.changeState(ControlState.DISCONNECTED)) {
+            throw new RuntimeException("Simulation is not connected");
+        }
         stateTimerTask.cancel();
     }
 
@@ -152,7 +159,7 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     @Override
     public ControlState getControlState() {
-        return controlState;
+        return controlStateMachine.getControlState();
     }
 
     @Override

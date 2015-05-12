@@ -1,7 +1,5 @@
-package com.jbee.device.ardrone2;
+package com.jbee.device.ardrone2.internal.navdata;
 
-import com.jbee.device.ardrone2.internal.navdata.NavData;
-import com.jbee.device.ardrone2.internal.navdata.NavDataParser;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -11,9 +9,9 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,11 +20,11 @@ import java.util.logging.Logger;
  *
  * @author weinpau
  */
-class NavDataClient extends Thread {
+public class NavDataClient extends Thread {
 
     static final byte[] TRIGGER_BYTES = {0x01, 0x00, 0x00, 0x00};
 
-    List<Consumer<NavData>> navDataConsumers = new CopyOnWriteArrayList<>();
+    Map<String, Consumer<NavData>> navDataConsumers = new ConcurrentHashMap<>();
 
     DatagramChannel channel;
     Selector selector;
@@ -97,12 +95,16 @@ class NavDataClient extends Thread {
 
     }
 
-    public void onNavDataReceived(Consumer<NavData> receiver) {
-        navDataConsumers.add(receiver);
+    public void onNavDataReceived(String id, Consumer<NavData> receiver) {
+        navDataConsumers.put(id, receiver);
+    }
+
+    public void removeNavDataReceiver(String id) {
+        navDataConsumers.remove(id);
     }
 
     void newNavDataReceived(NavData navdata) {
-        navDataConsumers.forEach(c -> c.accept(navdata));
+        navDataConsumers.forEach((k, v) -> v.accept(navdata));
     }
 
     int readDataBlock(byte[] buffer) throws IOException {
