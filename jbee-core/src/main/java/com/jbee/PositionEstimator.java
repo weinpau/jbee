@@ -20,10 +20,9 @@ final class PositionEstimator extends PositionBus {
 
     Double altitude;
 
-    BeeContext context;
 
     @Override
-    public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
+    public void bootstrap(TargetDevice device, BusRegistry busRegistry) throws BeeBootstrapException {
         busRegistry.get(VelocityBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A translational velocity bus is missing.")).
                 subscripe(v -> {

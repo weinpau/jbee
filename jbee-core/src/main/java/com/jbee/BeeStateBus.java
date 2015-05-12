@@ -15,38 +15,35 @@ class BeeStateBus extends Bus<BeeState> {
     Velocity velocity = Velocity.ZERO;
     PrincipalAxes principalAxes = PrincipalAxes.ZERO;
 
-    TargetDevice device;
-
-    BeeStateBus(TargetDevice device) {
+    BeeStateBus() {
         super(Priority.HIGH);
-        this.device = device;
     }
 
     @Override
-    public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
+    public void bootstrap(TargetDevice device, BusRegistry busRegistry) throws BeeBootstrapException {
         busRegistry.get(PrincipalAxesBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A principal axes bus is missing.")).
                 subscripe(pa -> {
                     principalAxes = pa;
-                    publish(createBeeState());
+                    publish(createBeeState(device));
                 });
 
         busRegistry.get(VelocityBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A velocity bus is missing.")).
                 subscripe(v -> {
                     velocity = v;
-                    publish(createBeeState());
+                    publish(createBeeState(device));
                 });
 
         busRegistry.get(PositionBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A position bus is missing.")).
                 subscripe(p -> {
                     position = p;
-                    publish(createBeeState());
+                    publish(createBeeState(device));
                 });
     }
 
-    final BeeState createBeeState() {
+    final BeeState createBeeState(TargetDevice device) {
         return new BeeState(System.currentTimeMillis(), position, velocity, principalAxes,
                 device.getBatteryState(),
                 device.getControlState());

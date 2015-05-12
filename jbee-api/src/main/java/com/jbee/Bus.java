@@ -27,7 +27,7 @@ public abstract class Bus<T> implements Comparable<Bus> {
         subscribers.add(subscriber);
     }
 
-    public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
+    public void bootstrap(TargetDevice targetDevice, BusRegistry busRegistry) throws BeeBootstrapException {
     }
 
     public Priority getPriority() {

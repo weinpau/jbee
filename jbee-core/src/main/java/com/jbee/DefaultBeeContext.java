@@ -21,7 +21,7 @@ class DefaultBeeContext implements BeeContext {
     DefaultBeeContext(TargetDevice device) {
         this.device = device;
         register(new PositionEstimator());
-        register(new BeeStateBus(device));
+        register(new BeeStateBus());
     }
 
     @Override
@@ -37,7 +37,7 @@ class DefaultBeeContext implements BeeContext {
 
     void bootstrapBuses() throws BeeBootstrapException {
         for (Bus b : busRegistry.getAll()) {
-            b.bootstrap(busRegistry);
+            b.bootstrap(device, busRegistry);
         }
     }
 
