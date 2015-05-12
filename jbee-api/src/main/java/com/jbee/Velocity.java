@@ -35,7 +35,6 @@ public class Velocity {
         return z;
     }
 
-  
     public Velocity withX(Speed x) {
         return new Velocity(x, y, z);
     }
@@ -48,12 +47,24 @@ public class Velocity {
         return new Velocity(x, y, z);
     }
 
+    public Velocity add(Velocity velocity) {
+        return new Velocity(x.add(velocity.x), y.add(velocity.y), z.add(velocity.z));
+    }
+
+    public Velocity sub(Velocity velocity) {
+        return add(velocity.multiply(-1));
+    }
+
     public Velocity multiply(double factor) {
         return new Velocity(x.multiply(factor), y.multiply(factor), z.multiply(factor));
     }
 
     public Speed totalSpeed() {
         return Speed.mps(sqrt(pow(x.mps(), 2) + pow(y.mps(), 2) + pow(z.mps(), 2)));
+    }
+
+    public boolean isZero() {
+        return x.isZero() && y.isZero() && z.isZero();
     }
 
     @Override
