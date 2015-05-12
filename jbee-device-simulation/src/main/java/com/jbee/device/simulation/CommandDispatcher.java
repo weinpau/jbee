@@ -14,7 +14,7 @@ import com.jbee.units.Speed;
  *
  * @author weinpau
  */
-class StateMachine {
+class CommandDispatcher {
 
     volatile State state = State.INITIAL_STATE;
     volatile Command currentCommand;
@@ -23,7 +23,7 @@ class StateMachine {
     Distance takeOffAltitude;
     long startTime = System.currentTimeMillis();
 
-    StateMachine(Speed defaultSpeed, Distance takeOffAltitude) {
+    CommandDispatcher(Speed defaultSpeed, Distance takeOffAltitude) {
         this.defaultSpeed = defaultSpeed;
         this.takeOffAltitude = takeOffAltitude;
     }

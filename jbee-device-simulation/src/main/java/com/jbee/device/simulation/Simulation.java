@@ -39,7 +39,7 @@ public class Simulation extends BeeModule implements TargetDevice {
     Distance takeOffAltitude = Distance.ofMeters(2);
     BatteryState batteryState = new BatteryState(.99, false);
     ControlState controlState = ControlState.DISCONNECTED;
-    StateMachine stateMachine;
+    CommandDispatcher dispatcher;
 
     VelocityBus velocityBus = new VelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
@@ -50,7 +50,7 @@ public class Simulation extends BeeModule implements TargetDevice {
         @Override
         public void run() {
 
-            State state = stateMachine.getCurrentState();
+            State state = dispatcher.getCurrentState();
             velocityBus.publish(state.getVelocity());
             principalAxesBus.publish(new PrincipalAxes(state.getYAW(), Angle.ZERO, Angle.ZERO));
         }
@@ -87,7 +87,7 @@ public class Simulation extends BeeModule implements TargetDevice {
                 controlState = ControlState.FLYING;
             }
 
-            CommandResult result = stateMachine.execute(command);
+            CommandResult result = dispatcher.execute(command);
             if (command instanceof LandCommand) {
                 controlState = ControlState.READY_FOR_TAKE_OFF;
             }
@@ -102,7 +102,7 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     @Override
     public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
-        stateMachine = new StateMachine(defaultSpeed, takeOffAltitude);
+        dispatcher = new CommandDispatcher(defaultSpeed, takeOffAltitude);
         controlState = ControlState.READY_FOR_TAKE_OFF;
         stateListener.scheduleAtFixedRate(stateTimerTask, 0,
                 transmissionRate.toCycleDuration().toMillis());
