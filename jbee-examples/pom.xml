@@ -15,5 +15,10 @@
             <artifactId>jbee-device-simulation</artifactId>
             <version>${project.version}</version>
         </dependency>       
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jbee-device-ardrone2</artifactId>
+            <version>${project.version}</version>
+        </dependency>       
     </dependencies>
 </project>
