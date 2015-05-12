@@ -77,6 +77,12 @@ public class VelocityTest {
         assertEquals(expResult, result);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testMultiply_invalid() {
+        Velocity instance = new Velocity(Speed.mps(1), Speed.mps(2), Speed.mps(3));
+        instance.multiply(Double.NaN);
+    }
+
     @Test
     public void testTotalSpeed() {
         Velocity instance = new Velocity(Speed.mps(0), Speed.mps(3), Speed.mps(4));

@@ -56,6 +56,9 @@ public class Velocity {
     }
 
     public Velocity multiply(double factor) {
+        if (!Double.isFinite(factor)) {
+            throw new IllegalArgumentException("The factor must be a finite number.");
+        }
         return new Velocity(x.multiply(factor), y.multiply(factor), z.multiply(factor));
     }
 
