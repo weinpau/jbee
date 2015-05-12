@@ -18,7 +18,7 @@ public interface TargetDevice {
 
     RunnableFuture<CommandResult> execute(Command command);
 
-    void bootstrap() throws BeeBootstrapException;
+    void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException;
 
     void disconnect() throws IOException;
 

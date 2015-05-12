@@ -3,6 +3,7 @@ package com.jbee.device.simulation;
 import com.jbee.BatteryState;
 import com.jbee.BeeBootstrapException;
 import com.jbee.BeeModule;
+import com.jbee.BusRegistry;
 import com.jbee.ControlState;
 import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
@@ -100,7 +101,7 @@ public class Simulation extends BeeModule implements TargetDevice {
     }
 
     @Override
-    public void bootstrap() throws BeeBootstrapException {
+    public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
         stateMachine = new StateMachine(defaultSpeed, takeOffAltitude);
         controlState = ControlState.READY_FOR_TAKE_OFF;
         stateListener.scheduleAtFixedRate(stateTimerTask, 0,

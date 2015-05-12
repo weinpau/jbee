@@ -3,6 +3,7 @@ package com.jbee.device.ardrone2;
 import com.jbee.BatteryState;
 import com.jbee.BeeBootstrapException;
 import com.jbee.BeeModule;
+import com.jbee.BusRegistry;
 import com.jbee.ControlState;
 import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
@@ -65,7 +66,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     }
 
     @Override
-    public void bootstrap() throws BeeBootstrapException {
+    public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {        
         if (controlState != ControlState.DISCONNECTED) {
             throw new RuntimeException("Drone is not disconnected");
         }

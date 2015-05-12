@@ -14,7 +14,7 @@ final class PositionEstimator extends PositionBus {
     static final long NANOS_PER_SECOND = 1000_000_000L;
 
     Velocity velocity = Velocity.ZERO;
-  
+
     long lastTime;
     double x, y, z;
 
@@ -22,23 +22,16 @@ final class PositionEstimator extends PositionBus {
 
     BeeContext context;
 
-    PositionEstimator() {
-    }
-
-    PositionEstimator(BeeContext context) {
-        this.context = context;
-    }
-
     @Override
-    public void bootstrap() throws BeeBootstrapException {
-        context.getBus(VelocityBus.class).
+    public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
+        busRegistry.get(VelocityBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A translational velocity bus is missing.")).
                 subscripe(v -> {
                     velocity = v;
                     publish(estimatePosition());
                 });
 
-        context.getBus(AltitudeBus.class).
+        busRegistry.get(AltitudeBus.class).
                 ifPresent(b -> b.subscripe(d -> {
                     altitude = d.toMeters();
                     publish(estimatePosition());
@@ -58,7 +51,7 @@ final class PositionEstimator extends PositionBus {
 
         x += dt * vx;
         y += dt * vy;
-        
+
         if (altitude == null) {
             z += dt * vz;
         } else {
