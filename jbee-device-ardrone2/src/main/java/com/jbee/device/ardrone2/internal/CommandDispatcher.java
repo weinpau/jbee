@@ -3,9 +3,11 @@ package com.jbee.device.ardrone2.internal;
 import com.jbee.ControlStateMachine;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import com.jbee.commands.HoverCommand;
 import com.jbee.commands.LandCommand;
 import com.jbee.commands.TakeOffCommand;
 import com.jbee.device.ardrone2.internal.commands.AT_CommandSender;
+import com.jbee.device.ardrone2.internal.controllers.HoverController;
 import com.jbee.device.ardrone2.internal.controllers.LandController;
 import com.jbee.device.ardrone2.internal.controllers.TakeOffController;
 import com.jbee.device.ardrone2.internal.navdata.NavDataClient;
@@ -22,14 +24,13 @@ public class CommandDispatcher {
 
     LandController landController;
     TakeOffController takeOffController;
-    
-
+    HoverController hoverController;
 
     public CommandDispatcher(AT_CommandSender commandSender, NavDataClient navdataClient, ControlStateMachine controlStateMachine) {
 
         takeOffController = new TakeOffController(commandSender, navdataClient, controlStateMachine, commandExecutorService);
         landController = new LandController(commandSender, navdataClient, controlStateMachine, commandExecutorService);
-
+        hoverController = new HoverController(commandSender, controlStateMachine);
     }
 
     public CommandResult dispatch(Command command) {
@@ -37,8 +38,11 @@ public class CommandDispatcher {
         if (command instanceof TakeOffCommand) {
             return takeOffController.execute((TakeOffCommand) command);
         }
-        if (command instanceof LandController) {
+        if (command instanceof LandCommand) {
             return landController.execute((LandCommand) command);
+        }
+        if (command instanceof HoverCommand) {
+            return hoverController.execute((HoverCommand) command);
         }
 
         throw new RuntimeException("unknown command");
