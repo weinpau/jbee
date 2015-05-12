@@ -10,10 +10,10 @@ import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +26,7 @@ class NavDataClient extends Thread {
 
     static final byte[] TRIGGER_BYTES = {0x01, 0x00, 0x00, 0x00};
 
-    List<Consumer<NavData>> navDataConsumers = new ArrayList<>();
+    List<Consumer<NavData>> navDataConsumers = new CopyOnWriteArrayList<>();
 
     DatagramChannel channel;
     Selector selector;
