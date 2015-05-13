@@ -109,6 +109,15 @@ public class Position {
         return Distance.ofMeters(sqrt(pow(x - position.x, 2) + pow(y - position.y, 2) + pow(z - position.z, 2)));
     }
 
+    public LatLon toLatLon(LatLon origin) {
+        return toLatLon(origin, Ellipsoid.WGS84);
+    }
+
+    public LatLon toLatLon(LatLon origin, Ellipsoid ellipsoid) {
+        Position originPosition = CoordinateConverter.geo2utm(origin, ellipsoid);
+        return CoordinateConverter.utm2geo(originPosition.add(this), ellipsoid, origin.getUTMZone(), origin.getHemisphere());
+    }
+
     @Override
     public String toString() {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);

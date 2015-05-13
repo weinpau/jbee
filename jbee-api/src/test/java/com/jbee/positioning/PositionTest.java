@@ -179,6 +179,14 @@ public class PositionTest {
     }
 
     @Test
+    public void testToLatLon_LatLon() {
+        LatLon origin = new LatLon(50, 16);
+        Position instance = new Position(100, 200);
+        assertTrue(instance.toLatLon(origin).toPosition(origin).nearlyEqual(instance, Distance.ofMillimeters(1)));
+    }
+
+    @Test
+    @SuppressWarnings("IncompatibleEquals")
     public void testEquals() {
 
         Position instance = new Position(1, 2);

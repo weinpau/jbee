@@ -46,4 +46,34 @@ public class LatLonTest {
 
     }
 
+    @Test
+    public void testGetHemisphere() {
+
+        assertEquals(Hemisphere.SOUTH, new LatLon(-10, -10).getHemisphere());
+        assertEquals(Hemisphere.SOUTH, new LatLon(-10, 10).getHemisphere());
+        assertEquals(Hemisphere.NORTH, new LatLon(10, -10).getHemisphere());
+        assertEquals(Hemisphere.NORTH, new LatLon(10, 10).getHemisphere());
+
+    }
+
+    @Test
+    public void testGetUTMZone() {
+        assertEquals(33, new LatLon(50, 15).getUTMZone());
+
+    }
+
+    @Test
+    public void testToPosition() {
+        LatLon origin = new LatLon(50, 16);
+        LatLon instance = new LatLon(50, 15);
+        assertTrue(instance.toPosition(origin).toLatLon(origin).nearlyEqual(instance, Distance.ofCentimeters(1)));
+    }
+
+    @Test
+    public void testNearlyEqual() {
+        LatLon instance = new LatLon(50, 16);
+        assertTrue(instance.nearlyEqual(new LatLon(50.000001, 16.000001), Distance.ofMeters(1)));
+        assertFalse(instance.nearlyEqual(new LatLon(50.1, 16.1), Distance.ofMeters(1)));
+    }
+
 }

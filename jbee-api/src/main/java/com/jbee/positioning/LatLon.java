@@ -41,6 +41,46 @@ public class LatLon {
         return Distance.ofMeters(ellipsoidalDistance);
     }
 
+    public Hemisphere getHemisphere() {
+        if (latitude >= 0) {
+            return Hemisphere.NORTH;
+        } else {
+            return Hemisphere.SOUTH;
+        }
+    }
+
+    public int getUTMZone() {
+        double longZone;
+        if (longitude < 0.0) {
+            longZone = ((180.0 + longitude) / 6) + 1;
+        } else {
+            longZone = (longitude / 6) + 31;
+        }
+        return (int) longZone;
+    }
+
+  public Position toPosition(LatLon origin) {
+        return toPosition(origin, Distance.ZERO, Ellipsoid.WGS84);
+    }
+    
+    public Position toPosition(LatLon origin, Ellipsoid ellipsoid) {
+        return toPosition(origin, Distance.ZERO, ellipsoid);
+    }
+    
+     public Position toPosition(LatLon origin, Distance altitude) {
+        return toPosition(origin, altitude, Ellipsoid.WGS84);
+    }
+
+    public Position toPosition(LatLon origin, Distance altitude, Ellipsoid ellipsoid) {
+        Position originPosition = CoordinateConverter.geo2utm(origin, ellipsoid);
+        Position position = CoordinateConverter.geo2utm(this, ellipsoid);
+        return position.sub(originPosition).withZ(altitude.toMeters());
+    }
+
+    public boolean nearlyEqual(LatLon coordinate, Distance epsilon) {
+        return distance(coordinate).lessThan(epsilon);
+    }
+
     @Override
     public String toString() {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
