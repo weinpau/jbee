@@ -16,10 +16,19 @@ public class Position {
     private final double x, y, z;
 
     public Position(double x, double y) {
-        this(x, y, Double.NaN);
+        this(x, y, 0);
     }
 
     public Position(double x, double y, double z) {
+        if (!Double.isFinite(x)) {
+            throw new IllegalArgumentException("The x must be a finite number.");
+        }
+        if (!Double.isFinite(y)) {
+            throw new IllegalArgumentException("The y must be a finite number.");
+        }
+        if (!Double.isFinite(z)) {
+            throw new IllegalArgumentException("The z must be a finite number.");
+        }
         this.x = x;
         this.y = y;
         this.z = z;
@@ -70,10 +79,13 @@ public class Position {
     }
 
     public Position sub(Position position) {
-        return new Position(x - position.x, y - position.y, z - position.z);
+        return add(position.multiply(-1));
     }
 
     public Position multiply(double factor) {
+        if (!Double.isFinite(factor)) {
+            throw new IllegalArgumentException("The factor must be a finite number.");
+        }
         return new Position(x * factor, y * factor, z * factor);
     }
 
