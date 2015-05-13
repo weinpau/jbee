@@ -44,7 +44,7 @@ class DefaultBee implements Bee {
     public void close() {
         try {
             device.disconnect();
-        } catch (IOException iOException) {
+        } catch (IOException ioe) {
         }
         commandExecutor.shutdown();
         control.close();

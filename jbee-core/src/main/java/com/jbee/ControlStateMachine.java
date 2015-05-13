@@ -10,7 +10,6 @@ public class ControlStateMachine {
 
     ControlStateMachine(ControlState controlState) {
         this.controlState = controlState;
-
     }
 
     public ControlState getControlState() {

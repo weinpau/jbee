@@ -127,7 +127,7 @@ class DefaultBeeControl implements BeeControl {
 
     @Override
     public CommandResult execute(Command command) {
-        checkControl();              
+        checkControl();
         command.init(commandExecutor.newCommandNumber(), this);
         List<CommandHandler> handlers = startHandlers(command);
         postExecute(command);
@@ -182,24 +182,6 @@ class DefaultBeeControl implements BeeControl {
         }
     }
 
-    public void close() {
-        childs.forEach(c -> c.close());
-        closed = true;
-    }
-
-    private DefaultBeeControl createChildControl() {
-        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, speed, rotationalSpeed, this);
-        childs.add(control);
-        return control;
-    }
-
-    private List<CommandHandler> startHandlers(Command command) {
-        List<CommandHandler> handlers = new ArrayList<>();
-        createHandlers(command, handlers);
-        handlers.forEach(h -> h.start());
-        return handlers;
-    }
-
     protected void createHandlers(Command command, Collection<CommandHandler> handlers) {
 
         if (commandHandlerFactory != null) {
@@ -210,18 +192,36 @@ class DefaultBeeControl implements BeeControl {
         }
     }
 
-    private void checkControl() {
-        if (closed) {
-            throw new RuntimeException("Illegal call, the control is already closed.");
-        }
-    }
-
     protected DefaultBeeControl root() {
         if (parent == null) {
             return this;
         } else {
             return parent.root();
         }
+    }
+
+    DefaultBeeControl createChildControl() {
+        DefaultBeeControl control = new DefaultBeeControl(commandExecutor, monitor, speed, rotationalSpeed, this);
+        childs.add(control);
+        return control;
+    }
+
+    List<CommandHandler> startHandlers(Command command) {
+        List<CommandHandler> handlers = new ArrayList<>();
+        createHandlers(command, handlers);
+        handlers.forEach(h -> h.start());
+        return handlers;
+    }
+
+    void checkControl() {
+        if (closed) {
+            throw new RuntimeException("Illegal call, the control is already closed.");
+        }
+    }
+
+    void close() {
+        childs.forEach(c -> c.close());
+        closed = true;
     }
 
 }
