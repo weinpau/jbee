@@ -1,5 +1,6 @@
 package com.jbee;
 
+import com.jbee.units.Distance;
 import com.jbee.units.Speed;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -45,6 +46,10 @@ public class Velocity {
 
     public Velocity withZ(Speed z) {
         return new Velocity(x, y, z);
+    }
+
+    public Velocity abs() {
+        return new Velocity(x.abs(), y.abs(), z.abs());
     }
 
     public Velocity add(Velocity velocity) {

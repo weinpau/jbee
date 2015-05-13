@@ -69,6 +69,13 @@ public class VelocityTest {
     }
 
     @Test
+    public void testAbs() {
+        Velocity instance = new Velocity(Speed.mps(1), Speed.mps(-2), Speed.mps(3));
+        Velocity expResult = new Velocity(Speed.mps(1), Speed.mps(2), Speed.mps(3));
+        assertEquals(expResult, instance.abs());
+    }
+
+    @Test
     public void testMultiply() {
 
         Velocity instance = new Velocity(Speed.mps(1), Speed.mps(2), Speed.mps(3));
