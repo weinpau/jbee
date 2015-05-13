@@ -23,7 +23,7 @@ class GeodeticCalculator {
      * @param ellipsoid reference ellipsoid to use
      * @param start starting coordinates
      * @param end ending coordinates
-     * @return
+     * @return geodetic curve
      */
     public static GeodeticCurve calculateGeodeticCurve(Ellipsoid ellipsoid, LatLon start, LatLon end) {
 
