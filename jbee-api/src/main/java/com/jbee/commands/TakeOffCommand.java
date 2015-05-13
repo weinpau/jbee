@@ -6,4 +6,7 @@ package com.jbee.commands;
  */
 public class TakeOffCommand extends AbstractCommand {
 
+    TakeOffCommand() {
+    }
+
 }

@@ -10,7 +10,7 @@ public class HoverCommand extends AbstractCommand {
 
     private final Duration duration;
 
-    public HoverCommand(Duration duration) {
+    HoverCommand(Duration duration) {
         this.duration = duration;
     }
 

@@ -6,5 +6,7 @@ package com.jbee.commands;
  */
 public class LandCommand extends AbstractCommand {
 
-  
+    LandCommand() {
+    }
+
 }
