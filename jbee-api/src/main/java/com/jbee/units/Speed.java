@@ -67,19 +67,8 @@ public final class Speed implements Comparable<Speed> {
         return mps == 0;
     }
 
-    public static Speed mps(double mps) {
-        if (!Double.isFinite(mps)) {
-            throw new IllegalArgumentException("The speed must be a finite number.");
-        }
-        return new Speed(mps);
-    }
-
-    public static Speed kmph(double kmph) {
-        return mps(kmph / kmph2mpsFactor);
-    }
-
-    public static Speed kn(double kn) {
-        return mps(kn / kn2mpsFactor);
+    public boolean isNegative() {
+        return mps < 0;
     }
 
     @Override
@@ -112,6 +101,21 @@ public final class Speed implements Comparable<Speed> {
         }
         final Speed other = (Speed) obj;
         return Double.doubleToLongBits(this.mps) == Double.doubleToLongBits(other.mps);
+    }
+
+    public static Speed mps(double mps) {
+        if (!Double.isFinite(mps)) {
+            throw new IllegalArgumentException("The speed must be a finite number.");
+        }
+        return new Speed(mps);
+    }
+
+    public static Speed kmph(double kmph) {
+        return mps(kmph / kmph2mpsFactor);
+    }
+
+    public static Speed kn(double kn) {
+        return mps(kn / kn2mpsFactor);
     }
 
 }

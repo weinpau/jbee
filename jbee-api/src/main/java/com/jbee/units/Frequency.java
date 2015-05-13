@@ -20,6 +20,10 @@ public class Frequency implements Comparable<Frequency> {
         this.mHz = mHz;
     }
 
+    public Frequency abs() {
+        return new Frequency(Math.abs(mHz));
+    }
+
     public Frequency add(Frequency frequency) {
         return new Frequency(StrictMath.addExact(mHz, frequency.mHz));
     }
@@ -51,6 +55,14 @@ public class Frequency implements Comparable<Frequency> {
         long nanos = ((1000 * NANOS_PER_SECOND / mHz) - millis * 1_000_000L) % NANOS_PER_SECOND;
 
         return Duration.ofMillis(millis).plusNanos(nanos);
+    }
+
+    public boolean isZero() {
+        return mHz == 0;
+    }
+
+    public boolean isNegative() {
+        return mHz < 0;
     }
 
     @Override

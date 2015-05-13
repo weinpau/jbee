@@ -20,7 +20,6 @@ public final class Distance implements Comparable<Distance> {
 
     private Distance(double meters) {
         this.meters = meters;
-
     }
 
     public double toMillimeters() {
@@ -33,6 +32,10 @@ public final class Distance implements Comparable<Distance> {
 
     public double toMeters() {
         return meters;
+    }
+
+    public Distance abs() {
+        return new Distance(Math.abs(meters));
     }
 
     public Distance add(Distance distance) {
@@ -69,15 +72,28 @@ public final class Distance implements Comparable<Distance> {
         return meters == 0;
     }
 
+    public boolean isNegative() {
+        return meters < 0;
+    }
+
     public static Distance ofMeters(double meters) {
+        if (!Double.isFinite(meters)) {
+            throw new IllegalArgumentException("The meters must be a finite number.");
+        }
         return new Distance(meters);
     }
 
     public static Distance ofCentimeters(double centimeters) {
+        if (!Double.isFinite(centimeters)) {
+            throw new IllegalArgumentException("The centimeters must be a finite number.");
+        }
         return new Distance(centimeters / 100d);
     }
 
     public static Distance ofMillimeters(double millimeters) {
+        if (!Double.isFinite(millimeters)) {
+            throw new IllegalArgumentException("The millimeters must be a finite number.");
+        }
         return new Distance(millimeters / 1000d);
     }
 

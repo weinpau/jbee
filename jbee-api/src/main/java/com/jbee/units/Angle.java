@@ -57,6 +57,10 @@ public final class Angle implements Comparable<Angle> {
     public boolean isZero() {
         return radians == 0;
     }
+    
+    public boolean isNegative() {
+        return radians < 0;
+    }
 
     public double toRadians() {
         return radians;

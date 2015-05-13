@@ -37,6 +37,10 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
         return rpm == 0;
     }
 
+    public boolean isNegative() {
+        return rpm < 0;
+    }
+
     @Override
     public String toString() {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
@@ -69,10 +73,16 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
     }
 
     public static RotationalSpeed rps(double rps) {
+        if (!Double.isFinite(rps)) {
+            throw new IllegalArgumentException("The rps must be a finite number.");
+        }
         return new RotationalSpeed(rps / 60);
     }
 
     public static RotationalSpeed rpm(double rpm) {
+        if (!Double.isFinite(rpm)) {
+            throw new IllegalArgumentException("The rpm must be a finite number.");
+        }
         return new RotationalSpeed(rpm);
     }
 

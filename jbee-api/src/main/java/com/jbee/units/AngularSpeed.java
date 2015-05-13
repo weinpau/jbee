@@ -28,6 +28,26 @@ public class AngularSpeed implements Comparable<AngularSpeed> {
         return new AngularSpeed(degreesPerSecond.abs());
     }
 
+    public AngularSpeed add(AngularSpeed angularSpeed) {
+        return new AngularSpeed(degreesPerSecond.add(angularSpeed.degreesPerSecond));
+    }
+
+    public AngularSpeed sub(AngularSpeed angularSpeed) {
+        return add(multiply(-1));
+    }
+
+    public AngularSpeed multiply(double factor) {
+        return new AngularSpeed(degreesPerSecond.multiply(factor));
+    }
+
+    public boolean isZero() {
+        return degreesPerSecond.isZero();
+    }
+
+    public boolean isNegative() {
+        return degreesPerSecond.isNegative();
+    }
+
     @Override
     public int compareTo(AngularSpeed o) {
         return degreesPerSecond.compareTo(o.degreesPerSecond);
