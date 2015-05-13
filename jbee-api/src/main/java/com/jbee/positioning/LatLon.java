@@ -10,8 +10,6 @@ import java.util.Locale;
  */
 public class LatLon {
 
-    static final double EARTH_RADIUS = 6378.137;
-
     private final double latitude;
     private final double longitude;
 
@@ -35,17 +33,7 @@ public class LatLon {
     }
 
     public Distance distance(LatLon coordinate) {
-
-        double dLat = Math.toRadians(coordinate.latitude - latitude);
-        double dLon = Math.toRadians(coordinate.longitude - longitude);
-        double lat1 = Math.toRadians(latitude);
-        double lat2 = Math.toRadians(coordinate.latitude);
-
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return Distance.ofMeters(1000 * EARTH_RADIUS * c);
+        return distance(coordinate, Ellipsoid.WGS84);
     }
 
     public Distance distance(LatLon coordinate, Ellipsoid ellipsoid) {
