@@ -27,18 +27,20 @@ public abstract class AT_Command {
     String encodedParameters() {
         StringBuilder sb = new StringBuilder();
         for (Object p : getParameters()) {
-            sb.append(",").append(encodeParameter(p));
+            if (p != null) {
+                sb.append(",").append(encodeParameter(p));
+            }
         }
 
         return sb.toString();
     }
 
-    String encodeParameter(Object parameter) {
+    static String encodeParameter(Object parameter) {
         if (parameter instanceof Integer) {
-            return parameter.toString();
+            return Integer.toString((int) parameter);
         }
         if (parameter instanceof Float) {
-            return Integer.toString(Float.floatToIntBits((Float) parameter));
+            return Integer.toString(Float.floatToIntBits((float) parameter));
         }
         if (parameter instanceof String) {
             return "\"" + parameter + "\"";
