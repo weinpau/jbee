@@ -13,13 +13,6 @@ public class AT_CONFIG extends AT_Command {
         this.value = parseConfigValue(value);
     }
 
-    final String parseConfigValue(Object value) {
-        if (value instanceof Boolean) {
-            return ((boolean) value) ? "TRUE" : "FALSE";
-        }
-        return value.toString();
-    }
-
     @Override
     public String getId() {
         return "CONFIG";
@@ -28,6 +21,17 @@ public class AT_CONFIG extends AT_Command {
     @Override
     public Object[] getParameters() {
         return new Object[]{name, value};
+    }
+
+    static String parseConfigValue(Object value) {
+        if (value == null) {
+            return "";
+        }
+
+        if (value instanceof Boolean) {
+            return ((boolean) value) ? "TRUE" : "FALSE";
+        }
+        return value.toString();
     }
 
 }
