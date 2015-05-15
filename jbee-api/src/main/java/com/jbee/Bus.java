@@ -1,6 +1,7 @@
 package com.jbee;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
@@ -11,6 +12,8 @@ import java.util.function.Consumer;
  */
 public abstract class Bus<T> implements Comparable<Bus> {
 
+    volatile T lastKnownValue;
+
     Priority priority;
 
     List<Consumer<T>> subscribers = new CopyOnWriteArrayList<>();
@@ -20,11 +23,16 @@ public abstract class Bus<T> implements Comparable<Bus> {
     }
 
     public void publish(T object) {
+        lastKnownValue = object;
         subscribers.forEach(s -> s.accept(object));
     }
 
     public void subscripe(Consumer<T> subscriber) {
         subscribers.add(subscriber);
+    }
+
+    public Optional<T> getLastKnownValue() {
+        return Optional.ofNullable(lastKnownValue);
     }
 
     public void bootstrap(TargetDevice targetDevice, BusRegistry busRegistry) throws BeeBootstrapException {

@@ -1,6 +1,8 @@
 package com.jbee;
 
+import com.jbee.positioning.LatLon;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  *
@@ -11,12 +13,13 @@ class DefaultBee implements Bee {
     final TargetDevice device;
 
     final CommandExecutor commandExecutor;
-    final BeeWorld world = new BeeWorldImpl();
+    final LatLon origin;
     final DefaultBeeControl control;
     final DefaultBeeMonitor monitor = new DefaultBeeMonitor();
 
-    public DefaultBee(TargetDevice device, BusRegistry busRegistry) {
+    public DefaultBee(TargetDevice device, BusRegistry busRegistry, LatLon origin) {
         this.device = device;
+        this.origin = origin;
         commandExecutor = new CommandExecutor(device);
         control = new DefaultBeeControl(commandExecutor, monitor, device.getDefaultSpeed(), device.getDefaultRotationalSpeed());
 
@@ -36,8 +39,8 @@ class DefaultBee implements Bee {
     }
 
     @Override
-    public BeeWorld getWorld() {
-        return world;
+    public Optional<LatLon> getOrigin() {
+        return Optional.ofNullable(origin);
     }
 
     @Override

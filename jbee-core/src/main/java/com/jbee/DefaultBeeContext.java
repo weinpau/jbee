@@ -1,5 +1,7 @@
 package com.jbee;
 
+import com.jbee.buses.LatLonBus;
+import com.jbee.positioning.LatLon;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -31,7 +33,7 @@ class DefaultBeeContext implements BeeContext {
         }
         bootstrapBuses();
         device.bootstrap(busRegistry);
-        bee = new DefaultBee(device, busRegistry);
+        bee = new DefaultBee(device, busRegistry, determinePosition());
         return bee;
     }
 
@@ -39,6 +41,16 @@ class DefaultBeeContext implements BeeContext {
         for (Bus b : busRegistry.getAll()) {
             b.bootstrap(device, busRegistry);
         }
+    }
+
+    LatLon determinePosition() {
+        for (LatLonBus bus : busRegistry.getAll(LatLonBus.class)) {
+            LatLon position = bus.getLastKnownValue().orElse(null);
+            if (position != null) {
+                return position;
+            }
+        }
+        return null;
     }
 
     @Override

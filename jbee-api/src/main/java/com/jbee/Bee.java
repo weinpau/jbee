@@ -1,5 +1,8 @@
 package com.jbee;
 
+import com.jbee.positioning.LatLon;
+import java.util.Optional;
+
 /**
  *
  * @author weinpau
@@ -10,7 +13,7 @@ public interface Bee {
 
     BeeMonitor monitor();
 
-    BeeWorld getWorld();
+    Optional<LatLon> getOrigin();
 
     void close();
 
