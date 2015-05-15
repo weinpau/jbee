@@ -8,9 +8,16 @@ public class AT_CONFIG extends AT_Command {
 
     private final String name, value;
 
-    public AT_CONFIG(String name, String value) {
+    public AT_CONFIG(String name, Object value) {
         this.name = name;
-        this.value = value;
+        this.value = parseConfigValue(value);
+    }
+
+    final String parseConfigValue(Object value) {
+        if (value instanceof Boolean) {
+            return ((boolean) value) ? "TRUE" : "FALSE";
+        }
+        return value.toString();
     }
 
     @Override
