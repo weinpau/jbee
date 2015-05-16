@@ -141,7 +141,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
 
                     navdataClient.onNavDataReceived("bootstrap", navdata -> {
                         if (!navdata.getState().isNavDataBootstrap() && navdata.getOption(Demo.class) != null) {
-                            handleNavData(navdata);
+                            navdataHandler.accept(navdata);
                             submit(true);
                         }
 
@@ -171,37 +171,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     void initNavClient() throws UnknownHostException, IOException {
         navdataClient = new NavDataClient(InetAddress.getByName(host), navdataPort, timeout);
         navdataClient.connect();
-        navdataClient.onNavDataReceived("main", this::handleNavData);
-    }
-
-    void handleNavData(NavData navdata) {
-        Demo demo = navdata.getOption(Demo.class);
-        if (demo == null) {
-            return;
-        }
-
-        handleVelocityBus(demo);
-
-        principalAxesBus.publish(new PrincipalAxes(
-                Angle.ofDegrees(demo.getYaw()),
-                Angle.ofDegrees(demo.getRoll()),
-                Angle.ofDegrees(demo.getPitch())));
-
-        altitudeBus.publish(Distance.ofMillimeters(demo.getAltitude()));
-
-        batteryState = new BatteryState(demo.getBatteryPercentage() / 100d, navdata.getState().isBatteryTooLow());
-    }
-
-    void handleVelocityBus(Demo demo) {
-        double x = demo.getSpeedX() / 100d;
-        double y = demo.getSpeedY() / 100d;
-
-        double phi = Math.toRadians(demo.getYaw());
-
-        velocityBus.publish(new Velocity(
-                Speed.mps(x * Math.cos(phi) - y * Math.sin(phi)),
-                Speed.mps(x * Math.sin(phi) + y * Math.cos(phi)),
-                Speed.mps(demo.getSpeedZ() / 100d)));
+        navdataClient.onNavDataReceived("navdata-handler", navdataHandler);
     }
 
     @Override
@@ -257,5 +227,41 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     public RotationalSpeed getDefaultRotationalSpeed() {
         return RotationalSpeed.rps(.25);
     }
+
+    Consumer<NavData> navdataHandler = new Consumer<NavData>() {
+
+        @Override
+        public void accept(NavData navdata) {
+            Demo demo = navdata.getOption(Demo.class);
+            if (demo != null) {
+                handleVelocity(demo);
+                handleAxes(demo);
+                altitudeBus.publish(Distance.ofMillimeters(demo.getAltitude()));
+                batteryState = new BatteryState(demo.getBatteryPercentage() / 100d, navdata.getState().isBatteryTooLow());
+
+            }
+
+        }
+
+        void handleAxes(Demo demo) {
+            principalAxesBus.publish(new PrincipalAxes(
+                    Angle.ofDegrees(demo.getYaw()),
+                    Angle.ofDegrees(demo.getRoll()),
+                    Angle.ofDegrees(demo.getPitch())));
+        }
+
+        void handleVelocity(Demo demo) {
+            double x = demo.getSpeedX() / 100d;
+            double y = demo.getSpeedY() / 100d;
+
+            double phi = Math.toRadians(demo.getYaw());
+
+            velocityBus.publish(new Velocity(
+                    Speed.mps(x * Math.cos(phi) - y * Math.sin(phi)),
+                    Speed.mps(x * Math.sin(phi) + y * Math.cos(phi)),
+                    Speed.mps(demo.getSpeedZ() / 100d)));
+        }
+
+    };
 
 }
