@@ -234,32 +234,42 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
         public void accept(NavData navdata) {
             Demo demo = navdata.getOption(Demo.class);
             if (demo != null) {
-                handleVelocity(demo);
-                handleAxes(demo);
-                altitudeBus.publish(Distance.ofMillimeters(demo.getAltitude()));
-                batteryState = new BatteryState(demo.getBatteryPercentage() / 100d, navdata.getState().isBatteryTooLow());
-
+                publishVelocity(demo);
+                publishAxes(demo);
+                publishAltitude(demo);
+                publishBatteryState(demo, navdata);
             }
 
         }
 
-        void handleAxes(Demo demo) {
+        void publishAltitude(Demo demo) {
+            Distance altitude = Distance.ofMillimeters(demo.getAltitude());
+            altitudeBus.publish(altitude);
+        }
+
+        void publishBatteryState(Demo demo, NavData navdata) {
+            double percentage = demo.getBatteryPercentage() / 100d;
+            batteryState = new BatteryState(percentage, navdata.getState().isBatteryTooLow());
+        }
+
+        void publishAxes(Demo demo) {
             principalAxesBus.publish(new PrincipalAxes(
                     Angle.ofDegrees(demo.getYaw()),
                     Angle.ofDegrees(demo.getRoll()),
                     Angle.ofDegrees(demo.getPitch())));
         }
 
-        void handleVelocity(Demo demo) {
-            double x = demo.getSpeedX() / 100d;
-            double y = demo.getSpeedY() / 100d;
+        void publishVelocity(Demo demo) {
+            double xSpeed = demo.getSpeedX() / 100d;
+            double ySpeed = demo.getSpeedY() / 100d;
 
             double phi = Math.toRadians(demo.getYaw());
-
-            velocityBus.publish(new Velocity(
-                    Speed.mps(x * Math.cos(phi) - y * Math.sin(phi)),
-                    Speed.mps(x * Math.sin(phi) + y * Math.cos(phi)),
-                    Speed.mps(demo.getSpeedZ() / 100d)));
+            double directedXSpeed = xSpeed * Math.cos(phi) - ySpeed * Math.sin(phi);
+            double directedYSpeed = xSpeed * Math.sin(phi) + ySpeed * Math.cos(phi);
+            double zSpeed = demo.getSpeedZ() / 100d;
+            
+            Velocity velocity = new Velocity(Speed.mps(directedXSpeed), Speed.mps(directedYSpeed), Speed.mps(zSpeed));
+            velocityBus.publish(velocity);
         }
 
     };
