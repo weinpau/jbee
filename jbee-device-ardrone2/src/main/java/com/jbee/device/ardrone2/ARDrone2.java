@@ -57,6 +57,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     AltitudeBus altitudeBus = new AltitudeBus();
     VelocityBus velocityBus = new VelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
+    PositionBus positionBus;
 
     AT_CommandSender commandSender;
     NavDataClient navdataClient;
@@ -100,28 +101,24 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
         if (controlStateMachine.getControlState() != com.jbee.ControlState.DISCONNECTED) {
             throw new BeeBootstrapException("Drone is already connected.");
         }
-        busRegistry.get(PositionBus.class).
-                orElseThrow(() -> new BeeBootstrapException("A position bus is missing."));
-
         try {
+            positionBus = busRegistry.get(PositionBus.class).
+                    orElseThrow(() -> new BeeBootstrapException("A position bus is missing."));
+
             initNavClient();
             initCommandSender();
             initCommandDispatcher();
-        } catch (IOException ex) {
-            Logger.getLogger(ARDrone2.class.getName()).log(Level.SEVERE, null, ex);
-            throw new BeeBootstrapException(ex);
-        }
 
-        try {
             if (configARDrone()) {
                 trim();
                 controlStateMachine.changeState(com.jbee.ControlState.READY_FOR_TAKE_OFF);
             } else {
                 throw new BeeBootstrapException("AR Drone cannot be configured.");
             }
-        } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+        } catch (IOException | InterruptedException | ExecutionException | TimeoutException ex) {
             Logger.getLogger(ARDrone2.class.getName()).log(Level.SEVERE, null, ex);
             throw new BeeBootstrapException("AR Drone cannot be configured.", ex);
+
         } finally {
             navdataClient.removeNavDataReceiver("bootstrap");
         }
@@ -267,7 +264,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
             double directedXSpeed = xSpeed * Math.cos(phi) - ySpeed * Math.sin(phi);
             double directedYSpeed = xSpeed * Math.sin(phi) + ySpeed * Math.cos(phi);
             double zSpeed = demo.getSpeedZ() / 100d;
-            
+
             Velocity velocity = new Velocity(Speed.mps(directedXSpeed), Speed.mps(directedYSpeed), Speed.mps(zSpeed));
             velocityBus.publish(velocity);
         }
