@@ -14,21 +14,26 @@ import java.time.Duration;
  */
 public class TakeOffAndLand {
 
-        public static void main(String[] args) throws BeeBootstrapException {
-            
-            BeeContext context = BeeContext.of(new ARDrone2());
-                        
-            Bee bee = context.bootstrap();
-            
-            BeeControl control = bee.control();
-            
-            control.takeOff();
-            control.hover(Duration.ofSeconds(5));
-            control.land();
-            
-            context.close();
-            
-            
-        }
-    
+    public static void main(String[] args) throws BeeBootstrapException {
+        ARDrone2 arDrone = new ARDrone2();
+
+        BeeContext context = BeeContext.of(arDrone);
+
+        Bee bee = context.bootstrap();
+
+        //arDrone.onNavDataReceived(data -> System.out.println("received: " + data.getOption(Demo.class)));
+        bee.monitor().onStateChange(System.out::println);
+
+        System.out.println(bee.monitor().getLastKnownState().getBatteryState().getLevel());
+
+        BeeControl control = bee.control();
+
+        System.out.println("takeOff: " + control.takeOff());
+        control.hover(Duration.ofSeconds(5));
+        System.out.println("land: " + control.land());
+
+        context.close();
+
+    }
+
 }

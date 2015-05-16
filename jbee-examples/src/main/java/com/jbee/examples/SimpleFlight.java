@@ -9,7 +9,6 @@ import com.jbee.commands.Commands;
 import com.jbee.device.simulation.Simulation;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
-import com.jbee.units.RotationalSpeed;
 import com.jbee.units.Speed;
 import java.time.Duration;
 
