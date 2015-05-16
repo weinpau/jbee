@@ -1,7 +1,6 @@
 package com.jbee;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import com.jbee.utils.Numbers;
 
 /**
  *
@@ -59,9 +58,7 @@ public final class BatteryState implements Comparable<BatteryState> {
 
     @Override
     public String toString() {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        nf.setMaximumFractionDigits(2);
-        String percentages = nf.format(level * 100) + "%";
+        String percentages = Numbers.format(level * 100, 2) + "%";
         return "BatteryState{" + "tooLow=" + tooLow + ", level=" + percentages + '}';
     }
 
