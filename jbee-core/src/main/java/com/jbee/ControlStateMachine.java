@@ -6,7 +6,7 @@ package com.jbee;
  */
 public class ControlStateMachine {
 
-    volatile ControlState controlState;
+    ControlState controlState;
 
     ControlStateMachine(ControlState controlState) {
         this.controlState = controlState;
@@ -16,13 +16,17 @@ public class ControlStateMachine {
         return controlState;
     }
 
-    public boolean changeState(ControlState state) {
+    public synchronized boolean changeState(ControlState state) {
         if (checkTransition(state)) {
             controlState = state;
             return true;
         }
         return false;
 
+    }
+
+    public void changeStateForced(ControlState state) {
+        controlState = state;
     }
 
     boolean checkTransition(ControlState state) {
@@ -32,15 +36,15 @@ public class ControlStateMachine {
 
         switch (state) {
             case DISCONNECTED:
-                return permit(ControlState.FLYING, ControlState.LANDING, ControlState.READY_FOR_TAKE_OFF, ControlState.TAKING_OFF);
+                return permitFrom(ControlState.FLYING, ControlState.LANDING, ControlState.READY_FOR_TAKE_OFF, ControlState.TAKING_OFF);
             case FLYING:
-                return permit(ControlState.TAKING_OFF);
+                return permitFrom(ControlState.TAKING_OFF);
             case LANDING:
-                return permit(ControlState.FLYING);
+                return permitFrom(ControlState.FLYING);
             case READY_FOR_TAKE_OFF:
-                return permit(ControlState.DISCONNECTED, ControlState.LANDING);
+                return permitFrom(ControlState.DISCONNECTED, ControlState.LANDING);
             case TAKING_OFF:
-                return permit(ControlState.READY_FOR_TAKE_OFF);
+                return permitFrom(ControlState.READY_FOR_TAKE_OFF);
 
         }
 
@@ -48,7 +52,7 @@ public class ControlStateMachine {
 
     }
 
-    boolean permit(ControlState... state) {
+    boolean permitFrom(ControlState... state) {
         for (ControlState s : state) {
             if (s == this.controlState) {
                 return true;
