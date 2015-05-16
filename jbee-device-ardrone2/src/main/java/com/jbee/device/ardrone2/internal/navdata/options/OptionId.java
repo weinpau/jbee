@@ -52,6 +52,10 @@ public enum OptionId {
         return id;
     }
 
+    public int mask() {
+        return 1 << id;
+    }
+
     public Option createOption() {
         if (optionClass != null) {
             try {
@@ -69,6 +73,14 @@ public enum OptionId {
             }
         }
         return null;
+    }
+
+    public static int mask(OptionId... options) {
+        int mask = 0;
+        for (OptionId option : options) {
+            mask = mask | option.mask();
+        }
+        return mask;
     }
 
 }

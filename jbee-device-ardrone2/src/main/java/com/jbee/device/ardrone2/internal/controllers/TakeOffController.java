@@ -25,7 +25,7 @@ public class TakeOffController implements CommandController<TakeOffCommand> {
     ExecutorService commandExecutorService;
     ControlStateMachine controlStateMachine;
 
-    public static final int TIMEOUT_MILLIS = 5000;
+    static final int TIMEOUT_MILLIS = 10_000;
 
     public TakeOffController(AT_CommandSender commandSender,
             NavDataClient navdataClient,
@@ -40,11 +40,11 @@ public class TakeOffController implements CommandController<TakeOffCommand> {
 
     @Override
     public CommandResult execute(TakeOffCommand command) {
-        if (!controlStateMachine.changeState(com.jbee.ControlState.TAKING_OFF)) {
+        if (controlStateMachine.getControlState() != com.jbee.ControlState.READY_FOR_TAKE_OFF) {
             return CommandResult.NOT_EXECUTED;
         }
-
-        String navdataReveiverId = "takeoff-" + command.getCommandNumber();
+       
+        String navdataReveiverId = String.format("takeoff-%d", command.getCommandNumber());
         try {
             return commandExecutorService.submit(new CallbackWrapper<CommandResult>() {
 
@@ -55,9 +55,14 @@ public class TakeOffController implements CommandController<TakeOffCommand> {
                         navdataClient.onNavDataReceived(navdataReveiverId, navdata -> {
 
                             Demo demo = navdata.getOption(Demo.class);
-                            if (demo != null && demo.getControlState() == ControlState.CTRL_HOVERING) {
-                                controlStateMachine.changeState(com.jbee.ControlState.FLYING);
-                                submit(CommandResult.COMPLETED);
+
+                            if (demo != null) {
+                                if (demo.getControlState() == ControlState.CTRL_TRANS_GOTOFIX) {
+                                    controlStateMachine.changeStateForced(com.jbee.ControlState.TAKING_OFF);
+                                } else if (demo.getControlState() == ControlState.CTRL_HOVERING) {
+                                    controlStateMachine.changeStateForced(com.jbee.ControlState.FLYING);
+                                    submit(CommandResult.COMPLETED);
+                                }
                             }
 
                         });

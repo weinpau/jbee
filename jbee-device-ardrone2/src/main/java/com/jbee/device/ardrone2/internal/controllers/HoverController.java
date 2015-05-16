@@ -1,5 +1,6 @@
 package com.jbee.device.ardrone2.internal.controllers;
 
+import com.jbee.ControlState;
 import com.jbee.ControlStateMachine;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.HoverCommand;
@@ -22,12 +23,13 @@ public class HoverController implements CommandController<HoverCommand> {
 
     @Override
     public CommandResult execute(HoverCommand command) {
-        if (!controlStateMachine.changeState(com.jbee.ControlState.FLYING)) {
+        if (controlStateMachine.getControlState() != ControlState.FLYING) {
             return CommandResult.NOT_EXECUTED;
         }
         try {
             commandSender.send(AT_PCMD.HOVER);
             Thread.sleep(command.getDuration().toMillis());
+            controlStateMachine.changeStateForced(ControlState.FLYING);
             return CommandResult.COMPLETED;
         } catch (InterruptedException e) {
             return CommandResult.FAILED;

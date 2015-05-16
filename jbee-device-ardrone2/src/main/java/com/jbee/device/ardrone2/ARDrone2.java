@@ -15,10 +15,17 @@ import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.buses.VelocityBus;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
+import com.jbee.concurrent.CallbackWrapper;
 import com.jbee.device.ardrone2.internal.CommandDispatcher;
+import com.jbee.device.ardrone2.internal.commands.AT_COMWDG;
+import com.jbee.device.ardrone2.internal.commands.AT_CONFIG;
 import com.jbee.device.ardrone2.internal.commands.AT_CommandSender;
+import com.jbee.device.ardrone2.internal.commands.AT_FTRIM;
+import com.jbee.device.ardrone2.internal.commands.AT_REF;
+import com.jbee.device.ardrone2.internal.navdata.NavData;
 import com.jbee.device.ardrone2.internal.navdata.NavDataClient;
 import com.jbee.device.ardrone2.internal.navdata.options.Demo;
+import com.jbee.device.ardrone2.internal.navdata.options.OptionId;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
@@ -27,8 +34,15 @@ import com.jbee.units.Speed;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,7 +62,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     NavDataClient navdataClient;
     CommandDispatcher commandDispatcher;
 
-    ControlStateMachine controlStateMachine = ControlStateMachine.init(ControlState.DISCONNECTED);
+    ControlStateMachine controlStateMachine = ControlStateMachine.init(com.jbee.ControlState.DISCONNECTED);
 
     volatile BatteryState batteryState = new BatteryState(.99, false);
 
@@ -56,6 +70,10 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     int navdataPort = 5554;
     int controlPort = 5556;
     String host = "192.168.1.1";
+    Duration bootstrapTimeout = Duration.ofSeconds(10);
+
+    static final Random RANDOM = new Random();
+    static final OptionId[] NAVDATA_OPTIONS = {OptionId.DEMO};
 
     public ARDrone2() {
 
@@ -79,10 +97,9 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
 
     @Override
     public void bootstrap(BusRegistry busRegistry) throws BeeBootstrapException {
-        if (controlStateMachine.getControlState() != ControlState.DISCONNECTED) {
-            throw new RuntimeException("Drone is already connected.");
+        if (controlStateMachine.getControlState() != com.jbee.ControlState.DISCONNECTED) {
+            throw new BeeBootstrapException("Drone is already connected.");
         }
-
         busRegistry.get(PositionBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A position bus is missing."));
 
@@ -90,13 +107,56 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
             initNavClient();
             initCommandSender();
             initCommandDispatcher();
-
-            controlStateMachine.changeState(ControlState.READY_FOR_TAKE_OFF);
-
         } catch (IOException ex) {
             Logger.getLogger(ARDrone2.class.getName()).log(Level.SEVERE, null, ex);
             throw new BeeBootstrapException(ex);
         }
+
+        try {
+            if (configARDrone()) {
+                trim();
+                controlStateMachine.changeState(com.jbee.ControlState.READY_FOR_TAKE_OFF);
+            } else {
+                throw new BeeBootstrapException("AR Drone cannot be configured.");
+            }
+        } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+            Logger.getLogger(ARDrone2.class.getName()).log(Level.SEVERE, null, ex);
+            throw new BeeBootstrapException("AR Drone cannot be configured.", ex);
+        } finally {
+            navdataClient.removeNavDataReceiver("bootstrap");
+        }
+
+    }
+
+    boolean configARDrone() throws InterruptedException, TimeoutException, ExecutionException {
+        return Executors.newSingleThreadExecutor().submit(new CallbackWrapper<Boolean>() {
+
+            @Override
+            protected void handle() {
+
+                try {
+                    commandSender.send(new AT_COMWDG());
+                    commandSender.send(new AT_CONFIG("general:navdata_demo", true));
+                    commandSender.send(new AT_CONFIG("general:navdata_options", OptionId.mask(NAVDATA_OPTIONS)));
+
+                    navdataClient.onNavDataReceived("bootstrap", navdata -> {
+                        if (!navdata.getState().isNavDataBootstrap() && navdata.getOption(Demo.class) != null) {
+                            handleNavData(navdata);
+                            submit(true);
+                        }
+
+                    });
+                } catch (InterruptedException e) {
+                    submit(false);
+                }
+
+            }
+        }).get(bootstrapTimeout.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    void trim() throws InterruptedException {
+        commandSender.send(new AT_FTRIM());
+        Thread.sleep(200);
     }
 
     void initCommandDispatcher() {
@@ -111,46 +171,56 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     void initNavClient() throws UnknownHostException, IOException {
         navdataClient = new NavDataClient(InetAddress.getByName(host), navdataPort, timeout);
         navdataClient.connect();
-        navdataClient.onNavDataReceived("main", n -> {
+        navdataClient.onNavDataReceived("main", this::handleNavData);
+    }
 
-            Demo demo = n.getOption(Demo.class);
-            if (demo != null) {
-                handleVelocityBus(demo);
+    void handleNavData(NavData navdata) {
+        Demo demo = navdata.getOption(Demo.class);
+        if (demo == null) {
+            return;
+        }
 
-                principalAxesBus.publish(new PrincipalAxes(
-                        Angle.ofDegrees(demo.getYaw()),
-                        Angle.ofDegrees(demo.getRoll()),
-                        Angle.ofDegrees(demo.getPitch())));
+        handleVelocityBus(demo);
 
-                altitudeBus.publish(Distance.ofMillimeters(demo.getAltitude()));
+        principalAxesBus.publish(new PrincipalAxes(
+                Angle.ofDegrees(demo.getYaw()),
+                Angle.ofDegrees(demo.getRoll()),
+                Angle.ofDegrees(demo.getPitch())));
 
-                batteryState = new BatteryState(demo.getBatteryPercentage() / 100d, n.getState().isBatteryTooLow());
+        altitudeBus.publish(Distance.ofMillimeters(demo.getAltitude()));
 
-            }
-
-        });
+        batteryState = new BatteryState(demo.getBatteryPercentage() / 100d, navdata.getState().isBatteryTooLow());
     }
 
     void handleVelocityBus(Demo demo) {
-        double x = demo.getSpeedX() / 1000d;
-        double y = demo.getSpeedY() / 1000d;
+        double x = demo.getSpeedX() / 100d;
+        double y = demo.getSpeedY() / 100d;
 
         double phi = Math.toRadians(demo.getYaw());
 
         velocityBus.publish(new Velocity(
                 Speed.mps(x * Math.cos(phi) - y * Math.sin(phi)),
                 Speed.mps(x * Math.sin(phi) + y * Math.cos(phi)),
-                Speed.mps(demo.getSpeedZ() / 1000d)));
+                Speed.mps(demo.getSpeedZ() / 100d)));
     }
 
     @Override
     public void disconnect() throws IOException {
         if (!controlStateMachine.changeState(ControlState.DISCONNECTED)) {
-            throw new RuntimeException("Drone is not connected");
+            try {
+                System.out.println("EMERGENCY");
+                commandSender.send(AT_REF.EMERGENCY);
+            } catch (InterruptedException ex) {
+            }
         }
         navdataClient.disconnect();
         commandSender.disconnect();
+        controlStateMachine.changeStateForced(ControlState.DISCONNECTED);
+    }
 
+    public void onNavDataReceived(Consumer<NavData> receiver) {
+        String receiverId = String.format("client-%d-%d", System.nanoTime(), RANDOM.nextLong());
+        navdataClient.onNavDataReceived(receiverId, receiver);
     }
 
     @Override

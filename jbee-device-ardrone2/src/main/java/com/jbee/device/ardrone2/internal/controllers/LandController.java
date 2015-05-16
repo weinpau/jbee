@@ -25,7 +25,7 @@ public class LandController implements CommandController<LandCommand> {
     ControlStateMachine controlStateMachine;
     ExecutorService commandExecutorService;
 
-    public static final int TIMEOUT_MILLIS = 10_000;
+    static final int TIMEOUT_MILLIS = 10_000;
 
     public LandController(AT_CommandSender commandSender,
             NavDataClient navdataClient,
@@ -40,10 +40,11 @@ public class LandController implements CommandController<LandCommand> {
 
     @Override
     public CommandResult execute(LandCommand command) {
-        if (!controlStateMachine.changeState(com.jbee.ControlState.LANDING))
+        if (controlStateMachine.getControlState() != com.jbee.ControlState.FLYING) {
             return CommandResult.NOT_EXECUTED;
-        
-        String navdataReveiverId = "land-" + command.getCommandNumber();
+        }
+
+        String navdataReveiverId = String.format("land-%d", command.getCommandNumber());
         try {
             return commandExecutorService.submit(new CallbackWrapper<CommandResult>() {
 
@@ -54,9 +55,13 @@ public class LandController implements CommandController<LandCommand> {
                         navdataClient.onNavDataReceived(navdataReveiverId, navdata -> {
 
                             Demo demo = navdata.getOption(Demo.class);
-                            if (demo != null && demo.getControlState() == ControlState.CTRL_LANDED) {
-                                controlStateMachine.changeState(com.jbee.ControlState.READY_FOR_TAKE_OFF);
-                                submit(CommandResult.COMPLETED);
+                            if (demo != null) {
+                                if (demo.getControlState() == ControlState.CTRL_TRANS_LOOPING) {
+                                    controlStateMachine.changeStateForced(com.jbee.ControlState.LANDING);
+                                } else if (demo.getControlState() == ControlState.CTRL_LANDED) {
+                                    controlStateMachine.changeStateForced(com.jbee.ControlState.READY_FOR_TAKE_OFF);
+                                    submit(CommandResult.COMPLETED);
+                                }
                             }
 
                         });

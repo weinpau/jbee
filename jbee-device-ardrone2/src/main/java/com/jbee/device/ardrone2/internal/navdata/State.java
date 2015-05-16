@@ -159,5 +159,5 @@ public final class State {
         }
         return this.state == ((State) obj).state;
     }
-
+    
 }

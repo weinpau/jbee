@@ -13,10 +13,10 @@ public class NavDataParser {
 
     public NavData parse(ByteBuffer buffer) throws NavDataParseException {
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        
+
         int expectedChecksum = checksum(buffer);
         int header = buffer.getInt();
-        if (header != 0x55667788) {
+        if (header != 0x55667788 && header != 0x55667789) {
             throw new NavDataParseException("Invalid header: " + Integer.toHexString(header));
         }
 
@@ -32,6 +32,7 @@ public class NavDataParser {
             OptionId id = OptionId.getById(buffer.getShort());
             short length = buffer.getShort();
 
+            int nextPosition = buffer.position() + length - 4;
             if (OptionId.CHECKSUM == id) {
 
                 int checksum = buffer.getInt();
@@ -41,14 +42,13 @@ public class NavDataParser {
                 checked = true;
                 break;
             }
-
-            Option option = id.createOption();
-            if (option == null) {
-                buffer.position(buffer.position() + length - 4);
-                continue;
+            Option option = createOption(id);
+            if (option != null) {
+                option.parse(buffer);
+                data.options.put(option.getClass(), option);
             }
-            option.parse(buffer);
-            data.options.put(option.getClass(), option);
+            buffer.position(nextPosition);
+
         }
 
         if (!checked) {
@@ -58,7 +58,14 @@ public class NavDataParser {
         return data;
     }
 
-    int checksum(ByteBuffer buffer) {        
+    Option createOption(OptionId id) {
+        if (id == null) {
+            return null;
+        }
+        return id.createOption();
+    }
+
+    int checksum(ByteBuffer buffer) {
         int checksum = 0;
         while (buffer.remaining() > 8) {
             byte b = buffer.get();
