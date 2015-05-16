@@ -1,9 +1,8 @@
 package com.jbee.positioning;
 
 import com.jbee.units.Distance;
+import com.jbee.utils.Numbers;
 import static java.lang.Math.*;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 /**
  *
@@ -120,9 +119,7 @@ public class Position {
 
     @Override
     public String toString() {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        nf.setMaximumFractionDigits(3);
-        return "P(" + nf.format(x) + ", " + nf.format(y) + ", " + nf.format(z) + ")";
+        return "P(" + Numbers.format(x,3) + ", " + Numbers.format(y,3) + ", " + Numbers.format(z,3) + ")";
     }
 
     @Override

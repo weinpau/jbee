@@ -1,8 +1,7 @@
 package com.jbee.units;
 
-import java.text.NumberFormat;
+import com.jbee.utils.Numbers;
 import java.time.Duration;
-import java.util.Locale;
 
 /**
  *
@@ -91,9 +90,7 @@ public class Frequency implements Comparable<Frequency> {
 
     @Override
     public String toString() {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        nf.setMaximumFractionDigits(3);
-        return nf.format(toHz()) + " Hz";
+        return Numbers.format(toHz(), 3) + " Hz";
     }
 
     public static Frequency ofHz(int Hz) {

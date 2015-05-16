@@ -58,4 +58,9 @@ public class PrincipalAxes {
         return Objects.equals(this.pitch, other.pitch);
     }
 
+    @Override
+    public String toString() {
+        return "PrincipalAxes{" + "yaw=" + yaw + ", roll=" + roll + ", pitch=" + pitch + '}';
+    }
+
 }

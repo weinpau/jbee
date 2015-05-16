@@ -1,7 +1,6 @@
 package com.jbee.units;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import com.jbee.utils.Numbers;
 
 /**
  *
@@ -43,9 +42,7 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
 
     @Override
     public String toString() {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        nf.setMaximumFractionDigits(3);
-        return nf.format(rpm) + " rpm";
+        return Numbers.format(rpm,3) + " rpm";
     }
 
     @Override

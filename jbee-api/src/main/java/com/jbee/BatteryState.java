@@ -1,11 +1,14 @@
 package com.jbee;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  *
  * @author weinpau
  */
 public final class BatteryState implements Comparable<BatteryState> {
-    
+
     private final boolean tooLow;
     private final double level;
 
@@ -52,6 +55,14 @@ public final class BatteryState implements Comparable<BatteryState> {
     @Override
     public int compareTo(BatteryState o) {
         return Double.compare(level, o.level);
+    }
+
+    @Override
+    public String toString() {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        nf.setMaximumFractionDigits(2);
+        String percentages = nf.format(level * 100) + "%";
+        return "BatteryState{" + "tooLow=" + tooLow + ", level=" + percentages + '}';
     }
 
 }

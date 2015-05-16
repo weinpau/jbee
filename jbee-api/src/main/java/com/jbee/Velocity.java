@@ -77,7 +77,7 @@ public class Velocity {
 
     @Override
     public String toString() {
-        return "x=" + x + ", y=" + y + ", z=" + z + ", total=" + totalSpeed();
+        return "Velocity{x=" + x + ", y=" + y + ", z=" + z + ", total=" + totalSpeed() + "}";
     }
 
     @Override

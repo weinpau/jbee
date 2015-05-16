@@ -1,5 +1,6 @@
 package com.jbee.units;
 
+import com.jbee.utils.Numbers;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.util.Locale;
@@ -107,9 +108,7 @@ public final class Distance implements Comparable<Distance> {
 
     @Override
     public String toString() {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        nf.setMaximumFractionDigits(3);
-        return nf.format(toMeters()) + " m";
+        return Numbers.format(toMeters(), 3) + " m";
     }
 
     @Override

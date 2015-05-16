@@ -1,5 +1,6 @@
 package com.jbee.units;
 
+import com.jbee.utils.Numbers;
 import java.time.Duration;
 
 /**
@@ -81,7 +82,7 @@ public final class Speed implements Comparable<Speed> {
 
     @Override
     public String toString() {
-        return mps + " m/s";
+        return Numbers.format(mps, 3) + " m/s";
     }
 
     @Override

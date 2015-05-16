@@ -1,8 +1,7 @@
 package com.jbee.units;
 
-import java.text.NumberFormat;
+import com.jbee.utils.Numbers;
 import java.time.Duration;
-import java.util.Locale;
 
 /**
  *
@@ -57,7 +56,7 @@ public final class Angle implements Comparable<Angle> {
     public boolean isZero() {
         return radians == 0;
     }
-    
+
     public boolean isNegative() {
         return radians < 0;
     }
@@ -96,9 +95,7 @@ public final class Angle implements Comparable<Angle> {
 
     @Override
     public String toString() {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        nf.setMaximumFractionDigits(3);
-        return nf.format(toDegrees()) + "\u00b0";
+        return Numbers.format(toDegrees(), 3) + "\u00b0";
     }
 
     public static Angle ofRadians(double radians) {

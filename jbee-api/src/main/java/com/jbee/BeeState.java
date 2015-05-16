@@ -75,4 +75,21 @@ public class BeeState {
         return this.timestamp == other.timestamp;
     }
 
+    @Override
+    public String toString() {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("BeeState{").append("\n");
+        stringBuilder.append("\t").append("timestamp=").append(timestamp).append("\n");
+        stringBuilder.append("\t").append("controlState=").append(controlState).append("\n");
+        stringBuilder.append("\t").append("batteryState=").append(batteryState).append("\n");
+        stringBuilder.append("\t").append("position=").append(position).append("\n");
+        stringBuilder.append("\t").append("velocity=").append(velocity).append("\n");
+        stringBuilder.append("\t").append("principalAxes=").append(principalAxes).append("\n");
+        stringBuilder.append("}");
+
+        return stringBuilder.toString();
+    }
+
 }

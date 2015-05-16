@@ -1,8 +1,7 @@
 package com.jbee.positioning;
 
 import com.jbee.units.Distance;
-import java.text.NumberFormat;
-import java.util.Locale;
+import com.jbee.utils.Numbers;
 
 /**
  *
@@ -83,15 +82,12 @@ public class LatLon {
 
     @Override
     public String toString() {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        nf.setMaximumFractionDigits(6);
-
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(nf.format(Math.abs(latitude)));
+        stringBuilder.append(Numbers.format(Math.abs(latitude),6));
         stringBuilder.append((latitude >= 0) ? "N" : "S");
         stringBuilder.append(" ");
-        stringBuilder.append(nf.format(Math.abs(longitude)));
+        stringBuilder.append(Numbers.format(Math.abs(longitude),6));
         stringBuilder.append((longitude >= 0) ? "E" : "W");
 
         return stringBuilder.toString();
