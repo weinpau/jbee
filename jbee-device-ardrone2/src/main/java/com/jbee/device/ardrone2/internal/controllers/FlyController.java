@@ -18,6 +18,11 @@ public class FlyController implements CommandController<FlyCommand> {
     ControlStateMachine controlStateMachine;
     ExecutorService commandExecutorService;
 
+    PID xPID = new PID(.5, 0, .35);
+    PID yPID = new PID(.5, 0, .35);
+    PID zPID = new PID(.8, 0, .35);
+    PID yawPID = new PID(1, 0, .3);
+
     public FlyController(AT_CommandSender commandSender,
             PositionBus positionBus,
             ControlStateMachine controlStateMachine,
@@ -32,12 +37,14 @@ public class FlyController implements CommandController<FlyCommand> {
     public CommandResult execute(FlyCommand command) {
         return CommandResult.NOT_EXECUTED;
     }
-    
-        
+
     private static class PID {
 
+        static final double MIN_DEFLECTION = -1;
+        static final double MAX_DEFLECTION = 1;
+
         private final double kp, ki, kd;
-        
+
         private long lastTime;
         private double lastError, errorSum;
 
@@ -47,28 +54,30 @@ public class FlyController implements CommandController<FlyCommand> {
             this.kd = kd;
             reset();
         }
-        
+
         public final void reset() {
             lastTime = 0;
             lastError = Double.POSITIVE_INFINITY;
             errorSum = 0;
         }
-        
-        public double getCommand(double error) {            
-            
+
+        public double getDeflection(double error) {
+
             long time = System.nanoTime();
-            double dt = (time - lastTime) / 10e9d;            
+            double dt = (time - lastTime) / 10e9d;
             double de = 0;
-            if (lastTime != 0) {                
+            if (lastTime != 0) {
                 if (lastError < Double.POSITIVE_INFINITY) {
-                     de = (error - lastError) / dt;
+                    de = (error - lastError) / dt;
                 }
                 errorSum += error * dt;
             }
-            
+
             lastTime = time;
-            lastError = error;            
-            return kp * error + ki * errorSum + kd * de;            
+            lastError = error;
+            double result = kp * error + ki * errorSum + kd * de;
+
+            return Math.max(MIN_DEFLECTION, Math.min(MAX_DEFLECTION, result));
         }
     }
 
