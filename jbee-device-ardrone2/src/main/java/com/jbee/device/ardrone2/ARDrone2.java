@@ -157,7 +157,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     }
 
     void initCommandDispatcher() {
-        commandDispatcher = new CommandDispatcher(commandSender, navdataClient, controlStateMachine);
+        commandDispatcher = new CommandDispatcher(commandSender, navdataClient, positionBus, controlStateMachine);
     }
 
     void initCommandSender() throws IOException, UnknownHostException {
