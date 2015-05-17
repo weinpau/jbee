@@ -18,10 +18,10 @@ public class FlyController implements CommandController<FlyCommand> {
     ControlStateMachine controlStateMachine;
     ExecutorService commandExecutorService;
 
-    public FlyController(AT_CommandSender commandSender, 
-            PositionBus positionBus, 
-            ControlStateMachine controlStateMachine, 
-            ExecutorService commandExecutorService) {        
+    public FlyController(AT_CommandSender commandSender,
+            PositionBus positionBus,
+            ControlStateMachine controlStateMachine,
+            ExecutorService commandExecutorService) {
         this.commandSender = commandSender;
         this.positionBus = positionBus;
         this.controlStateMachine = controlStateMachine;
@@ -31,6 +31,45 @@ public class FlyController implements CommandController<FlyCommand> {
     @Override
     public CommandResult execute(FlyCommand command) {
         return CommandResult.NOT_EXECUTED;
+    }
+    
+        
+    private static class PID {
+
+        private final double kp, ki, kd;
+        
+        private long lastTime;
+        private double lastError, errorSum;
+
+        public PID(double kp, double ki, double kd) {
+            this.kp = kp;
+            this.ki = ki;
+            this.kd = kd;
+            reset();
+        }
+        
+        public final void reset() {
+            lastTime = 0;
+            lastError = Double.POSITIVE_INFINITY;
+            errorSum = 0;
+        }
+        
+        public double getCommand(double error) {            
+            
+            long time = System.nanoTime();
+            double dt = (time - lastTime) / 10e9d;            
+            double de = 0;
+            if (lastTime != 0) {                
+                if (lastError < Double.POSITIVE_INFINITY) {
+                     de = (error - lastError) / dt;
+                }
+                errorSum += error * dt;
+            }
+            
+            lastTime = time;
+            lastError = error;            
+            return kp * error + ki * errorSum + kd * de;            
+        }
     }
 
 }
