@@ -28,4 +28,16 @@ public class AngleTest {
         assertEquals(-180, Angle.ofRadians(-Math.PI).toDegrees(), 0.0);
     }
 
+    @Test
+    public void testNormalize() {
+        assertTrue(Angle.ofDegrees(0).equal(Angle.ofDegrees(0).normalize()));
+        assertTrue(Angle.ofDegrees(90).equal(Angle.ofDegrees(90).normalize()));
+        assertTrue(Angle.ofDegrees(-90).equal(Angle.ofDegrees(-90).normalize()));
+        assertTrue(Angle.ofDegrees(180).equal(Angle.ofDegrees(180).normalize()));
+        assertTrue(Angle.ofDegrees(340).equal(Angle.ofDegrees(340).normalize()));
+        assertTrue(Angle.ofDegrees(0).equal(Angle.ofDegrees(360).normalize()));
+        assertTrue(Angle.ofDegrees(40).equal(Angle.ofDegrees(400).normalize()));
+        assertTrue(Angle.ofDegrees(-40).equal(Angle.ofDegrees(-400).normalize()));
+    }
+
 }

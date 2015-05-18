@@ -37,8 +37,8 @@ public final class Angle implements Comparable<Angle> {
     }
 
     public Angle normalize() {
-        double normalized = radians / Math.PI;
-        return new Angle((normalized - (int) normalized) * Math.PI);
+        double normalized = radians / (2 * Math.PI);
+        return new Angle((normalized - (int) normalized) * (2 * Math.PI));
     }
 
     public Angle abs() {
@@ -67,6 +67,11 @@ public final class Angle implements Comparable<Angle> {
 
     public double toDegrees() {
         return Math.toDegrees(radians);
+    }
+
+    public boolean equal(Angle angle) {
+        int scale = 100000;
+        return Math.round(radians * scale) == Math.round(angle.radians * scale);
     }
 
     @Override
