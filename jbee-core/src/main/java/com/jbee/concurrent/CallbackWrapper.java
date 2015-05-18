@@ -31,6 +31,7 @@ public abstract class CallbackWrapper<T> implements Callable<T> {
             while (!completed) {
                 resultMutex.wait();
             }
+            completed = false;
         }
         return result;
     }
