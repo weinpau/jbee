@@ -1,6 +1,7 @@
 package com.jbee.device.ardrone2.internal;
 
 import com.jbee.ControlStateMachine;
+import com.jbee.buses.BeeStateBus;
 import com.jbee.buses.PositionBus;
 import com.jbee.commands.CancelCommand;
 import com.jbee.commands.Command;
@@ -33,13 +34,12 @@ public class CommandDispatcher {
     CancelController cancelController;
     FlyController flyController;
 
-    public CommandDispatcher(AT_CommandSender commandSender, NavDataClient navdataClient,   PositionBus positionBus, ControlStateMachine controlStateMachine) {
-
+    public CommandDispatcher(AT_CommandSender commandSender, NavDataClient navdataClient, BeeStateBus beeStateBus, ControlStateMachine controlStateMachine) {
         takeOffController = new TakeOffController(commandSender, navdataClient, controlStateMachine, commandExecutorService);
         landController = new LandController(commandSender, navdataClient, controlStateMachine, commandExecutorService);
         hoverController = new HoverController(commandSender, controlStateMachine);
         cancelController = new CancelController(commandSender, controlStateMachine);
-        flyController = new FlyController(commandSender, positionBus, controlStateMachine, commandExecutorService);
+        flyController = new FlyController(commandSender, beeStateBus, controlStateMachine, commandExecutorService);
     }
 
     public CommandResult dispatch(Command command) {

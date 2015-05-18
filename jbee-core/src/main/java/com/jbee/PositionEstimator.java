@@ -20,7 +20,7 @@ final class PositionEstimator extends PositionBus {
 
     Double altitude;
 
-
+    
     @Override
     public void bootstrap(TargetDevice device, BusRegistry busRegistry) throws BeeBootstrapException {
         busRegistry.get(VelocityBus.class).

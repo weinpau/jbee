@@ -1,5 +1,6 @@
 package com.jbee;
 
+import com.jbee.buses.BeeStateBus;
 import com.jbee.buses.PositionBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.buses.VelocityBus;
@@ -9,13 +10,13 @@ import com.jbee.positioning.Position;
  *
  * @author weinpau
  */
-class BeeStateBus extends Bus<BeeState> {
+class DefaultBeeStateBus extends BeeStateBus {
 
     Position position = Position.ORIGIN;
     Velocity velocity = Velocity.ZERO;
     PrincipalAxes principalAxes = PrincipalAxes.ZERO;
 
-    BeeStateBus() {
+    DefaultBeeStateBus() {
         super(Priority.HIGH);
     }
 

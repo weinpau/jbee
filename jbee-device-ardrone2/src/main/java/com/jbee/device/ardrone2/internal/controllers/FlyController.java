@@ -1,10 +1,15 @@
 package com.jbee.device.ardrone2.internal.controllers;
 
+import com.jbee.BeeState;
 import com.jbee.ControlStateMachine;
-import com.jbee.buses.PositionBus;
+import com.jbee.RotationDirection;
+import com.jbee.buses.BeeStateBus;
+import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.FlyCommand;
 import com.jbee.device.ardrone2.internal.commands.AT_CommandSender;
+import com.jbee.positioning.Position;
+import com.jbee.units.Angle;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -13,8 +18,12 @@ import java.util.concurrent.ExecutorService;
  */
 public class FlyController implements CommandController<FlyCommand> {
 
+    static final double MIN_DEFLECTION = -1;
+    static final double MAX_DEFLECTION = 1;
+
     AT_CommandSender commandSender;
-    PositionBus positionBus;
+    BeeStateBus beeStateBus;
+    PrincipalAxesBus principalAxesBus;
     ControlStateMachine controlStateMachine;
     ExecutorService commandExecutorService;
 
@@ -24,11 +33,11 @@ public class FlyController implements CommandController<FlyCommand> {
     PID yawPID = new PID(1, 0, .3);
 
     public FlyController(AT_CommandSender commandSender,
-            PositionBus positionBus,
+            BeeStateBus beeStateBus,
             ControlStateMachine controlStateMachine,
             ExecutorService commandExecutorService) {
         this.commandSender = commandSender;
-        this.positionBus = positionBus;
+        this.beeStateBus = beeStateBus;
         this.controlStateMachine = controlStateMachine;
         this.commandExecutorService = commandExecutorService;
     }
@@ -38,10 +47,47 @@ public class FlyController implements CommandController<FlyCommand> {
         return CommandResult.NOT_EXECUTED;
     }
 
-    private static class PID {
+    static Angle calculateDeltaYAW(BeeState initialState, FlyCommand command) {
+        Angle yaw = initialState.getPrincipalAxes().getYaw();
+        Angle commandYAW = command.getAngle();
+        if (command.isRealtiveRotation()) {
+            if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
+                return commandYAW;
+            } else {
+                return commandYAW.multiply(-1);
+            }
+        } else {
+            commandYAW = commandYAW.normalize();
 
-        static final double MIN_DEFLECTION = -1;
-        static final double MAX_DEFLECTION = 1;
+            if ((yaw.compareTo(commandYAW) >= 0 && command.getRotationDirection() == RotationDirection.CLOCKWISE)
+                    || (yaw.compareTo(commandYAW) <= 0 && command.getRotationDirection() == RotationDirection.COUNTERCLOCKWISE)) {
+                return yaw.sub(commandYAW).normalize();
+            } else {
+                if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
+                    return Angle.ofDegrees(360).sub(commandYAW.sub(yaw)).normalize();
+                } else {
+                    return yaw.sub(commandYAW).sub(Angle.ofDegrees(360)).normalize();
+                }
+            }
+        }
+    }
+
+    static Position calculateTargetPosition(BeeState initialState, FlyCommand command) {
+
+        if (command.isRealtivePosition()) {
+            Position p = initialState.getPosition();
+            double phi = initialState.getPrincipalAxes().getYaw().toRadians();
+            double x = command.getPosition().getX();
+            double y = command.getPosition().getY();
+            return p.addX(x * Math.cos(phi) - y * Math.sin(phi)).
+                    addY(x * Math.sin(phi) + y * Math.cos(phi)).
+                    addZ(command.getPosition().getZ());
+        }
+        return command.getPosition();
+
+    }
+
+    static class PID {
 
         private final double kp, ki, kd;
 
@@ -72,12 +118,9 @@ public class FlyController implements CommandController<FlyCommand> {
                 }
                 errorSum += error * dt;
             }
-
             lastTime = time;
             lastError = error;
-            double result = kp * error + ki * errorSum + kd * de;
-
-            return Math.max(MIN_DEFLECTION, Math.min(MAX_DEFLECTION, result));
+            return kp * error + ki * errorSum + kd * de;
         }
     }
 

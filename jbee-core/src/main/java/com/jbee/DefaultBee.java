@@ -23,7 +23,7 @@ class DefaultBee implements Bee {
         commandExecutor = new CommandExecutor(device);
         control = new DefaultBeeControl(commandExecutor, monitor, device.getDefaultSpeed(), device.getDefaultRotationalSpeed());
 
-        busRegistry.get(BeeStateBus.class).
+        busRegistry.get(DefaultBeeStateBus.class).
                 orElseThrow(() -> new RuntimeException("BeeStateBus has not been initialized")).
                 subscripe(state -> monitor.changeState(state));
     }

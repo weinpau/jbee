@@ -10,6 +10,7 @@ import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
 import com.jbee.Velocity;
 import com.jbee.buses.AltitudeBus;
+import com.jbee.buses.BeeStateBus;
 import com.jbee.buses.PositionBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.buses.VelocityBus;
@@ -57,7 +58,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     AltitudeBus altitudeBus = new AltitudeBus();
     VelocityBus velocityBus = new VelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
-    PositionBus positionBus;
+    BeeStateBus beeStateBus;
 
     AT_CommandSender commandSender;
     NavDataClient navdataClient;
@@ -102,8 +103,8 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
             throw new BeeBootstrapException("Drone is already connected.");
         }
         try {
-            positionBus = busRegistry.get(PositionBus.class).
-                    orElseThrow(() -> new BeeBootstrapException("A position bus is missing."));
+            beeStateBus = busRegistry.get(BeeStateBus.class).
+                    orElseThrow(() -> new BeeBootstrapException("A state bus is missing."));
 
             initNavClient();
             initCommandSender();
@@ -157,7 +158,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     }
 
     void initCommandDispatcher() {
-        commandDispatcher = new CommandDispatcher(commandSender, navdataClient, positionBus, controlStateMachine);
+        commandDispatcher = new CommandDispatcher(commandSender, navdataClient, beeStateBus, controlStateMachine);
     }
 
     void initCommandSender() throws IOException, UnknownHostException {

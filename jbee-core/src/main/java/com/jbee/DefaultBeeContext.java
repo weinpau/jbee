@@ -23,7 +23,7 @@ class DefaultBeeContext implements BeeContext {
     DefaultBeeContext(TargetDevice device) {
         this.device = device;
         register(new PositionEstimator());
-        register(new BeeStateBus());
+        register(new DefaultBeeStateBus());
     }
 
     @Override
