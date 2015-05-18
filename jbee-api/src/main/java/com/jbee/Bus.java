@@ -31,6 +31,10 @@ public abstract class Bus<T> implements Comparable<Bus> {
         subscribers.add(subscriber);
     }
 
+    public void removeSubscriber(Consumer<T> subscriber) {
+        subscribers.remove(subscriber);
+    }
+
     public Optional<T> getLastKnownValue() {
         return Optional.ofNullable(lastKnownValue);
     }
