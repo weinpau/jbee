@@ -47,30 +47,7 @@ public class FlyController implements CommandController<FlyCommand> {
         return CommandResult.NOT_EXECUTED;
     }
 
-    static Angle calculateDeltaYAW(BeeState initialState, FlyCommand command) {
-        Angle yaw = initialState.getPrincipalAxes().getYaw();
-        Angle commandYAW = command.getAngle();
-        if (command.isRealtiveRotation()) {
-            if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
-                return commandYAW;
-            } else {
-                return commandYAW.multiply(-1);
-            }
-        } else {
-            commandYAW = commandYAW.normalize();
-
-            if ((yaw.compareTo(commandYAW) >= 0 && command.getRotationDirection() == RotationDirection.CLOCKWISE)
-                    || (yaw.compareTo(commandYAW) <= 0 && command.getRotationDirection() == RotationDirection.COUNTERCLOCKWISE)) {
-                return yaw.sub(commandYAW).normalize();
-            } else {
-                if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
-                    return Angle.ofDegrees(360).sub(commandYAW.sub(yaw)).normalize();
-                } else {
-                    return yaw.sub(commandYAW).sub(Angle.ofDegrees(360)).normalize();
-                }
-            }
-        }
-    }
+   
 
     static Position calculateTargetPosition(BeeState initialState, FlyCommand command) {
 

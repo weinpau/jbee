@@ -26,9 +26,9 @@ class LandSimulation implements CommandSimulation<LandCommand> {
                         multiply(-1).toMeters());
 
         if (time < calculateTimeSpent(initialState, command)) {
-            return new State(p, new Velocity(Speed.ZERO, Speed.ZERO, landSpeed.multiply(-1)), initialState.getYAW());
+            return new State(p, new Velocity(Speed.ZERO, Speed.ZERO, landSpeed.multiply(-1)), initialState.getYaw());
         } else {
-            return new State(p, Velocity.ZERO, initialState.getYAW());
+            return new State(p, Velocity.ZERO, initialState.getYaw());
         }
 
     }

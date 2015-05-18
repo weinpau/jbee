@@ -37,7 +37,7 @@ public class SimpleFlight {
                 andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
                 build());
         beeControl.forward(Distance.ofMeters(5));
-
+      
         beeControl.rotate(Angle.ofDegrees(90), RotationDirection.COUNTERCLOCKWISE);
         beeControl.forward(Distance.ofMeters(2));
         beeControl.onAction(c -> beeControl.cancel(), Duration.ofSeconds(1)).hover(Duration.ofSeconds(10));

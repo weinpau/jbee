@@ -31,7 +31,7 @@ class State {
         return velocity;
     }
 
-    public Angle getYAW() {
+    public Angle getYaw() {
         return yaw;
     }
 

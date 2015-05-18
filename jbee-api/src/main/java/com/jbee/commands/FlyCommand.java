@@ -1,6 +1,7 @@
 package com.jbee.commands;
 
 import com.jbee.BeeControl;
+import com.jbee.BeeState;
 import com.jbee.RotationDirection;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
@@ -74,7 +75,43 @@ public class FlyCommand extends AbstractCommand {
     public Speed getSpeed() {
         return speed;
     }
-    
+
+    public Angle calculateDeltaYAW(Angle initialYAW) {
+        Angle yaw = getAngle();
+        if (isRealtiveRotation()) {
+            if (getRotationDirection() == RotationDirection.CLOCKWISE) {
+                return yaw;
+            } else {
+                return yaw.multiply(-1);
+            }
+        } else {
+            yaw = yaw.normalize();
+            if ((initialYAW.compareTo(yaw) >= 0 && rotationDirection == RotationDirection.CLOCKWISE)
+                    || (initialYAW.compareTo(yaw) <= 0 && rotationDirection == RotationDirection.COUNTERCLOCKWISE)) {
+                return initialYAW.sub(yaw).normalize();
+            } else {
+                if (rotationDirection == RotationDirection.CLOCKWISE) {
+                    return Angle.ofDegrees(360).sub(yaw.sub(initialYAW)).normalize();
+                } else {
+                    return initialYAW.sub(yaw).sub(Angle.ofDegrees(360)).normalize();
+                }
+            }
+        }
+    }
+
+    public Position calculateTargetPosition(Position initialPosition, Angle initialYAW) {
+
+        if (isRealtivePosition()) {
+            double phi = initialYAW.toRadians();
+            double x = getPosition().getX();
+            double y = getPosition().getY();
+            return initialPosition.addX(x * Math.cos(phi) - y * Math.sin(phi)).
+                    addY(x * Math.sin(phi) + y * Math.cos(phi)).
+                    addZ(getPosition().getZ());
+        }
+        return getPosition();
+
+    }
 
     @Override
     public int hashCode() {

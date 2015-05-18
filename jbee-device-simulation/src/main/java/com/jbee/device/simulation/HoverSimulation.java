@@ -11,7 +11,7 @@ class HoverSimulation implements CommandSimulation<HoverCommand> {
 
     @Override
     public State simulateState(State initialState, HoverCommand command, long time) {
-        return new State(initialState.getPosition(), Velocity.ZERO, initialState.getYAW());
+        return new State(initialState.getPosition(), Velocity.ZERO, initialState.getYaw());
     }
 
     @Override

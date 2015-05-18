@@ -35,10 +35,10 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
     }
 
     Angle calculateYAW(State initialState, FlyCommand command, double progress) {
-        Angle deltaYAW = calculateDeltaYAW(initialState, command);
-        Angle yaw = initialState.getYAW().add(deltaYAW.multiply(progress)).normalize();
+        Angle deltaYAW = command.calculateDeltaYAW(initialState.getYaw());
+        Angle yaw = initialState.getYaw().add(deltaYAW.multiply(progress)).normalize();
         if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
-            yaw = initialState.getYAW().sub(deltaYAW.multiply(progress)).normalize();
+            yaw = initialState.getYaw().sub(deltaYAW.multiply(progress)).normalize();
         }
         return yaw;
     }
@@ -59,32 +59,8 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
     }
 
     long calculateRotationTimeSpent(State initialState, FlyCommand command) {
-        Angle deltaYAW = calculateDeltaYAW(initialState, command);
+        Angle deltaYAW = command.calculateDeltaYAW(initialState.getYaw());
         return Math.abs(deltaYAW.divide(command.getRotationalSpeed().toAngularSpeed()).toMillis());
-    }
-
-    Angle calculateDeltaYAW(State initialState, FlyCommand command) {
-        Angle yaw = initialState.getYAW();
-        Angle commandYAW = command.getAngle();
-        if (command.isRealtiveRotation()) {
-            if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
-                return commandYAW;
-            } else {
-                return commandYAW.multiply(-1);
-            }
-        } else {
-            commandYAW = commandYAW.normalize();
-            if ((yaw.compareTo(commandYAW) >= 0 && command.getRotationDirection() == RotationDirection.CLOCKWISE)
-                    || (yaw.compareTo(commandYAW) <= 0 && command.getRotationDirection() == RotationDirection.COUNTERCLOCKWISE)) {
-                return yaw.sub(commandYAW).normalize();
-            } else {
-                if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
-                    return Angle.ofDegrees(360).sub(commandYAW.sub(yaw)).normalize();
-                } else {
-                    return yaw.sub(commandYAW).sub(Angle.ofDegrees(360)).normalize();
-                }
-            }
-        }
     }
 
     Velocity calculateVelocity(State initialState, FlyCommand command, double progress) {
@@ -113,15 +89,7 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
         }
 
         Position a = initialState.getPosition();
-        Position b = command.getPosition();
-        if (command.isRealtivePosition()) {
-            double phi = initialState.getYAW().toRadians();
-            double x = command.getPosition().getX();
-            double y = command.getPosition().getY();
-            b = a.addX(x * Math.cos(phi) - y * Math.sin(phi)).
-                    addY(x * Math.sin(phi) + y * Math.cos(phi)).
-                    addZ(command.getPosition().getZ());
-        }
+        Position b = command.calculateTargetPosition(a, initialState.getYaw());
 
         return b.sub(a).
                 normalize().

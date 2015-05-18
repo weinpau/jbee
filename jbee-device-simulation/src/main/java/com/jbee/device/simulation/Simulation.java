@@ -55,7 +55,7 @@ public class Simulation extends BeeModule implements TargetDevice {
 
             State state = dispatcher.getCurrentState();
             velocityBus.publish(state.getVelocity());
-            principalAxesBus.publish(new PrincipalAxes(state.getYAW(), Angle.ZERO, Angle.ZERO));
+            principalAxesBus.publish(new PrincipalAxes(state.getYaw(), Angle.ZERO, Angle.ZERO));
         }
     };
 

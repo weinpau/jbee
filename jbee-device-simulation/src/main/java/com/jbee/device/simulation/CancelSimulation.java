@@ -11,7 +11,7 @@ class CancelSimulation implements CommandSimulation<CancelCommand> {
     
     @Override
     public State simulateState(State initialState, CancelCommand command, long time) {
-        return new State(initialState.getPosition(), Velocity.ZERO, initialState.getYAW());
+        return new State(initialState.getPosition(), Velocity.ZERO, initialState.getYaw());
     }
 
     @Override

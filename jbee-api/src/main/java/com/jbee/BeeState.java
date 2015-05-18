@@ -22,7 +22,7 @@ public class BeeState {
     private final BatteryState batteryState;
     private final ControlState controlState;
 
-    public BeeState(long timestamp, Position position, Velocity velocity, PrincipalAxes principalAxes, BatteryState batteryState, ControlState controlState) {
+    BeeState(long timestamp, Position position, Velocity velocity, PrincipalAxes principalAxes, BatteryState batteryState, ControlState controlState) {
         this.timestamp = timestamp;
         this.position = position;
         this.velocity = velocity;
