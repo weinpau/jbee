@@ -69,6 +69,10 @@ public class FlyControllerTest {
                 YAWState(Angle.ofDegrees(340)),
                 Commands.rotate(Angle.ofDegrees(180), RotationDirection.CLOCKWISE).build())));
 
+        assertTrue(Angle.ofDegrees(350).equal(FlyController.calculateDeltaYAW(
+                YAWState(Angle.ofDegrees(20)),
+                Commands.rotate(Angle.ofDegrees(350), RotationDirection.CLOCKWISE).build())));
+
         assertTrue(Angle.ofDegrees(-40).equal(FlyController.calculateDeltaYAW(
                 YAWState(Angle.ofDegrees(20)),
                 Commands.rotate(Angle.ofDegrees(40), RotationDirection.COUNTERCLOCKWISE).build())));
@@ -76,6 +80,11 @@ public class FlyControllerTest {
         assertTrue(Angle.ofDegrees(-180).equal(FlyController.calculateDeltaYAW(
                 YAWState(Angle.ofDegrees(340)),
                 Commands.rotate(Angle.ofDegrees(180), RotationDirection.COUNTERCLOCKWISE).build())));
+
+        assertTrue(Angle.ofDegrees(-350).equal(FlyController.calculateDeltaYAW(
+                YAWState(Angle.ofDegrees(20)),
+                Commands.rotate(Angle.ofDegrees(350), RotationDirection.COUNTERCLOCKWISE).build())));
+
     }
 
     BeeState YAWState(Angle yaw) {
