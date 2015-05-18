@@ -1,15 +1,11 @@
 package com.jbee.device.ardrone2.internal.controllers;
 
-import com.jbee.BeeState;
 import com.jbee.ControlStateMachine;
-import com.jbee.RotationDirection;
 import com.jbee.buses.BeeStateBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.FlyCommand;
 import com.jbee.device.ardrone2.internal.commands.AT_CommandSender;
-import com.jbee.positioning.Position;
-import com.jbee.units.Angle;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -48,22 +44,6 @@ public class FlyController implements CommandController<FlyCommand> {
     }
 
    
-
-    static Position calculateTargetPosition(BeeState initialState, FlyCommand command) {
-
-        if (command.isRealtivePosition()) {
-            Position p = initialState.getPosition();
-            double phi = initialState.getPrincipalAxes().getYaw().toRadians();
-            double x = command.getPosition().getX();
-            double y = command.getPosition().getY();
-            return p.addX(x * Math.cos(phi) - y * Math.sin(phi)).
-                    addY(x * Math.sin(phi) + y * Math.cos(phi)).
-                    addZ(command.getPosition().getZ());
-        }
-        return command.getPosition();
-
-    }
-
     static class PID {
 
         private final double kp, ki, kd;
