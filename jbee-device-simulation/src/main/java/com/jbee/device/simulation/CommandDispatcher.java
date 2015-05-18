@@ -46,7 +46,7 @@ class CommandDispatcher {
         CommandSimulation cmdSimulation = getCommandSimulation(command);
         currentCommand = command;
         currentCmdSimulation = cmdSimulation;
-        long timeSpent = cmdSimulation.calculateTimeSpent(state, command);
+        long timeSpent = cmdSimulation.calculateDuration(state, command);
         startTime = System.currentTimeMillis();
         Thread.sleep(timeSpent);
         state = cmdSimulation.simulateState(state, command, timeSpent);

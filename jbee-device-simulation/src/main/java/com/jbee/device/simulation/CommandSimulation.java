@@ -10,6 +10,6 @@ interface CommandSimulation<T extends Command> {
 
     State simulateState(State initialState, T command, long time);
 
-    long calculateTimeSpent(State initialState, T command);
+    long calculateDuration(State initialState, T command);
 
 }

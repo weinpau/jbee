@@ -26,7 +26,7 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
     }
 
     double calculateProgress(State initialState, FlyCommand command, long time) {
-        long timeSpent = calculateFlyTimeSpent(initialState, command);
+        long timeSpent = calculateDuration(initialState, command);
 
         if (timeSpent > 0) {
             return time / (double) timeSpent;
@@ -44,23 +44,8 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
     }
 
     @Override
-    public long calculateTimeSpent(State initialState, FlyCommand command) {
-        return Math.max(
-                calculateFlyTimeSpent(initialState, command),
-                calculateRotationTimeSpent(initialState, command));
-    }
-
-    long calculateFlyTimeSpent(State initialState, FlyCommand command) {
-        Position startPosition = Position.ORIGIN;
-        if (!command.isRealtivePosition()) {
-            startPosition = initialState.getPosition();
-        }
-        return Math.abs(command.getPosition().distance(startPosition).divide(command.getSpeed()).toMillis());
-    }
-
-    long calculateRotationTimeSpent(State initialState, FlyCommand command) {
-        Angle deltaYAW = command.calculateDeltaYAW(initialState.getYaw());
-        return Math.abs(deltaYAW.divide(command.getRotationalSpeed().toAngularSpeed()).toMillis());
+    public long calculateDuration(State initialState, FlyCommand command) {
+        return command.calculateDuration(initialState.getPosition(), initialState.getYaw()).toMillis();
     }
 
     Velocity calculateVelocity(State initialState, FlyCommand command, double progress) {

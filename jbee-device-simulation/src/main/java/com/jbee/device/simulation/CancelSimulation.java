@@ -15,7 +15,7 @@ class CancelSimulation implements CommandSimulation<CancelCommand> {
     }
 
     @Override
-    public long calculateTimeSpent(State initialState, CancelCommand command) {
+    public long calculateDuration(State initialState, CancelCommand command) {
         return 0;
 
     }

@@ -15,7 +15,7 @@ class HoverSimulation implements CommandSimulation<HoverCommand> {
     }
 
     @Override
-    public long calculateTimeSpent(State initialState, HoverCommand command) {
+    public long calculateDuration(State initialState, HoverCommand command) {
         return command.getDuration().toMillis();
     }
 

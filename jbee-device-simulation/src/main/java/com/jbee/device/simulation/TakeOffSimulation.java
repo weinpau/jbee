@@ -26,7 +26,7 @@ class TakeOffSimulation implements CommandSimulation<TakeOffCommand> {
         Position p = initialState.getPosition().
                 addZ(takeOffSpeed.multiply(Duration.ofMillis(time)).toMeters());
 
-        if (time < calculateTimeSpent(initialState, command)) {
+        if (time < calculateDuration(initialState, command)) {
             return new State(p, new Velocity(Speed.ZERO, Speed.ZERO, takeOffSpeed), initialState.getYaw());
         } else {
             return new State(p, Velocity.ZERO, initialState.getYaw());
@@ -34,7 +34,7 @@ class TakeOffSimulation implements CommandSimulation<TakeOffCommand> {
     }
 
     @Override
-    public long calculateTimeSpent(State initialState, TakeOffCommand command) {
+    public long calculateDuration(State initialState, TakeOffCommand command) {
         return takeOffAltitude.divide(takeOffSpeed).toMillis();
     }
 

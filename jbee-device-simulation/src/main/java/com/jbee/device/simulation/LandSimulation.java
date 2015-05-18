@@ -25,7 +25,7 @@ class LandSimulation implements CommandSimulation<LandCommand> {
                 addZ(landSpeed.multiply(Duration.ofMillis(time)).
                         multiply(-1).toMeters());
 
-        if (time < calculateTimeSpent(initialState, command)) {
+        if (time < calculateDuration(initialState, command)) {
             return new State(p, new Velocity(Speed.ZERO, Speed.ZERO, landSpeed.multiply(-1)), initialState.getYaw());
         } else {
             return new State(p, Velocity.ZERO, initialState.getYaw());
@@ -34,7 +34,7 @@ class LandSimulation implements CommandSimulation<LandCommand> {
     }
 
     @Override
-    public long calculateTimeSpent(State initialState, LandCommand command) {
+    public long calculateDuration(State initialState, LandCommand command) {
         return (long) (1000d * initialState.getPosition().getZ() / landSpeed.mps());
     }
 
