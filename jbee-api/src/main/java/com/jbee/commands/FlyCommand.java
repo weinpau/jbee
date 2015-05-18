@@ -1,7 +1,6 @@
 package com.jbee.commands;
 
 import com.jbee.BeeControl;
-import com.jbee.BeeState;
 import com.jbee.RotationDirection;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
