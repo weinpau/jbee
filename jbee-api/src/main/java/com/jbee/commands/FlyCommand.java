@@ -136,47 +136,4 @@ public class FlyCommand extends AbstractCommand {
         return deltaYAW.divide(rotationalSpeed.toAngularSpeed()).abs();
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + Objects.hashCode(this.position);
-        hash = 37 * hash + Objects.hashCode(this.angle);
-        hash = 37 * hash + Objects.hashCode(this.rotationDirection);
-        hash = 37 * hash + Objects.hashCode(this.rotationalSpeed);
-        hash = 37 * hash + (this.realtivePosition ? 1 : 0);
-        hash = 37 * hash + (this.realtiveRotation ? 1 : 0);
-        hash = 37 * hash + Objects.hashCode(this.speed);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final FlyCommand other = (FlyCommand) obj;
-        if (!Objects.equals(this.position, other.position)) {
-            return false;
-        }
-        if (!Objects.equals(this.angle, other.angle)) {
-            return false;
-        }
-        if (this.rotationDirection != other.rotationDirection) {
-            return false;
-        }
-        if (!Objects.equals(this.rotationalSpeed, other.rotationalSpeed)) {
-            return false;
-        }
-        if (this.realtivePosition != other.realtivePosition) {
-            return false;
-        }
-        if (this.realtiveRotation != other.realtiveRotation) {
-            return false;
-        }
-        return Objects.equals(this.speed, other.speed);
-    }
-
 }

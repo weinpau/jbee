@@ -13,7 +13,7 @@ import java.time.Duration;
  */
 public class Commands {
 
-    private Commands() {
+    protected Commands() {
     }
 
     public static Command cancel() {
