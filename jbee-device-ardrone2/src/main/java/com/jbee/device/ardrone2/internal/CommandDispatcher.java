@@ -2,7 +2,6 @@ package com.jbee.device.ardrone2.internal;
 
 import com.jbee.ControlStateMachine;
 import com.jbee.buses.BeeStateBus;
-import com.jbee.buses.PositionBus;
 import com.jbee.commands.CancelCommand;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
@@ -28,7 +27,7 @@ import java.util.concurrent.Executors;
  */
 public class CommandDispatcher {
 
-    ExecutorService commandExecutorService = Executors.newSingleThreadExecutor();
+    ExecutorService commandExecutorService = Executors.newSingleThreadExecutor(r -> new Thread(r, "command-executor"));
 
     LandController landController;
     TakeOffController takeOffController;
