@@ -11,6 +11,7 @@ import com.jbee.device.ardrone2.internal.navdata.options.ControlState;
 import com.jbee.device.ardrone2.internal.navdata.options.Demo;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -45,36 +46,41 @@ public class LandController implements CommandController<LandCommand> {
         }
 
         String navdataReveiverId = String.format("land-%d", command.getCommandNumber());
-        try {
-            return commandExecutorService.submit(new CallbackWrapper<CommandResult>() {
 
-                @Override
-                protected void handle() {
-                    try {
-                        commandSender.send(AT_REF.LAND);
-                        navdataClient.onNavDataReceived(navdataReveiverId, navdata -> {
+        Future<CommandResult> task = commandExecutorService.submit(new CallbackWrapper<CommandResult>() {
 
-                            Demo demo = navdata.getOption(Demo.class);
-                            if (demo != null) {
-                                if (demo.getControlState() == ControlState.CTRL_TRANS_LOOPING) {
-                                    controlStateMachine.changeStateForced(com.jbee.ControlState.LANDING);
-                                } else if (demo.getControlState() == ControlState.CTRL_LANDED) {
-                                    controlStateMachine.changeStateForced(com.jbee.ControlState.READY_FOR_TAKE_OFF);
-                                    submit(CommandResult.COMPLETED);
-                                }
+            @Override
+            protected void handle() {
+                try {
+                    commandSender.send(AT_REF.LAND);
+                    navdataClient.onNavDataReceived(navdataReveiverId, navdata -> {
+
+                        Demo demo = navdata.getOption(Demo.class);
+                        if (demo != null) {
+                            if (demo.getControlState() == ControlState.CTRL_TRANS_LOOPING) {
+                                controlStateMachine.changeStateForced(com.jbee.ControlState.LANDING);
+                            } else if (demo.getControlState() == ControlState.CTRL_LANDED) {
+                                controlStateMachine.changeStateForced(com.jbee.ControlState.READY_FOR_TAKE_OFF);
+                                submit(CommandResult.COMPLETED);
                             }
+                        }
 
-                        });
-                    } catch (InterruptedException ex) {
-                        submit(CommandResult.FAILED);
-                    }
+                    });
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    submit(CommandResult.FAILED);
                 }
-            }).get(TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+            }
+        });
+        try {
+            return task.get(TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
         } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+            ex.printStackTrace();
             return CommandResult.FAILED;
         } finally {
             navdataClient.removeNavDataReceiver(navdataReveiverId);
+            task.cancel(true);
         }
 
     }
