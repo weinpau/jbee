@@ -74,7 +74,7 @@ public class Demo implements Option {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append("BeeState{").append("\n");
+        stringBuilder.append("Demo{").append("\n");
         stringBuilder.append("\t").append("controlState=").append(controlState).append("\n");
         stringBuilder.append("\t").append("batteryPercentage=").append(batteryPercentage).append("\n");
         stringBuilder.append("\t").append("pitch=").append(pitch).append("\n");
