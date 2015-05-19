@@ -11,7 +11,6 @@ import com.jbee.TargetDevice;
 import com.jbee.Velocity;
 import com.jbee.buses.AltitudeBus;
 import com.jbee.buses.BeeStateBus;
-import com.jbee.buses.PositionBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.buses.VelocityBus;
 import com.jbee.commands.Command;
@@ -136,6 +135,9 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
                     commandSender.send(new AT_COMWDG());
                     commandSender.send(new AT_CONFIG("general:navdata_demo", true));
                     commandSender.send(new AT_CONFIG("general:navdata_options", OptionId.mask(NAVDATA_OPTIONS)));
+                    commandSender.send(new AT_CONFIG("control:flying_mode", "0"));
+                    commandSender.send(new AT_CONFIG("control:control_vz_max", "200"));
+                    commandSender.send(new AT_CONFIG("control:control_yaw", "2.0"));
 
                     navdataClient.onNavDataReceived("bootstrap", navdata -> {
                         if (!navdata.getState().isNavDataBootstrap() && navdata.getOption(Demo.class) != null) {
@@ -174,10 +176,10 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
 
     @Override
     public void disconnect() throws IOException {
-        if (!controlStateMachine.changeState(ControlState.DISCONNECTED)) {
+        if (controlStateMachine.getControlState() != ControlState.DISCONNECTED) {
             try {
-                System.out.println("EMERGENCY");
-                commandSender.send(AT_REF.EMERGENCY);
+                commandSender.send(AT_REF.LAND);
+                Thread.sleep(5000);
             } catch (InterruptedException ex) {
             }
         }
