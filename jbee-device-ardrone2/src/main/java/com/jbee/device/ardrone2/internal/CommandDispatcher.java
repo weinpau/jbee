@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
  */
 public class CommandDispatcher {
 
-    ExecutorService commandExecutorService = Executors.newSingleThreadExecutor(r -> new Thread(r, "command-executor"));
+    ExecutorService commandExecutorService = Executors.newSingleThreadExecutor(r -> new Thread(r, "CommandExecutor"));
 
     LandController landController;
     TakeOffController takeOffController;
@@ -68,6 +68,10 @@ public class CommandDispatcher {
         }
 
         throw new RuntimeException("unknown command");
+    }
+    
+    public void close() {
+        commandExecutorService.shutdownNow();
     }
 
 }

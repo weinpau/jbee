@@ -136,8 +136,8 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
                     commandSender.send(new AT_CONFIG("general:navdata_demo", true));
                     commandSender.send(new AT_CONFIG("general:navdata_options", OptionId.mask(NAVDATA_OPTIONS)));
                     commandSender.send(new AT_CONFIG("control:flying_mode", "0"));
-                    commandSender.send(new AT_CONFIG("control:control_vz_max", "200"));
-                    commandSender.send(new AT_CONFIG("control:control_yaw", "2.0"));
+//                    commandSender.send(new AT_CONFIG("control:control_vz_max", "200"));
+//                    commandSender.send(new AT_CONFIG("control:control_yaw", "2.0"));
 
                     navdataClient.onNavDataReceived("bootstrap", navdata -> {
                         if (!navdata.getState().isNavDataBootstrap() && navdata.getOption(Demo.class) != null) {
@@ -185,6 +185,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
         }
         navdataClient.disconnect();
         commandSender.disconnect();
+        commandDispatcher.close();
         controlStateMachine.changeStateForced(ControlState.DISCONNECTED);
     }
 
