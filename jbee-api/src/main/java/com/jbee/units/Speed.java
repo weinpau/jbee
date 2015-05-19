@@ -72,6 +72,11 @@ public final class Speed implements Comparable<Speed> {
         return mps < 0;
     }
 
+    public boolean equal(Speed speed) {
+        int scale = 100000;
+        return Math.round(mps * scale) == Math.round(speed.mps * scale);
+    }
+
     @Override
     public int compareTo(Speed o) {
         if (o == null) {

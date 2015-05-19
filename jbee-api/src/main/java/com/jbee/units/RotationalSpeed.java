@@ -40,9 +40,14 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
         return rpm < 0;
     }
 
+    public boolean equal(RotationalSpeed rotationalSpeed) {
+        int scale = 100000;
+        return Math.round(rpm * scale) == Math.round(rotationalSpeed.rpm * scale);
+    }
+
     @Override
     public String toString() {
-        return Numbers.format(rpm,3) + " rpm";
+        return Numbers.format(rpm, 3) + " rpm";
     }
 
     @Override

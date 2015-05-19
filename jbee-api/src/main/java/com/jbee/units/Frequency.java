@@ -63,7 +63,7 @@ public class Frequency implements Comparable<Frequency> {
     public boolean isNegative() {
         return mHz < 0;
     }
-
+    
     @Override
     public int compareTo(Frequency o) {
         return Long.compare(mHz, o.mHz);

@@ -1,9 +1,7 @@
 package com.jbee.units;
 
 import com.jbee.utils.Numbers;
-import java.text.NumberFormat;
 import java.time.Duration;
-import java.util.Locale;
 
 /**
  *
@@ -75,6 +73,11 @@ public final class Distance implements Comparable<Distance> {
 
     public boolean isNegative() {
         return meters < 0;
+    }
+
+    public boolean equal(Distance distance) {
+        int scale = 100000;
+        return Math.round(meters * scale) == Math.round(distance.meters * scale);
     }
 
     public static Distance ofMeters(double meters) {

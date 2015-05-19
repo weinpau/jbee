@@ -48,6 +48,10 @@ public class AngularSpeed implements Comparable<AngularSpeed> {
         return degreesPerSecond.isNegative();
     }
 
+    public boolean equal(AngularSpeed angularSpeed) {
+        return degreesPerSecond.equal(angularSpeed.degreesPerSecond);
+    }
+
     @Override
     public int compareTo(AngularSpeed o) {
         return degreesPerSecond.compareTo(o.degreesPerSecond);
