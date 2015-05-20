@@ -4,6 +4,9 @@ import com.jbee.RotationDirection;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
+import com.jbee.units.RotationalSpeed;
+import com.jbee.units.Speed;
+import java.time.Duration;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -97,6 +100,62 @@ public class FlyCommandTest {
 
         p = Commands.forward(Distance.ofMeters(10)).build().calculateTargetPosition(p, Angle.ofDegrees(90));
         assertTrue(p.nearlyEqual(new Position(-10, 10), Distance.ofMillimeters(1)));
+    }
+
+    @Test
+    public void testCalculateFlyDuration() {
+
+        FlyCommand command = Commands.
+                forward(Distance.ofMeters(10)).
+                with(Speed.mps(2)).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                with(RotationalSpeed.rpm(1)).build();
+
+        Duration duration = command.calculateFlyDuration(Position.ORIGIN);
+
+        assertEquals(Duration.ofSeconds(5), duration);
+    }
+
+    @Test
+    public void testCalculateRotationDuration() {
+
+        FlyCommand command = Commands.
+                forward(Distance.ofMeters(10)).
+                with(Speed.mps(2)).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                with(RotationalSpeed.rpm(1)).build();
+
+        Duration duration = command.calculateRotationDuration(Angle.ZERO);
+
+        assertEquals(Duration.ofSeconds(15), duration);
+    }
+
+    @Test
+    public void testCalculateDuration() {
+
+        FlyCommand command = Commands.
+                forward(Distance.ofMeters(10)).
+                with(Speed.mps(2)).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                with(RotationalSpeed.rpm(1)).build();
+
+        Duration duration = command.calculateDuration(Position.ORIGIN, Angle.ZERO);
+
+        assertEquals(Duration.ofSeconds(15), duration);
+    }
+
+    @Test
+    public void testCalculateDuration_2() {
+
+        FlyCommand command = Commands.
+                forward(Distance.ofMeters(10)).
+                with(Speed.mps(2)).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                with(RotationalSpeed.rps(10)).build();
+
+        Duration duration = command.calculateDuration(Position.ORIGIN, Angle.ZERO);
+
+        assertEquals(Duration.ofSeconds(5), duration);
     }
 
 }

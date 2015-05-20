@@ -7,7 +7,6 @@ import com.jbee.units.Angle;
 import com.jbee.units.RotationalSpeed;
 import com.jbee.units.Speed;
 import java.time.Duration;
-import java.util.Objects;
 
 /**
  *
@@ -114,16 +113,16 @@ public class FlyCommand extends AbstractCommand {
     }
 
     public Duration calculateDuration(Position initialPosition, Angle initialYAW) {
-        Duration flyDuration = calculateFlyDuration(initialPosition, initialYAW);
+        Duration flyDuration = calculateFlyDuration(initialPosition);
         Duration rotationDuration = calculateRotationDuration(initialYAW);
-        if (flyDuration.compareTo(flyDuration) >= 0) {
+        if (flyDuration.compareTo(rotationDuration) >= 0) {
             return flyDuration;
         } else {
             return rotationDuration;
         }
     }
 
-    public Duration calculateFlyDuration(Position initialPosition, Angle initialYAW) {
+    public Duration calculateFlyDuration(Position initialPosition) {
         Position p = Position.ORIGIN;
         if (!isRealtivePosition()) {
             p = initialPosition;
