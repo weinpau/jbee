@@ -12,7 +12,7 @@ import java.util.Set;
 class DefaultBeeContext implements BeeContext {
 
     boolean closed = false;
-    Bee bee;
+    DefaultBee bee;
 
     final TargetDevice device;
 
@@ -22,7 +22,7 @@ class DefaultBeeContext implements BeeContext {
 
     DefaultBeeContext(TargetDevice device) {
         this.device = device;
-        register(new PositionEstimator());
+        register(new DefaultPositionBus());
         register(new DefaultBeeStateBus());
     }
 
@@ -33,7 +33,8 @@ class DefaultBeeContext implements BeeContext {
         }
         bootstrapBuses();
         device.bootstrap(busRegistry);
-        bee = new DefaultBee(device, busRegistry, determinePosition());
+        bee = new DefaultBee(device);
+        bee.init(busRegistry);
         return bee;
     }
 
@@ -41,16 +42,6 @@ class DefaultBeeContext implements BeeContext {
         for (Bus b : busRegistry.getAll()) {
             b.bootstrap(device, busRegistry);
         }
-    }
-
-    LatLon determinePosition() {
-        for (LatLonBus bus : busRegistry.getAll(LatLonBus.class)) {
-            LatLon position = bus.getLastKnownValue().orElse(null);
-            if (position != null) {
-                return position;
-            }
-        }
-        return null;
     }
 
     @Override

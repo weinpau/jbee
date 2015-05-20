@@ -13,15 +13,22 @@ class DefaultBee implements Bee {
     final TargetDevice device;
 
     final CommandExecutor commandExecutor;
-    final LatLon origin;
+    LatLon origin;
     final DefaultBeeControl control;
     final DefaultBeeMonitor monitor = new DefaultBeeMonitor();
 
-    public DefaultBee(TargetDevice device, BusRegistry busRegistry, LatLon origin) {
+    public DefaultBee(TargetDevice device) {
         this.device = device;
-        this.origin = origin;
         commandExecutor = new CommandExecutor(device);
         control = new DefaultBeeControl(commandExecutor, monitor, device.getDefaultSpeed(), device.getDefaultRotationalSpeed());
+    }
+
+    public void init(BusRegistry busRegistry) throws BeeBootstrapException {
+        try {
+            origin = determineOrigin(busRegistry);
+        } catch (InterruptedException e) {
+            throw new BeeBootstrapException(e);
+        }
 
         busRegistry.get(DefaultBeeStateBus.class).
                 orElseThrow(() -> new RuntimeException("BeeStateBus has not been initialized")).
@@ -51,6 +58,16 @@ class DefaultBee implements Bee {
         }
         commandExecutor.shutdown();
         control.close();
+    }
+
+    private LatLon determineOrigin(BusRegistry busRegistry) throws InterruptedException {
+
+        OriginDeterminer originDeterminer = new OriginDeterminer(busRegistry);
+        if (originDeterminer.isDeterminable()) {
+            return originDeterminer.determineOrigin();
+        } else {
+            return null;
+        }
     }
 
 }
