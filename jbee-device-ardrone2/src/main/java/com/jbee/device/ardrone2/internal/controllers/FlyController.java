@@ -83,8 +83,8 @@ public class FlyController implements CommandController<FlyCommand> {
 
     class OpenLoopControl extends CallbackWrapper<CommandResult> implements LoopControl {
 
-        static final double MIN_DEFLECTION = -.1;
-        static final double MAX_DEFLECTION = .1;
+        static final double MIN_DEFLECTION = -1;
+        static final double MAX_DEFLECTION = 1;
 
         static final double EPSILON_HORIZONTAL = .1;
         static final double EPSILON_ALTITUDE = .1;
@@ -92,10 +92,12 @@ public class FlyController implements CommandController<FlyCommand> {
 
         static final int REQUIRED_ACCEPTABLE_COUNT = 2;
 
-        PID xPID = new PID(.05, 0, .035);
-        PID yPID = new PID(.05, 0, .035);
-        PID zPID = new PID(.08, 0, .035);
+        PID xPID = new PID(.5, 0, .35);
+        PID yPID = new PID(.5, 0, .35);
+        PID zPID = new PID(.8, 0, .35);
         PID yawPID = new PID(1, 0, .3);
+
+        long lastTime;
 
         double targetX, targetY, targetZ, targetYAW;
         int acceptableCount = 0;
@@ -108,6 +110,12 @@ public class FlyController implements CommandController<FlyCommand> {
             beeStateBus.subscripe(state -> {
                 if (!enable) {
                     return;
+                }
+                long time = System.currentTimeMillis();
+                if (time - lastTime <= 1) {
+                    return;
+                } else {
+                    lastTime = time;
                 }
 
                 double yaw = state.getPrincipalAxes().getYaw().toRadians();
@@ -139,7 +147,7 @@ public class FlyController implements CommandController<FlyCommand> {
                 System.out.println(String.format("ex: %f, ey: %f, ez: %f, eyaw: %f", eX, eY, eZ, eYaw));
                 System.out.println(String.format("rx: %f, ry: %f, rz: %f, ryaw: %f", rX, rY, rZ, rYaw));
                 System.out.println(String.format("dx: %f, dy: %f, dz: %f, dyaw: %f", dX, dY, dZ, dYaw));
-
+              
                 try {
                     commandSender.send(new AT_PCMD(false, (float) dX, (float) dY, (float) dZ, (float) dYaw));
                 } catch (InterruptedException e) {
@@ -171,6 +179,10 @@ public class FlyController implements CommandController<FlyCommand> {
         void configTarget(BeeState state, FlyCommand command) {
             Angle initialYAW = state.getPrincipalAxes().getYaw();
             Position targetPosition = command.calculateTargetPosition(state.getPosition(), initialYAW);
+
+            System.out.println("currentPosition: " + state.getPosition());
+            System.out.println("targetPosition: " + targetPosition);
+
             targetX = targetPosition.getX();
             targetY = targetPosition.getY();
             targetZ = targetPosition.getZ();
@@ -198,7 +210,7 @@ public class FlyController implements CommandController<FlyCommand> {
 
         private double kp, ki, kd;
 
-        private long lastTime;
+        private long lastNanoTime;
         private double lastError, errorSum;
 
         public PID(double kp, double ki, double kd) {
@@ -206,30 +218,30 @@ public class FlyController implements CommandController<FlyCommand> {
             reset();
         }
 
-        public final void config(double kp1, double ki1, double kd1) {
-            this.kp = kp1;
-            this.ki = ki1;
-            this.kd = kd1;
+        public final void config(double kp, double ki, double kd) {
+            this.kp = kp;
+            this.ki = ki;
+            this.kd = kd;
         }
 
         public final void reset() {
-            lastTime = 0;
+            lastNanoTime = 0;
             lastError = Double.POSITIVE_INFINITY;
             errorSum = 0;
         }
 
         public double getRawCommand(double error) {
 
-            long time = System.nanoTime();
-            double dt = (time - lastTime) / 10e9d;
+            long nanoTime = System.nanoTime();
+            double dt = (nanoTime - lastNanoTime) / 10e9d;
             double de = 0;
-            if (lastTime != 0) {
+            if (lastNanoTime != 0) {
                 if (lastError < Double.POSITIVE_INFINITY) {
                     de = (error - lastError) / dt;
                 }
                 errorSum += error * dt;
             }
-            lastTime = time;
+            lastNanoTime = nanoTime;
             lastError = error;
             return kp * error + ki * errorSum + kd * de;
         }
