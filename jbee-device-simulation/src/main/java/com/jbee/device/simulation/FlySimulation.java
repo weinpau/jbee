@@ -54,12 +54,17 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
             return Velocity.ZERO;
         }
 
+        long flyDuration = command.calculateFlyDuration(initialState.getPosition()).toMillis();
+        long totalDuration = command.calculateDuration(initialState.getPosition(), initialState.getYaw()).toMillis();
+        
+        double speedFactor = (double) flyDuration / (double) totalDuration;
+        
         Position a = initialState.getPosition();
         Position b = calculatePosition(initialState, command, progress);
 
         Position p = b.sub(a).
                 normalize().
-                multiply(command.getSpeed().mps());
+                multiply(command.getSpeed().multiply(speedFactor).mps());
 
         return new Velocity(
                 Speed.mps(p.getX()),
