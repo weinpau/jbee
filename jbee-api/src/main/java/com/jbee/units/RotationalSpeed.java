@@ -17,7 +17,7 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
     }
 
     public double rps() {
-        return rpm * 60;
+        return rpm / 60;
     }
 
     public double rpm() {
@@ -78,7 +78,7 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
         if (!Double.isFinite(rps)) {
             throw new IllegalArgumentException("The rps must be a finite number.");
         }
-        return new RotationalSpeed(rps / 60);
+        return new RotationalSpeed(rps * 60);
     }
 
     public static RotationalSpeed rpm(double rpm) {
