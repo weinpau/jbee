@@ -24,7 +24,6 @@ public class SimpleFlight {
 
         BeeControl beeControl = bee.control().
                 speed(Speed.mps(2)).
-                onCanceled(c -> System.out.println("command " + c.getCommandNumber() + " canceled")).
                 onPositionChanged((c, p) -> {
                     System.out.println("command " + c.getCommandNumber() + ": " + p);
                 },
@@ -33,14 +32,13 @@ public class SimpleFlight {
         beeControl.takeOff();
 
         beeControl.execute(Commands.
-                forward(Distance.ofMeters(5)).
+                forward(Distance.ofMeters(10)).
                 andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
                 build());
-        beeControl.forward(Distance.ofMeters(5));
-      
+        
         beeControl.rotate(Angle.ofDegrees(90), RotationDirection.COUNTERCLOCKWISE);
         beeControl.forward(Distance.ofMeters(2));
-        beeControl.onAction(c -> beeControl.cancel(), Duration.ofSeconds(1)).hover(Duration.ofSeconds(10));
+        beeControl.hover(Duration.ofSeconds(5));
         beeControl.land();
 
         System.out.println("target position: " + bee.monitor().getLastKnownState().getPosition());
