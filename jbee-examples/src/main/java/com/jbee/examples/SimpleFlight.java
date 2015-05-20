@@ -9,6 +9,7 @@ import com.jbee.commands.Commands;
 import com.jbee.device.simulation.Simulation;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
+import com.jbee.units.RotationalSpeed;
 import com.jbee.units.Speed;
 import java.time.Duration;
 
@@ -31,11 +32,13 @@ public class SimpleFlight {
 
         beeControl.takeOff();
 
-        beeControl.execute(Commands.
-                forward(Distance.ofMeters(10)).
-                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
-                build());
-        
+        beeControl.onPositionChanged((c, p) -> System.out.println(bee.monitor().getLastKnownState().getPrincipalAxes()),
+                Distance.ofMeters(1)).execute(Commands.
+                        forward(Distance.ofMeters(10)).
+                        andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                        with(RotationalSpeed.rpm(1)).
+                        build());
+
         beeControl.rotate(Angle.ofDegrees(90), RotationDirection.COUNTERCLOCKWISE);
         beeControl.forward(Distance.ofMeters(2));
         beeControl.hover(Duration.ofSeconds(5));
