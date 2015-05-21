@@ -1,7 +1,5 @@
 package com.jbee;
 
-import com.jbee.buses.LatLonBus;
-import com.jbee.positioning.LatLon;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -30,9 +28,9 @@ class DefaultBeeContext implements BeeContext {
     public Bee bootstrap() throws BeeBootstrapException {
         if (bee != null) {
             throw new BeeBootstrapException("Bee has already been created.");
-        }
-        bootstrapBuses();
+        }        
         device.bootstrap(busRegistry);
+        bootstrapBuses();
         bee = new DefaultBee(device);
         bee.init(busRegistry);
         return bee;
