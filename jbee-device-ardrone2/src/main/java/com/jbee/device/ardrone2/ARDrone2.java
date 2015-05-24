@@ -74,7 +74,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     Duration bootstrapTimeout = Duration.ofSeconds(10);
 
     static final Random RANDOM = new Random();
-    static final OptionId[] NAVDATA_OPTIONS = {OptionId.DEMO};
+    static final OptionId[] NAVDATA_OPTIONS = {OptionId.DEMO, OptionId.GPS};
 
     public ARDrone2() {
 

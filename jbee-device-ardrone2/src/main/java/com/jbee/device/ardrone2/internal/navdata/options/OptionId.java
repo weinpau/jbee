@@ -34,7 +34,7 @@ public enum OptionId {
     KALMAN_PRESSURE(24),
     HDVIDEO_STREAM(25),
     WIFI(26),
-    GPS(27);
+    GPS(27, GPS.class);
 
     private final int id;
     private final Class<? extends Option> optionClass;
