@@ -106,7 +106,7 @@ public class DistanceTest {
 
     @Test
     public void testEqual() {
-        assertTrue(Distance.ofMeters(-1).equal(Distance.ofMeters(-1.000000001)));
+        assertTrue(Distance.ofMeters(-1).equal(Distance.ofMeters(-1+1e-50)));
         assertFalse(Distance.ofMeters(-1).equal(Distance.ofMeters(-1.1)));
     }
 

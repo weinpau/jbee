@@ -41,8 +41,8 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
     }
 
     public boolean equal(RotationalSpeed rotationalSpeed) {
-        int scale = 100000;
-        return Math.round(rpm * scale) == Math.round(rotationalSpeed.rpm * scale);
+        double error = Math.ulp(rpm) + Math.ulp(rotationalSpeed.rpm);
+        return Math.abs(rpm - rotationalSpeed.rpm) <= 2 * error;
     }
 
     @Override

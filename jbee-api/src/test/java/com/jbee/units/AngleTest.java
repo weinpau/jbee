@@ -56,20 +56,20 @@ public class AngleTest {
     @Test
     public void testMultiply() {
         assertTrue(Angle.ofDegrees(5).multiply(-1).equal(Angle.ofDegrees(-5)));
-       assertTrue(Angle.ofDegrees(5).multiply(0).equal(Angle.ZERO));
+        assertTrue(Angle.ofDegrees(5).multiply(0).equal(Angle.ZERO));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testMultiply_invalid() {
         Angle.ofDegrees(5).multiply(Double.NaN);
-      }
-    
+    }
+
     @Test
     public void testAbs() {
-    assertTrue(Angle.ofDegrees(-5).abs().equal(Angle.ofDegrees(5)));
-    assertTrue(Angle.ofDegrees(5).abs().equal(Angle.ofDegrees(5)));     
-    assertTrue(Angle.ZERO.abs().equal(Angle.ZERO));     
-      }
+        assertTrue(Angle.ofDegrees(-5).abs().equal(Angle.ofDegrees(5)));
+        assertTrue(Angle.ofDegrees(5).abs().equal(Angle.ofDegrees(5)));
+        assertTrue(Angle.ZERO.abs().equal(Angle.ZERO));
+    }
 
     @Test
     public void testDivide() {
@@ -77,7 +77,7 @@ public class AngleTest {
         Angle instance = Angle.ofDegrees(20);
         Duration expResult = Duration.ofSeconds(4);
         Duration result = instance.divide(speed);
-        assertEquals(expResult, result);       
+        assertEquals(expResult, result);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class AngleTest {
 
     @Test
     public void testEqual() {
-        assertTrue(Angle.ofDegrees(10).equal(Angle.ofDegrees(10.000000001)));
+        assertTrue(Angle.ofDegrees(10).equal(Angle.ofDegrees(10 + 1e-50)));
         assertFalse(Angle.ofDegrees(10).equal(Angle.ofDegrees(10.1)));
     }
 

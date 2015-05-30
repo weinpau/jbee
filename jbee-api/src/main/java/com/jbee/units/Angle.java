@@ -70,8 +70,8 @@ public final class Angle implements Comparable<Angle> {
     }
 
     public boolean equal(Angle angle) {
-        int scale = 100000;
-        return Math.round(radians * scale) == Math.round(angle.radians * scale);
+        double error = Math.ulp(radians) + Math.ulp(angle.radians);
+        return Math.abs(radians - angle.radians) <= 2 * error;
     }
 
     @Override

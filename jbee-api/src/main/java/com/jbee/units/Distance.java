@@ -76,8 +76,8 @@ public final class Distance implements Comparable<Distance> {
     }
 
     public boolean equal(Distance distance) {
-        int scale = 100000;
-        return Math.round(meters * scale) == Math.round(distance.meters * scale);
+        double error = Math.ulp(meters) + Math.ulp(distance.meters);
+        return Math.abs(meters - distance.meters) <= 2 * error;
     }
 
     public static Distance ofMeters(double meters) {

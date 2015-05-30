@@ -73,8 +73,8 @@ public final class Speed implements Comparable<Speed> {
     }
 
     public boolean equal(Speed speed) {
-        int scale = 100000;
-        return Math.round(mps * scale) == Math.round(speed.mps * scale);
+        double error = Math.ulp(mps) + Math.ulp(speed.mps);
+        return Math.abs(mps - speed.mps) <= 2 * error;
     }
 
     @Override
