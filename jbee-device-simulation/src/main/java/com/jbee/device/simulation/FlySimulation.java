@@ -1,7 +1,7 @@
 package com.jbee.device.simulation;
 
 import com.jbee.RotationDirection;
-import com.jbee.Velocity;
+import com.jbee.AxisVelocity;
 import com.jbee.commands.FlyCommand;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
@@ -20,7 +20,7 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
         Angle yaw = calculateYAW(initialState, command, progress);
         Position position = calculatePosition(initialState, command, progress);
 
-        Velocity velocity = calculateVelocity(initialState, command, progress);
+        AxisVelocity velocity = calculateVelocity(initialState, command, progress);
 
         return new State(position, velocity, yaw);
     }
@@ -48,10 +48,10 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
         return command.calculateDuration(initialState.getPosition(), initialState.getYaw()).toMillis();
     }
 
-    Velocity calculateVelocity(State initialState, FlyCommand command, double progress) {
+    AxisVelocity calculateVelocity(State initialState, FlyCommand command, double progress) {
 
         if (command.getSpeed().isZero()) {
-            return Velocity.ZERO;
+            return AxisVelocity.ZERO;
         }
 
         long flyDuration = command.calculateFlyDuration(initialState.getPosition()).toMillis();
@@ -66,7 +66,7 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
                 normalize().
                 multiply(command.getSpeed().multiply(speedFactor).mps());
 
-        return new Velocity(
+        return new AxisVelocity(
                 Speed.mps(p.getX()),
                 Speed.mps(p.getY()),
                 Speed.mps(p.getZ()));

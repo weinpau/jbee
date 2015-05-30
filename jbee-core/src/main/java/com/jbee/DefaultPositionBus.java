@@ -3,7 +3,7 @@ package com.jbee;
 import com.jbee.buses.AltitudeBus;
 import com.jbee.buses.LatLonBus;
 import com.jbee.buses.PositionBus;
-import com.jbee.buses.VelocityBus;
+import com.jbee.buses.AxisVelocityBus;
 import com.jbee.positioning.LatLon;
 import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
@@ -22,7 +22,7 @@ final class DefaultPositionBus extends PositionBus {
         if (origin == null) {
             VelocityPositionEstimator positionEstimator = new VelocityPositionEstimator();
             
-            busRegistry.get(VelocityBus.class).
+            busRegistry.get(AxisVelocityBus.class).
                     orElseThrow(() -> new BeeBootstrapException("A translational velocity bus is missing.")).
                     subscripe(v -> {
                         
@@ -88,7 +88,7 @@ final class DefaultPositionBus extends PositionBus {
             return new Position(x, y, z);
         }
         
-        Position estimatePosition(Velocity velocity) {
+        Position estimatePosition(AxisVelocity velocity) {
             long now = System.nanoTime();
             if (lastTime == 0) {
                 lastTime = now;

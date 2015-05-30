@@ -9,7 +9,7 @@ import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
-import com.jbee.buses.VelocityBus;
+import com.jbee.buses.AxisVelocityBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
@@ -42,7 +42,7 @@ public class Simulation extends BeeModule implements TargetDevice {
 
     CommandDispatcher dispatcher;
 
-    VelocityBus velocityBus = new VelocityBus();
+    AxisVelocityBus velocityBus = new AxisVelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
 
     Timer stateListener = new Timer("simulation-state-listener", true);

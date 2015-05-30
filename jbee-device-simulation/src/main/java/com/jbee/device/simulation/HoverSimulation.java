@@ -1,6 +1,6 @@
 package com.jbee.device.simulation;
 
-import com.jbee.Velocity;
+import com.jbee.AxisVelocity;
 import com.jbee.commands.HoverCommand;
 
 /**
@@ -11,7 +11,7 @@ class HoverSimulation implements CommandSimulation<HoverCommand> {
 
     @Override
     public State simulateState(State initialState, HoverCommand command, long time) {
-        return new State(initialState.getPosition(), Velocity.ZERO, initialState.getYaw());
+        return new State(initialState.getPosition(), AxisVelocity.ZERO, initialState.getYaw());
     }
 
     @Override

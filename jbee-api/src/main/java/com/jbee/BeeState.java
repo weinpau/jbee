@@ -10,19 +10,19 @@ public class BeeState {
 
     public static final BeeState START_STATE = new BeeState(0,
             Position.ORIGIN,
-            Velocity.ZERO,
+            AxisVelocity.ZERO,
             PrincipalAxes.ZERO,
             new BatteryState(1, false),
             ControlState.DISCONNECTED);
 
     private final long timestamp;
     private final Position position;
-    private final Velocity velocity;
+    private final AxisVelocity velocity;
     private final PrincipalAxes principalAxes;
     private final BatteryState batteryState;
     private final ControlState controlState;
 
-    BeeState(long timestamp, Position position, Velocity velocity, PrincipalAxes principalAxes, BatteryState batteryState, ControlState controlState) {
+    BeeState(long timestamp, Position position, AxisVelocity velocity, PrincipalAxes principalAxes, BatteryState batteryState, ControlState controlState) {
         this.timestamp = timestamp;
         this.position = position;
         this.velocity = velocity;
@@ -40,7 +40,7 @@ public class BeeState {
         return position;
     }
 
-    public Velocity getVelocity() {
+    public AxisVelocity getVelocity() {
         return velocity;
     }
 

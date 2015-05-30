@@ -1,6 +1,5 @@
 package com.jbee;
 
-import com.jbee.units.Distance;
 import com.jbee.units.Speed;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -10,15 +9,15 @@ import java.util.Objects;
  *
  * @author weinpau
  */
-public class Velocity {
+public class AxisVelocity {
 
-    public static final Velocity ZERO = new Velocity(Speed.ZERO, Speed.ZERO, Speed.ZERO);
+    public static final AxisVelocity ZERO = new AxisVelocity(Speed.ZERO, Speed.ZERO, Speed.ZERO);
 
     private final Speed x;
     private final Speed y;
     private final Speed z;
 
-    public Velocity(Speed x, Speed y, Speed z) {
+    public AxisVelocity(Speed x, Speed y, Speed z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -36,35 +35,35 @@ public class Velocity {
         return z;
     }
 
-    public Velocity withX(Speed x) {
-        return new Velocity(x, y, z);
+    public AxisVelocity withX(Speed x) {
+        return new AxisVelocity(x, y, z);
     }
 
-    public Velocity withY(Speed y) {
-        return new Velocity(x, y, z);
+    public AxisVelocity withY(Speed y) {
+        return new AxisVelocity(x, y, z);
     }
 
-    public Velocity withZ(Speed z) {
-        return new Velocity(x, y, z);
+    public AxisVelocity withZ(Speed z) {
+        return new AxisVelocity(x, y, z);
     }
 
-    public Velocity abs() {
-        return new Velocity(x.abs(), y.abs(), z.abs());
+    public AxisVelocity abs() {
+        return new AxisVelocity(x.abs(), y.abs(), z.abs());
     }
 
-    public Velocity add(Velocity velocity) {
-        return new Velocity(x.add(velocity.x), y.add(velocity.y), z.add(velocity.z));
+    public AxisVelocity add(AxisVelocity velocity) {
+        return new AxisVelocity(x.add(velocity.x), y.add(velocity.y), z.add(velocity.z));
     }
 
-    public Velocity sub(Velocity velocity) {
+    public AxisVelocity sub(AxisVelocity velocity) {
         return add(velocity.multiply(-1));
     }
 
-    public Velocity multiply(double factor) {
+    public AxisVelocity multiply(double factor) {
         if (!Double.isFinite(factor)) {
             throw new IllegalArgumentException("The factor must be a finite number.");
         }
-        return new Velocity(x.multiply(factor), y.multiply(factor), z.multiply(factor));
+        return new AxisVelocity(x.multiply(factor), y.multiply(factor), z.multiply(factor));
     }
 
     public Speed totalSpeed() {
@@ -97,7 +96,7 @@ public class Velocity {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Velocity other = (Velocity) obj;
+        final AxisVelocity other = (AxisVelocity) obj;
         if (!Objects.equals(this.x, other.x)) {
             return false;
         }
