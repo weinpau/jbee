@@ -2,10 +2,12 @@ package com.jbee.device.pixhawk.mavlink;
 
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Messages.MAVLinkMessage;
+import com.MAVLink.common.msg_mission_clear_all;
 import com.MAVLink.common.msg_mission_count;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_param_request_read;
 import com.MAVLink.common.msg_param_value;
+import com.MAVLink.common.msg_set_mode;
 import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_FRAME;
 import com.MAVLink.enums.MAV_QC_REGISTER_RESULT;
@@ -76,9 +78,12 @@ public class MavlinkModule implements Consumer<MAVLinkPacket>{
      * @param s the string to be copied to byte array
      */
     private void stringToByteArray(byte[] dest,String s){
-        for (int i = 0; i < Math.min(s.length(),dest.length); i++) {
+        int i = 0;
+        for (; i < Math.min(s.length(),dest.length-1); i++) {
             dest[i] = (byte)s.charAt(i);
         }
+        dest[i] = 0;
+        
     }
     
     /**
@@ -125,7 +130,7 @@ public class MavlinkModule implements Consumer<MAVLinkPacket>{
             connection.registerMavlinkPacketReceiver(MavlinkModule.class.getName(), this);
             connection.sendPackage(createPackage(msg));
             try {
-                mutex.wait(1000);
+                mutex.wait(2000);
             } catch (InterruptedException ex) {}
             finally {
                 connection.removeMavlinkReceiver(MavlinkModule.class.getName());
@@ -145,7 +150,7 @@ public class MavlinkModule implements Consumer<MAVLinkPacket>{
             connection.registerMavlinkPacketReceiver(MavlinkModule.class.getName(), this);
             connection.sendPackage(createPackage(msg));
             try {
-                mutex.wait(1000);
+                mutex.wait(2000);
             } catch (InterruptedException ex) {}
             finally {
                 connection.removeMavlinkReceiver(MavlinkModule.class.getName());
@@ -239,6 +244,33 @@ public class MavlinkModule implements Consumer<MAVLinkPacket>{
         msg.count = (short) count;
         msg.target_component = targetCompID;
         msg.target_system =  targetSysID;
+        connection.sendPackage(createPackage(msg));
+    }
+
+    /**
+     * Send a mission_clear_all Command to erase all Misssion Items on the Pixhawk
+     * @param targetSysID the system id of the pixhawk
+     * @param targetCompID the component id of the pixhawk
+     */
+    public void sendMissionClearCommand(byte targetSysID, byte targetCompID){
+        msg_mission_clear_all msg = new msg_mission_clear_all();
+        msg.target_system = targetSysID;
+        msg.target_component = targetCompID;
+        connection.sendPackage(createPackage(msg));
+    }
+    /**
+     * Send a set_mode Command to the Pixhawk to set the flight mode
+     * @param targetSysID the system id of the pixhawk
+     * @param targetCompID the component id of the pixhawk
+     * @param base_mode the desired base Mode
+     * @param custom_mode the desired custom mode
+     */
+    public void setMode(byte targetSysID, byte targetCompID,byte base_mode,byte custom_mode) {
+        
+        msg_set_mode msg = new msg_set_mode();
+        msg.base_mode = base_mode;
+        msg.custom_mode = custom_mode;
+        msg.target_system = targetSysID;
         connection.sendPackage(createPackage(msg));
     }
 }

@@ -1,6 +1,7 @@
 package com.jbee.device.pixhawk.internal;
 
 import com.MAVLink.MAVLinkPacket;
+import com.MAVLink.enums.MAV_COMPONENT;
 import com.jbee.device.pixhawk.mavlink.MavlinkModule;
 import java.util.function.Consumer;
 
@@ -56,7 +57,7 @@ public class Pixhawk extends PixhawkStateListener{
      * @param altitude the desired altitude in m
      */
     public void takeOff(float yawAngle, float latitude, float longtitude, float altitude){
-        mavlink.sendTakeoffCommand(getTargetSysID(),getTargetCompID(), yawAngle, latitude, longtitude, altitude);
+        mavlink.sendTakeoffCommand(getTargetSysID(),(byte)MAV_COMPONENT.MAV_COMP_ID_ALL, yawAngle, latitude, longtitude, altitude);
     }
     /**
      * Send a TakeOff command to the Pixhawk at the current Position
@@ -64,7 +65,7 @@ public class Pixhawk extends PixhawkStateListener{
      * @param altitude the desired altitude in m
      */
     public void takeOff(float yawAngle, float altitude){
-        mavlink.sendTakeoffCommand(getTargetSysID(),getTargetCompID(),yawAngle, (float)(getGpsStatus().lat / 1e7) , (float)(getGpsStatus().lon / 1e7), altitude);
+        mavlink.sendTakeoffCommand(getTargetSysID(),(byte)MAV_COMPONENT.MAV_COMP_ID_ALL,yawAngle, (float)(getGpsStatus().lat / 1e7) , (float)(getGpsStatus().lon / 1e7), altitude);
     }
     
     /**
@@ -74,7 +75,7 @@ public class Pixhawk extends PixhawkStateListener{
      * @param longtitude the desired longtitude after takeoff in deg.
      */
     public void land(float yawAngle, float latitude, float longtitude){
-        mavlink.sendLandCommand(getTargetSysID(),getTargetCompID(), yawAngle, latitude, longtitude);
+        mavlink.sendLandCommand(getTargetSysID(),(byte)MAV_COMPONENT.MAV_COMP_ID_ALL, yawAngle, latitude, longtitude);
     }
     
         /**
@@ -82,7 +83,7 @@ public class Pixhawk extends PixhawkStateListener{
      * @param yawAngle the desired yaw angle in rad
      */
     public void land(float yawAngle){
-        mavlink.sendLandCommand(getTargetSysID(),getTargetCompID(),yawAngle, (float)(getGpsStatus().lat / 1e7) , (float)(getGpsStatus().lon / 1e7));
+        mavlink.sendLandCommand(getTargetSysID(),(byte)MAV_COMPONENT.MAV_COMP_ID_ALL,yawAngle, (float)(getGpsStatus().lat / 1e7) , (float)(getGpsStatus().lon / 1e7));
     }
     
     /**
@@ -91,7 +92,22 @@ public class Pixhawk extends PixhawkStateListener{
      * @param count the number of Items in the Mission
      */
     public void setMissionCount(int count){
-        mavlink.sendMissionCountCommand(getTargetSysID(),getTargetCompID(), count);
+        mavlink.sendMissionCountCommand(getTargetSysID(),(byte)MAV_COMPONENT.MAV_COMP_ID_ALL, count);
+    }
+
+        /**
+     * Send a mission_clear_all Command to erase all Misssion Items on the Pixhawk
+     */
+    public void clearMission(){
+        mavlink.sendMissionClearCommand(getTargetSysID(), (byte)MAV_COMPONENT.MAV_COMP_ID_ALL);
+    }
+    
+    /**
+     * Send a set_mode Command to the Pixhawk to set the flight mode
+     * @param base_mode the desired base Mode
+     * @param custom_mode the desired custom mode
+     */
+    public void setMode(int base_mode, int custom_mode) {
+        mavlink.setMode(getTargetSysID(), (byte)MAV_COMPONENT.MAV_COMP_ID_ALL, (byte) (base_mode & 0xFF), (byte) (custom_mode & 0xFF));
     }
 }
-;

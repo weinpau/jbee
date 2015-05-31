@@ -11,7 +11,7 @@ import com.MAVLink.Messages.MAVLinkPayload;
         public class msg_register_module extends MAVLinkMessage{
         
         public static final int MAVLINK_MSG_ID_REGISTER_MODULE = 235;
-        public static final int MAVLINK_MSG_LENGTH = 22;
+        public static final int MAVLINK_MSG_LENGTH = 66;
         private static final long serialVersionUID = MAVLINK_MSG_ID_REGISTER_MODULE;
         
         
@@ -22,7 +22,7 @@ import com.MAVLink.Messages.MAVLinkPayload;
          	/**
         * Name of the Module
         */
-        public byte name[] = new byte[20];
+        public byte name[] = new byte[64];
         
         
         /**
@@ -82,11 +82,11 @@ import com.MAVLink.Messages.MAVLinkPayload;
                         * Sets the buffer of this message with a string, adds the necessary padding
                         */
                         public void setName(String str) {
-                        int len = Math.min(str.length(), 20);
+                        int len = Math.min(str.length(), 64);
                         for (int i=0; i<len; i++) {
                         name[i] = (byte) str.charAt(i);
                         }
-                        for (int i=len; i<20; i++) {			// padding for the rest of the buffer
+                        for (int i=len; i<64; i++) {			// padding for the rest of the buffer
                         name[i] = 0;
                         }
                         }
@@ -96,7 +96,7 @@ import com.MAVLink.Messages.MAVLinkPayload;
                         */
                         public String getName() {
                         String result = "";
-                        for (int i = 0; i < 20; i++) {
+                        for (int i = 0; i < 64; i++) {
                         if (name[i] != 0)
                         result = result + (char) name[i];
                         else

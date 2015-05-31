@@ -13,7 +13,8 @@
             	public static final int MAV_QC_ACCESS_RAW_CONTROL = 64; /* Allow set of THODDLE/ROLL/PITCH/YAW Controller Values | */
             	public static final int MAV_QC_ACCESS_MISSION = 128; /* Allow set of Mission messages | */
             	public static final int MAV_QC_ACCESS_GUIDED = 256; /* Allow Operations in GUIDED Mode | */
-            	public static final int MAV_QC_ACCESS_DEBUG = 512; /* Allow sending basic messages like heartbeat | */
+            	public static final int MAV_QC_ACCESS_DEBUG = 512; /* Allow sending debug messages | */
+            	public static final int MAV_QC_ACCESS_COMMAND = 1024; /* Allow sending COmmand_INT and Command_Long Messages | */
             	public static final int MAV_QC_ACCESS_ALL = 65535; /* ALL Access, all mavlink messages valid | */
             	public static final int MAV_QC_ACCESS_ENUM_END = 65536; /*  | */
             

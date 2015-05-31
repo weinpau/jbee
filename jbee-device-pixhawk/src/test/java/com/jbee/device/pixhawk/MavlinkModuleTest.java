@@ -29,8 +29,8 @@ public class MavlinkModuleTest {
         try {
             connection = new NetworkConnection(
                     InetAddress.getByName("192.168.2.26"),
-                    InetAddress.getByName("192.168.2.255")
-                    , 8080, 1000);
+                    InetAddress.getByName("192.168.2.255"),
+                    8080, 1000);
             
         } catch (UnknownHostException ex) {
             Logger.getLogger(MavlinkModuleTest.class.getName()).log(Level.SEVERE, null, ex);
