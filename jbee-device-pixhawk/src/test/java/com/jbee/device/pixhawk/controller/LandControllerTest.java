@@ -4,10 +4,10 @@
  */
 package com.jbee.device.pixhawk.controller;
 
-import com.MAVLink.enums.MAV_MODE;
-import com.MAVLink.enums.MAV_MODE_FLAG;
+import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.enums.MAV_MODE_FLAG_DECODE_POSITION;
 import com.jbee.commands.CommandResult;
+import com.jbee.commands.LandCommand;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -19,10 +19,10 @@ import static org.junit.Assert.*;
  *
  * @author Trader
  */
-public class TakeOffControllerTest extends ControllerTestHelper{
+public class LandControllerTest extends ControllerTestHelper{
     
-    public TakeOffControllerTest() {
-        super(TakeOffControllerTest.class.getSimpleName());
+    public LandControllerTest() {
+        super(LandControllerTest.class.getSimpleName());
     }
     
     @BeforeClass
@@ -31,7 +31,6 @@ public class TakeOffControllerTest extends ControllerTestHelper{
     
     @AfterClass
     public static void tearDownClass() {
-        
     }
     
     @Before
@@ -45,20 +44,18 @@ public class TakeOffControllerTest extends ControllerTestHelper{
     }
 
     /**
-     * Test of execute method, of class TakeOffController.
+     * Test of execute method, of class LandController.
      */
     @Test
     public void testExecute() {
-        
         if((pixhawk.getHeartbeat().base_mode & MAV_MODE_FLAG_DECODE_POSITION.MAV_MODE_FLAG_DECODE_POSITION_HIL) == 0){
             fail("Test this only in HIL mode!");
         }
         
-        TakeOffController controller = new TakeOffController(pixhawk);
+        LandController controller = new LandController(pixhawk);
         assertEquals(CommandResult.COMPLETED, controller.execute(null));
         
-        assertTrue("Pixhawk is in Air",pixhawk.getGpsStatus().alt > 1000);
+        assertTrue("Pixhawk is Landed",pixhawk.getGpsStatus().alt < 1000);
     }
-
     
 }

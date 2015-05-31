@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class TakeOffController implements Consumer<MAVLinkPacket>{
 
-    private int height = 5;//m
+    private int height = 3;//m
     private Integer state = 0;
     private final Boolean ready = true;
     private CommandResult result;
@@ -34,11 +34,11 @@ public class TakeOffController implements Consumer<MAVLinkPacket>{
     public CommandResult execute(TakeOffCommand takeOffCommand) {
             result = CommandResult.NOT_EXECUTED;
             int base_mode =  pixhawk.getHeartbeat().base_mode & 0xFF;
-
+            base_mode |= MAV_MODE_FLAG.MAV_MODE_FLAG_SAFETY_ARMED;
             state = 0;
             pixhawk.registerMavlinkPacketReceiver(TakeOffController.class.getName(), this);
             pixhawk.performingTakeOff = true;
-            pixhawk.setMode(base_mode | MAV_MODE_FLAG.MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG.MAV_MODE_FLAG_GUIDED_ENABLED | MAV_MODE_FLAG.MAV_MODE_FLAG_SAFETY_ARMED , 0);
+            pixhawk.setMode(base_mode | MAV_MODE_FLAG.MAV_MODE_FLAG_AUTO_ENABLED | MAV_MODE_FLAG.MAV_MODE_FLAG_GUIDED_ENABLED , 0);
             pixhawk.clearMission();
             pixhawk.setMissionCount(1);
             
@@ -73,11 +73,14 @@ public class TakeOffController implements Consumer<MAVLinkPacket>{
                 }
             }break;
             case 2:{
-                if(t.msgid == msg_mission_item_reached.MAVLINK_MSG_ID_MISSION_ITEM_REACHED){
-                    result = CommandResult.COMPLETED;
-                    state = 0;
-                    synchronized(ready){
-                        ready.notifyAll();
+                if(t.msgid == msg_global_position_int.MAVLINK_MSG_ID_GLOBAL_POSITION_INT){
+                    msg_global_position_int pos = new msg_global_position_int(t);
+                    if((pos.alt / 100) == (height * 10)){
+                        result = CommandResult.COMPLETED;
+                        state = 0;
+                        synchronized(ready){
+                            ready.notifyAll();
+                        }
                     }
                 }
             }
