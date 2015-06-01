@@ -11,9 +11,15 @@ import com.jbee.BeeModule;
 import com.jbee.BusRegistry;
 import com.jbee.ControlState;
 import com.jbee.TargetDevice;
+import com.jbee.buses.AltitudeBus;
+import com.jbee.buses.AxisVelocityBus;
+import com.jbee.buses.LatLonBus;
+import com.jbee.buses.PositionBus;
+import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.device.pixhawk.connection.network.NetworkConnection;
+import com.jbee.device.pixhawk.internal.BusHandler;
 import com.jbee.device.pixhawk.internal.CommandDispatcher;
 import com.jbee.device.pixhawk.internal.Pixhawk;
 import com.jbee.device.pixhawk.mavlink.MavlinkModule;
@@ -37,6 +43,15 @@ public class PixhawkController extends BeeModule implements TargetDevice{
     NetworkConnection connection;
     MavlinkModule myModule;
     Pixhawk pixhawk;
+
+    BusHandler busHandler = new BusHandler();
+    
+    public PixhawkController() {
+        register(busHandler.getAltBus());
+        register(busHandler.getAxeAngleBus());
+        register(busHandler.getPosBus());
+        register(busHandler.getVelBus());
+    }
     
     @Override
     public String getId() {
@@ -55,8 +70,8 @@ public class PixhawkController extends BeeModule implements TargetDevice{
         try {
             //init network
             connection = new NetworkConnection(
-                    InetAddress.getByName("10.10.0.1"),
-                    InetAddress.getByName("10.255.255.255"),
+                    InetAddress.getByName("192.168.2.26"),
+                    InetAddress.getByName("192.168.2.255"),
                     8080, 1000);
             connection.connect();
         } catch (UnknownHostException ex) {
@@ -64,6 +79,9 @@ public class PixhawkController extends BeeModule implements TargetDevice{
         } catch (IOException ex) {
             throw new BeeBootstrapException(ex.getMessage());
         }
+        
+        connection.registerMavlinkPacketReceiver(BusHandler.class.getName(), busHandler);
+        
         myModule = new MavlinkModule(5, 0, connection);
         pixhawk = new Pixhawk(myModule);
         

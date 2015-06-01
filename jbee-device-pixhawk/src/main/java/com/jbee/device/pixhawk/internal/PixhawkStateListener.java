@@ -36,7 +36,7 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
     private msg_local_position_ned localPosition;
     private msg_highres_imu imu;
     private msg_position_target_global_int targetPos;
-        
+            
     private final Object connectionMutex = new Object();
     private final TimerTask timoutTask = new TimerTask() {
 

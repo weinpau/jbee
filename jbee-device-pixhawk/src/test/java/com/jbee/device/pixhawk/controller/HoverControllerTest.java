@@ -4,6 +4,7 @@
  */
 package com.jbee.device.pixhawk.controller;
 
+import com.MAVLink.enums.MAV_MODE_FLAG_DECODE_POSITION;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.HoverCommand;
 import org.junit.After;
@@ -46,6 +47,10 @@ public class HoverControllerTest extends ControllerTestHelper{
      */
     @Test
     public void testExecute() {
+        
+        if((pixhawk.getHeartbeat().base_mode & MAV_MODE_FLAG_DECODE_POSITION.MAV_MODE_FLAG_DECODE_POSITION_HIL) == 0){
+            fail("Test this only in HIL mode!");
+        }
         
         HoverController controller = new HoverController(pixhawk);
         
