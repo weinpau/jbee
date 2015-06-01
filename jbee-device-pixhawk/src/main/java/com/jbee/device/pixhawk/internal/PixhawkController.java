@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  *
  * @author Erik Jähne
  */
-public class Pixhawk extends PixhawkStateListener{
+public class PixhawkController extends PixhawkStateListener{
     
     final MavlinkModule mavlink;
     
@@ -18,9 +18,9 @@ public class Pixhawk extends PixhawkStateListener{
      * The Pixhawk Representation to generate Commands and get state information trough the StateListener
      * @param module a Mavlik Module for generating mavlink messages for the commands
      */
-    public Pixhawk(MavlinkModule module) {
+    public PixhawkController(MavlinkModule module) {
         mavlink = module;
-        mavlink.registerMavlinkPacketReceiver(Pixhawk.class.getName(), this);
+        mavlink.registerMavlinkPacketReceiver(PixhawkController.class.getName(), this);
     }
 
     /**

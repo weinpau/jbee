@@ -8,7 +8,7 @@ import com.jbee.device.ardrone2.ARDrone2;
 import com.jbee.device.ardrone2.LEDAnimation;
 import com.jbee.device.ardrone2.commands.ARDroneCommands;
 import com.jbee.device.ardrone2.internal.navdata.options.Demo;
-import com.jbee.device.pixhawk.PixhawkController;
+import com.jbee.device.pixhawk.Pixhawk;
 import com.jbee.units.Frequency;
 
 import java.time.Duration;
@@ -20,7 +20,7 @@ import java.time.Duration;
 public class PixhawkTakeOffAndLand {
 
     public static void main(String[] args) throws BeeBootstrapException {
-        PixhawkController pixhawk = new PixhawkController();
+        Pixhawk pixhawk = new Pixhawk();
 
         BeeContext context = BeeContext.of(pixhawk);
 

@@ -27,7 +27,7 @@ public class CommandDispatcher {
     private final CancelController cancelController;
     private final FlyController flyController;
 
-    public CommandDispatcher(Pixhawk pixhawk) {        
+    public CommandDispatcher(PixhawkController pixhawk) {        
         takeOffController = new TakeOffController(pixhawk);
         landController = new LandController(pixhawk);
         hoverController = new HoverController(pixhawk);

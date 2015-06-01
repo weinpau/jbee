@@ -3,7 +3,7 @@ package com.jbee.device.pixhawk.controller;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.HoverCommand;
-import com.jbee.device.pixhawk.internal.Pixhawk;
+import com.jbee.device.pixhawk.internal.PixhawkController;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,9 +13,9 @@ import java.util.logging.Logger;
  */
 public class HoverController {
 
-    private final Pixhawk pixhawk;
+    private final PixhawkController pixhawk;
 
-    public HoverController(Pixhawk pixhawk) {
+    public HoverController(PixhawkController pixhawk) {
         this.pixhawk = pixhawk;
     }
 

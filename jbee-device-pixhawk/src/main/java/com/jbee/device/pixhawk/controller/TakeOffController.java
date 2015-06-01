@@ -9,7 +9,7 @@ import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.MAVLink.enums.MAV_STATE;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.TakeOffCommand;
-import com.jbee.device.pixhawk.internal.Pixhawk;
+import com.jbee.device.pixhawk.internal.PixhawkController;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,9 +25,9 @@ public class TakeOffController implements Consumer<MAVLinkPacket>{
     private final Boolean ready = true;
     private CommandResult result;
     
-    private final Pixhawk pixhawk;
+    private final PixhawkController pixhawk;
 
-    public TakeOffController(Pixhawk pixhawk) {
+    public TakeOffController(PixhawkController pixhawk) {
         this.pixhawk = pixhawk;
     }
     

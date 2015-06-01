@@ -9,7 +9,7 @@ import com.MAVLink.enums.MAV_QC_REGISTER_RESULT;
 import com.jbee.BeeBootstrapException;
 import com.jbee.device.pixhawk.connection.network.NetworkConnection;
 import com.jbee.device.pixhawk.internal.CommandDispatcher;
-import com.jbee.device.pixhawk.internal.Pixhawk;
+import com.jbee.device.pixhawk.internal.PixhawkController;
 import com.jbee.device.pixhawk.mavlink.MavlinkModule;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -26,7 +26,7 @@ public class ControllerTestHelper {
     
     protected NetworkConnection connection;
     protected MavlinkModule myModule;
-    protected Pixhawk pixhawk;
+    protected PixhawkController pixhawk;
     protected String name;
     
     static int sysid = 4;
@@ -50,7 +50,7 @@ public class ControllerTestHelper {
         
         
         myModule = new MavlinkModule(++sysid, 0, connection);
-        pixhawk = new Pixhawk(myModule);  
+        pixhawk = new PixhawkController(myModule);  
         
         int result = myModule.registerModule(name,MAV_QC_ACCESS.MAV_QC_ACCESS_ALL);
         if(result == MAV_QC_REGISTER_RESULT.MAV_QC_REGISTER_RESULT_FAILD_EXISTING){
