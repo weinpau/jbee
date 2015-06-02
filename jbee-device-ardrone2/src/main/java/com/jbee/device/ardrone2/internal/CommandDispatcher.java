@@ -9,10 +9,12 @@ import com.jbee.commands.FlyCommand;
 import com.jbee.commands.HoverCommand;
 import com.jbee.commands.LandCommand;
 import com.jbee.commands.TakeOffCommand;
+import com.jbee.device.ardrone2.commands.FlyPose;
 import com.jbee.device.ardrone2.commands.PlayLEDAnimation;
 import com.jbee.device.ardrone2.internal.commands.AT_CommandSender;
 import com.jbee.device.ardrone2.internal.controllers.CancelController;
 import com.jbee.device.ardrone2.internal.controllers.FlyController;
+import com.jbee.device.ardrone2.internal.controllers.FlyPoseController;
 import com.jbee.device.ardrone2.internal.controllers.HoverController;
 import com.jbee.device.ardrone2.internal.controllers.LandController;
 import com.jbee.device.ardrone2.internal.controllers.PlayLEDController;
@@ -35,7 +37,8 @@ public class CommandDispatcher {
     CancelController cancelController;
     FlyController flyController;
     PlayLEDController playLEDController;
-
+    FlyPoseController poseController;
+    
     public CommandDispatcher(AT_CommandSender commandSender, NavDataClient navdataClient, BeeStateBus beeStateBus, ControlStateMachine controlStateMachine) {
         takeOffController = new TakeOffController(commandSender, navdataClient, controlStateMachine, commandExecutorService);
         landController = new LandController(commandSender, navdataClient, controlStateMachine, commandExecutorService);
@@ -43,6 +46,7 @@ public class CommandDispatcher {
         cancelController = new CancelController(commandSender, controlStateMachine);
         flyController = new FlyController(commandSender, beeStateBus, controlStateMachine, commandExecutorService);
         playLEDController = new PlayLEDController(commandSender);
+        poseController = new FlyPoseController(commandSender);    
     }
 
     public CommandResult dispatch(Command command) {
@@ -62,11 +66,12 @@ public class CommandDispatcher {
         if (command instanceof FlyCommand) {
             return flyController.execute((FlyCommand) command);
         }
-
         if (command instanceof PlayLEDAnimation) {
             return playLEDController.execute((PlayLEDAnimation) command);
         }
-
+        if (command instanceof FlyPose)
+            return poseController.execute((FlyPose) command);
+        
         throw new RuntimeException("unknown command");
     }
     
