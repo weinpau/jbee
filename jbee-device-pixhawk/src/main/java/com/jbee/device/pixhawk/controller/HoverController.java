@@ -1,8 +1,11 @@
 package com.jbee.device.pixhawk.controller;
 
+import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.HoverCommand;
-import com.jbee.device.pixhawk.internal.Pixhawk;
+import com.jbee.device.pixhawk.internal.PixhawkController;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -10,14 +13,22 @@ import com.jbee.device.pixhawk.internal.Pixhawk;
  */
 public class HoverController {
 
-    private final Pixhawk pixhawk;
+    private final PixhawkController pixhawk;
 
-    public HoverController(Pixhawk pixhawk) {
+    public HoverController(PixhawkController pixhawk) {
         this.pixhawk = pixhawk;
     }
 
     public CommandResult execute(HoverCommand hoverCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int baseMode = pixhawk.getHeartbeat().base_mode;
+        baseMode |= MAV_MODE_FLAG.MAV_MODE_FLAG_STABILIZE_ENABLED |MAV_MODE_FLAG.MAV_MODE_FLAG_AUTO_ENABLED;
+        pixhawk.setMode(baseMode, 0);
+        try {
+            Thread.sleep(hoverCommand.getDuration().toMillis());
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HoverController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return CommandResult.COMPLETED;
     }
     
     

@@ -3,7 +3,7 @@ package com.jbee.device.pixhawk.internal;
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_battery_status;
-import com.MAVLink.common.msg_gps_raw_int;
+import com.MAVLink.common.msg_global_position_int;
 import com.MAVLink.common.msg_heartbeat;
 import com.MAVLink.common.msg_highres_imu;
 import com.MAVLink.common.msg_local_position_ned;
@@ -27,27 +27,33 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
     public boolean performingLand = false;
     public boolean performingTakeOff = false;
     private boolean isConnected = false;
-    private Timer watchdogTimer;    
+    private final Timer watchdogTimer;    
     private msg_heartbeat heartbeat;
     private msg_battery_status battery;
     private msg_sys_status sysStatus;
-    private msg_gps_raw_int gpsStatus;
+    private msg_global_position_int globalPosition;
     private msg_attitude attitude;
     private msg_local_position_ned localPosition;
     private msg_highres_imu imu;
     private msg_position_target_global_int targetPos;
-        
+            
     private final Object connectionMutex = new Object();
-    private TimerTask timoutTask = new TimerTask() {
+    private final TimerTask timoutTask = new TimerTask() {
 
         @Override
         public void run() {
             isConnected = false;
-            connectionMutex.notifyAll();
+            synchronized(connectionMutex){
+                connectionMutex.notifyAll();
+            }
             //TODO connection lost
         }
     };
 
+    public PixhawkStateListener() {
+        watchdogTimer = new Timer();
+    }
+    
     @Override
     public void accept(MAVLinkPacket t) {
         if(heartbeat != null && heartbeat.sysid != t.sysid) return;
@@ -58,16 +64,23 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
                     if(temp.autopilot == MAV_AUTOPILOT.MAV_AUTOPILOT_PX4){
                         heartbeat = new msg_heartbeat(t);
                         isConnected = true;
-                        connectionMutex.notifyAll();
+                        synchronized(connectionMutex){
+                            connectionMutex.notifyAll();
+                        }
                     }
                 }else if(t.sysid == heartbeat.sysid){
                     heartbeat.unpack(t.payload);
                     if(isConnected == false){
-                        connectionMutex.notifyAll();
+                        synchronized(connectionMutex){
+                            connectionMutex.notifyAll();
+                        }
                         //TODO reconnected
                     }
-                    watchdogTimer.cancel();
-                    watchdogTimer.schedule(timoutTask, 1100);
+                    try{
+                        watchdogTimer.cancel();
+                        watchdogTimer.schedule(timoutTask, 1100);
+                    }
+                    catch(Exception e){}
                 }
             }break;
             case msg_battery_status.MAVLINK_MSG_ID_BATTERY_STATUS:{
@@ -80,10 +93,10 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
                     sysStatus = new msg_sys_status(t);
                 else sysStatus.unpack(t.payload);
             }break;
-            case msg_gps_raw_int.MAVLINK_MSG_ID_GPS_RAW_INT:{
-                if(gpsStatus == null)
-                    gpsStatus = new msg_gps_raw_int(t);
-                else gpsStatus.unpack(t.payload);
+            case msg_global_position_int.MAVLINK_MSG_ID_GLOBAL_POSITION_INT:{
+                if(globalPosition == null)
+                    globalPosition = new msg_global_position_int(t);
+                else globalPosition.unpack(t.payload);
             }break;
             case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:{
                 if(attitude == null)
@@ -137,8 +150,8 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
      * get the raw GPS Data
      * @return the raw gps data expressed as deg * 1e7
      */
-    public msg_gps_raw_int getGpsStatus() {
-        return gpsStatus;
+    public msg_global_position_int getGpsStatus() {
+        return globalPosition;
     }
     /**
      * get the current battery Status

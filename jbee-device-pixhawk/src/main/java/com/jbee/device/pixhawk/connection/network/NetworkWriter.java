@@ -47,7 +47,7 @@ public class NetworkWriter extends Thread{
     public void connect() throws IOException {
         socket = new Socket();
         done = false;
-        socket.bind(new InetSocketAddress(port));
+        //socket.bind(new InetSocketAddress(port));
         socket.setReuseAddress(true);
         socket.setSendBufferSize(1);
         socket.setTcpNoDelay(true);

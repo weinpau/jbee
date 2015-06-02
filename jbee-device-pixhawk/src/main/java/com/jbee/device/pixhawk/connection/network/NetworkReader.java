@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class NetworkReader extends Thread{
     
-    Map<String, Consumer<MAVLinkPacket>> mavlinkConsumers = new ConcurrentHashMap<>();
+    Map<String, Consumer<MAVLinkPacket>> mavlinkConsumers = new HashMap();
     Parser mavParser = new Parser();
     
     DatagramSocket socket;
@@ -93,7 +95,18 @@ public class NetworkReader extends Thread{
      * @param packet the mavlink Pakcet
      */
     private void newMavlinkPacketReceived(MAVLinkPacket packet) {
-        mavlinkConsumers.forEach((k, v) -> v.accept(packet));
+        Iterator<Map.Entry<String, Consumer<MAVLinkPacket>>> iterator = mavlinkConsumers.entrySet().iterator();
+        while (iterator.hasNext()) {
+            try{
+                iterator.next().getValue().accept(packet);
+            }
+            catch(IllegalMonitorStateException e){
+                iterator.remove();
+            }
+            catch(Exception e){
+                //skip
+            }
+        }
     }
     
     @Override
@@ -111,8 +124,10 @@ public class NetworkReader extends Thread{
                         newMavlinkPacketReceived(packet);
                     }  
                 }
-            } catch (Exception ex) {
-                Logger.getLogger(NetworkConnection.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SocketException ex) {
+                //ignoing because socket can be closed to return from this thread
+            } catch (IOException ex) {
+                Logger.getLogger(NetworkReader.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

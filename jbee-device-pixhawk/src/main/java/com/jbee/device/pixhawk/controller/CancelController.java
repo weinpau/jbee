@@ -2,7 +2,7 @@ package com.jbee.device.pixhawk.controller;
 
 import com.jbee.commands.CancelCommand;
 import com.jbee.commands.CommandResult;
-import com.jbee.device.pixhawk.internal.Pixhawk;
+import com.jbee.device.pixhawk.internal.PixhawkController;
 
 /**
  *
@@ -10,9 +10,9 @@ import com.jbee.device.pixhawk.internal.Pixhawk;
  */
 public class CancelController {
 
-    private final Pixhawk pixhawk;
+    private final PixhawkController pixhawk;
 
-    public CancelController(Pixhawk pixhawk) {
+    public CancelController(PixhawkController pixhawk) {
         this.pixhawk = pixhawk;
     }
 

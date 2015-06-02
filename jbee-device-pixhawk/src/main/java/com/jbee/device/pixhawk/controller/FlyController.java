@@ -2,7 +2,7 @@ package com.jbee.device.pixhawk.controller;
 
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.FlyCommand;
-import com.jbee.device.pixhawk.internal.Pixhawk;
+import com.jbee.device.pixhawk.internal.PixhawkController;
 
 /**
  *
@@ -10,14 +10,16 @@ import com.jbee.device.pixhawk.internal.Pixhawk;
  */
 public class FlyController {
 
-    private final Pixhawk pixhawk;
+    private final PixhawkController pixhawk;
 
-    public FlyController(Pixhawk pixhawk) {
+    public FlyController(PixhawkController pixhawk) {
         this.pixhawk = pixhawk;
     }
     
     public CommandResult execute(FlyCommand flyCommand) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        
     }
     
     

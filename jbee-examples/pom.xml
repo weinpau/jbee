@@ -19,6 +19,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>jbee-device-ardrone2</artifactId>
             <version>${project.version}</version>
-        </dependency>       
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jbee-device-pixhawk</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
