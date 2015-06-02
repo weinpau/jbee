@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class TakeOffController implements Consumer<MAVLinkPacket>{
 
-    private int height = 3;//m
+    private final static int HEIGHT = 3;//m
     private Integer state = 0;
     private final Boolean ready = true;
     private CommandResult result;
@@ -62,7 +62,7 @@ public class TakeOffController implements Consumer<MAVLinkPacket>{
             case 0:{
                 if(t.msgid == msg_mission_request.MAVLINK_MSG_ID_MISSION_REQUEST){
                     msg_global_position_int gpsStatus = pixhawk.getGpsStatus();
-                    pixhawk.takeOff(0, (float)(gpsStatus.lat / 1e7), (float)(gpsStatus.lon  / 1e7), height);
+                    pixhawk.takeOff(0, (float)(gpsStatus.lat / 1e7), (float)(gpsStatus.lon  / 1e7), HEIGHT);
                     result = CommandResult.CANCELLED;
                     state = 1;
                 }
@@ -75,7 +75,7 @@ public class TakeOffController implements Consumer<MAVLinkPacket>{
             case 2:{
                 if(t.msgid == msg_global_position_int.MAVLINK_MSG_ID_GLOBAL_POSITION_INT){
                     msg_global_position_int pos = new msg_global_position_int(t);
-                    if((pos.alt / 100) == (height * 10)){
+                    if((pos.alt / 100) == (HEIGHT * 10)){
                         result = CommandResult.COMPLETED;
                         state = 0;
                         synchronized(ready){
