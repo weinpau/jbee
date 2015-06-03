@@ -46,7 +46,7 @@ public final class Angle implements Comparable<Angle> {
     }
 
     public Duration divide(AngularSpeed speed) {
-        double seconds = radians / speed.toDegreesPerSecond().toRadians();
+        double seconds = radians / speed.toAnglesPerSecond().toRadians();
         long millis = (long) seconds * 1000;
         long nanos = (long) ((seconds - Math.floor(seconds)) * 1000_000_000L);
         return Duration.ofMillis(millis).plusNanos(nanos);

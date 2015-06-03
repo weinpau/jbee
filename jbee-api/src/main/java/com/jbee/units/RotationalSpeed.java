@@ -89,7 +89,7 @@ public class RotationalSpeed implements Comparable<RotationalSpeed> {
     }
 
     public static RotationalSpeed ofAngularSpeed(AngularSpeed angularSpeed) {
-        return rps(angularSpeed.toDegreesPerSecond().toDegrees() / 360);
+        return rps(angularSpeed.toAnglesPerSecond().toDegrees() / 360);
     }
 
 }

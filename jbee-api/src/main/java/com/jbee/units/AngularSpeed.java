@@ -16,10 +16,18 @@ public class AngularSpeed implements Comparable<AngularSpeed> {
         this.degreesPerSecond = degreesPerSecond;
     }
 
-    public Angle toDegreesPerSecond() {
+    public Angle toAnglesPerSecond() {
         return degreesPerSecond;
     }
 
+    public double toDegreesPerSecond(){
+        return degreesPerSecond.toDegrees();
+    }
+    
+    public double toRadiansPerSecond(){
+        return degreesPerSecond.toRadians();
+    }
+    
     public RotationalSpeed toRotationalSpeed() {
         return RotationalSpeed.ofAngularSpeed(this);
     }
