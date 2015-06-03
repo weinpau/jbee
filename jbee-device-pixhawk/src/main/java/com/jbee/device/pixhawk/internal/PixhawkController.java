@@ -69,6 +69,15 @@ public class PixhawkController extends PixhawkStateListener{
     }
     
     /**
+     * Send a TakeOff command to the Pixhawk at the current Position and current Yaw
+     * @param yawAngle the desired yaw angle in rad
+     * @param altitude the desired altitude in m
+     */
+    public void takeOff(float altitude){
+        mavlink.sendTakeoffCommand(getTargetSysID(),(byte)MAV_COMPONENT.MAV_COMP_ID_ALL,getAttitude().yaw, (float)(getGpsStatus().lat / 1e7) , (float)(getGpsStatus().lon / 1e7), altitude);
+    }
+    
+    /**
      * Send a Land Command to the Pixhawk to land at a desired Position
      * @param yawAngle the desired yaw angle in rad
      * @param latitude the desired latitude after takeOff in deg.
@@ -84,6 +93,14 @@ public class PixhawkController extends PixhawkStateListener{
      */
     public void land(float yawAngle){
         mavlink.sendLandCommand(getTargetSysID(),(byte)MAV_COMPONENT.MAV_COMP_ID_ALL,yawAngle, (float)(getGpsStatus().lat / 1e7) , (float)(getGpsStatus().lon / 1e7));
+    }
+    
+    /**
+     * Send a Land Command to the Pixhawk to land at the current Position with current Yaw
+     * @param yawAngle the desired yaw angle in rad
+     */
+    public void land(){
+        mavlink.sendLandCommand(getTargetSysID(),(byte)MAV_COMPONENT.MAV_COMP_ID_ALL,getAttitude().yaw, (float)(getGpsStatus().lat / 1e7) , (float)(getGpsStatus().lon / 1e7));
     }
     
     /**
@@ -110,4 +127,25 @@ public class PixhawkController extends PixhawkStateListener{
     public void setMode(int base_mode, int custom_mode) {
         mavlink.setMode(getTargetSysID(), (byte)MAV_COMPONENT.MAV_COMP_ID_ALL, (byte) (base_mode & 0xFF), (byte) (custom_mode & 0xFF));
     }
+
+     /**
+     * Sends a Target Position to the Pixhawk
+     * @param x The X Coordinate of the Target in m relative to the start Position
+     * @param y The Y Coordinate of the Target in m relative to the start Position
+     * @param alt The Height of the Target in m relative to the start Position
+     * @param velX The Velocity to move to the Target in X Direction
+     * @param velY The Velocity to move to the Target in Y Direction
+     * @param velZ The Velocity to climp to the Target
+     * @param yaw The desired Yaw Angle
+     * @param yawRate The desired Yaw Speed in rad/s
+     * @param useYaw If true, the Yaw Angle will be set instead of the YawRate. If false the Yaw will be ignored and the YawRate will be set.
+     */
+    public void setPositionTargetLocal(double x, double y, double alt, double velX, double velY, double velZ, double yaw, double yawRate,boolean useGlobalYaw) {
+        mavlink.setPositionTargetLocal(getTargetSysID(), (byte)MAV_COMPONENT.MAV_COMP_ID_ALL, x, y, alt, velX, velY, velZ, yaw, yawRate, useGlobalYaw);
+    }
+
+    
+    
+    
+    
 }

@@ -8,7 +8,7 @@ import com.jbee.device.pixhawk.internal.PixhawkController;
  *
  * @author Erik Jähne
  */
-public class CancelController {
+public class CancelController extends BasicController{
 
     private final PixhawkController pixhawk;
 
@@ -17,9 +17,15 @@ public class CancelController {
     }
 
     public CommandResult execute(CancelCommand cancelCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        setCancle(true);
+        return CommandResult.COMPLETED;
+    }
+
+    @Override
+    public void onCanle() {
+        
     }
     
     
-    
+
 }

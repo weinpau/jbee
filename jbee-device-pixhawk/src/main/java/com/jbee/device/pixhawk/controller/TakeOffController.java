@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author Erik Jähne
  */
-public class TakeOffController implements Consumer<MAVLinkPacket>{
+public class TakeOffController extends BasicController implements Consumer<MAVLinkPacket>{
 
     private final static int HEIGHT = 3;//m
     private Integer state = 0;
@@ -84,6 +84,17 @@ public class TakeOffController implements Consumer<MAVLinkPacket>{
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void onCanle() {
+        if(state != 0){
+            state = 0;
+            pixhawk.removeMavlinkReceiver(TakeOffController.class.getName());
+            pixhawk.clearMission();
+            pixhawk.performingLand = false;
+            result = CommandResult.CANCELLED;
         }
     }
 }

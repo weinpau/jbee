@@ -8,6 +8,8 @@ import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_param_request_read;
 import com.MAVLink.common.msg_param_value;
 import com.MAVLink.common.msg_set_mode;
+import com.MAVLink.common.msg_set_position_target_global_int;
+import com.MAVLink.common.msg_set_position_target_local_ned;
 import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_FRAME;
 import com.MAVLink.enums.MAV_QC_REGISTER_RESULT;
@@ -271,6 +273,36 @@ public class MavlinkModule implements Consumer<MAVLinkPacket>{
         msg.base_mode = base_mode;
         msg.custom_mode = custom_mode;
         msg.target_system = targetSysID;
+        connection.sendPackage(createPackage(msg));
+    }
+    
+    public void setPositionTargetLocal(byte targetSysID, byte targetCompID, double x, double y,double alt, double velX, double velY, double velZ,double yaw, double yawRate,boolean useGlobalYaw) {
+        msg_set_position_target_local_ned msg = new msg_set_position_target_local_ned();
+        msg.coordinate_frame = MAV_FRAME.MAV_FRAME_LOCAL_NED;
+        msg.target_system = targetSysID;
+        msg.target_component = targetCompID;
+        msg.vx = (float) velX; //X velocity in NED frame in meter / s
+        msg.vy = (float)velY; //Y velocity in NED frame in meter / s
+        msg.vz = (float)velZ; //Z velocity in NED frame in meter / s
+        msg.z = (float)-alt; //NED frame in meters (note, altitude is negative in NED
+        msg.x = (float)x; //X Position in NED frame in meters
+        msg.y = (float)y; //Y Position in NED frame in meters
+        msg.time_boot_ms = 0;
+        
+        //Type Mask Mapping:
+        //bit 1: x, bit 2: y, bit 3: z,
+        //bit 4: vx, bit 5: vy, bit 6: vz
+        //bit 7: ax, bit 8: ay, bit 9: az,
+        //bit 10: is force setpoint, bit 11: yaw, bit 12: yaw rate
+        if(useGlobalYaw){
+            msg.yaw = (float)yaw; //yaw setpoint in rad
+            msg.type_mask = 0b0000000111000000;
+        }
+        else{
+            msg.yaw_rate = (float)yawRate; //yaw rate setpoint in rad/s
+            msg.type_mask = 0b0000010111000000;
+        }
+        
         connection.sendPackage(createPackage(msg));
     }
 }

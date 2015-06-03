@@ -11,16 +11,12 @@ import com.jbee.BeeModule;
 import com.jbee.BusRegistry;
 import com.jbee.ControlState;
 import com.jbee.TargetDevice;
-import com.jbee.buses.AltitudeBus;
-import com.jbee.buses.AxisVelocityBus;
-import com.jbee.buses.LatLonBus;
-import com.jbee.buses.PositionBus;
-import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.device.pixhawk.connection.network.NetworkConnection;
 import com.jbee.device.pixhawk.internal.BusHandler;
 import com.jbee.device.pixhawk.internal.CommandDispatcher;
+import com.jbee.device.pixhawk.internal.PixhawkController;
 import com.jbee.device.pixhawk.mavlink.MavlinkModule;
 import com.jbee.units.Frequency;
 import com.jbee.units.RotationalSpeed;
@@ -41,7 +37,7 @@ public class Pixhawk extends BeeModule implements TargetDevice{
     CommandDispatcher commandDispatcher;
     NetworkConnection connection;
     MavlinkModule myModule;
-    com.jbee.device.pixhawk.internal.PixhawkController pixhawk;
+    PixhawkController pixhawk;
 
     BusHandler busHandler = new BusHandler();
     
@@ -82,7 +78,7 @@ public class Pixhawk extends BeeModule implements TargetDevice{
         connection.registerMavlinkPacketReceiver(BusHandler.class.getName(), busHandler);
         
         myModule = new MavlinkModule(5, 0, connection);
-        pixhawk = new com.jbee.device.pixhawk.internal.PixhawkController(myModule);
+        pixhawk = new PixhawkController(myModule);
         
         
         commandDispatcher = new CommandDispatcher(pixhawk);

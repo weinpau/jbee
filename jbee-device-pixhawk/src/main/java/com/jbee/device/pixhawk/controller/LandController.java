@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Erik Jähne
  */
-public class LandController implements Consumer<MAVLinkPacket>{
+public class LandController extends BasicController implements Consumer<MAVLinkPacket>{
 
     private final Boolean ready = true;
     private int state;
@@ -77,5 +77,15 @@ public class LandController implements Consumer<MAVLinkPacket>{
                 }
             }
         }
-    }   
+    }
+    @Override
+    public void onCanle() {
+        if(state != 0){
+            state = 0;
+            pixhawk.removeMavlinkReceiver(TakeOffController.class.getName());
+            pixhawk.clearMission();
+            pixhawk.performingLand = false;
+            result = CommandResult.CANCELLED;
+        }
+    }
 }
