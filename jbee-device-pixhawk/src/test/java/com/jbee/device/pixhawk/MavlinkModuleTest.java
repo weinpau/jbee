@@ -14,6 +14,7 @@ import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -57,9 +58,7 @@ public class MavlinkModuleTest {
         
     }
 
-    /**
-     * Test of registerModule method, of class MavlinkModule.
-     */
+    @Ignore
     @Test
     public void testRegisterModule() {
         System.out.println("registerModule");

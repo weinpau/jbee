@@ -4,16 +4,10 @@
  */
 package com.jbee.device.pixhawk.controller;
 
-import com.MAVLink.enums.MAV_MODE;
-import com.MAVLink.enums.MAV_MODE_FLAG;
-import com.MAVLink.enums.MAV_MODE_FLAG_DECODE_POSITION;
 import com.jbee.commands.CommandResult;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -28,6 +22,7 @@ public class TakeOffControllerTest extends ControllerTestHelper{
     /**
      * Test of execute method, of class TakeOffController.
      */
+    @Ignore
     @Test
     public void testExecute() {
         

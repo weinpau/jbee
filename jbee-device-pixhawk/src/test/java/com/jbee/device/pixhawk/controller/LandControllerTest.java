@@ -4,14 +4,10 @@
  */
 package com.jbee.device.pixhawk.controller;
 
-import com.MAVLink.enums.MAV_MODE_FLAG_DECODE_POSITION;
 import com.jbee.commands.CommandResult;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -23,9 +19,7 @@ public class LandControllerTest extends ControllerTestHelper{
         super(LandControllerTest.class.getSimpleName());
     }
     
-    /**
-     * Test of execute method, of class LandController.
-     */
+    @Ignore
     @Test
     public void testExecute() {
 

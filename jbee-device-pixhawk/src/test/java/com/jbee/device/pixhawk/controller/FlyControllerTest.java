@@ -5,7 +5,6 @@
 package com.jbee.device.pixhawk.controller;
 
 import com.MAVLink.common.msg_local_position_ned;
-import com.jbee.Direction;
 import com.jbee.RotationDirection;
 import com.jbee.commands.Commands;
 import com.jbee.commands.FlyCommand;
@@ -14,6 +13,7 @@ import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -25,6 +25,7 @@ public class FlyControllerTest extends ControllerTestHelper{
         super("FlyControllerTest");
     }
 
+    @Ignore
     @Test
     public void testMovement(){
         float yawStart = pixhawk.getAttitude().yaw;
