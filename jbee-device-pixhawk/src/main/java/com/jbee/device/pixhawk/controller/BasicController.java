@@ -13,11 +13,14 @@ import java.util.List;
  */
 public abstract class BasicController {
     
-    private static boolean cancle = false;
+    protected static boolean cancle = false;
     private static List<BasicController> instances = new ArrayList();
+    private Thread thread;
 
     public BasicController() {
+        cancle = false;
         instances.add(this);
+        thread = Thread.currentThread();
     }
     
     public synchronized static boolean isCancle() {
@@ -26,18 +29,17 @@ public abstract class BasicController {
 
     public synchronized static void setCancle(boolean cancle) {
         BasicController.cancle = cancle;
-        instances.forEach(c -> {c.onCanle();});
+        instances.forEach(c -> {c.onCanle(c.thread);});
     }
     
     
-    public abstract void onCanle();
+    public void onCanle(Thread t){
+        cancle = true;
+        t.interrupt();
+    }
     
     @Override
     public void finalize(){
            instances.remove(this);
     }
-    
-    
-    
-    
 }

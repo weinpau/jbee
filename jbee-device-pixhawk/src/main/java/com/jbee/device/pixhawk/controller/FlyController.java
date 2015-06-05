@@ -22,9 +22,6 @@ import java.util.logging.Logger;
 public class FlyController extends BasicController{
 
     private final PixhawkController pixhawk;
-    private Integer state = 0;
-    private final Boolean ready = true;
-    private CommandResult result;
     
     private Angle angle;
     private Position position;
@@ -33,8 +30,6 @@ public class FlyController extends BasicController{
     private boolean realtivePosition;
     private boolean absoluteRotation;
     private RotationalSpeed rotationalSpeed;
-    
-    private boolean cancle= false;
     
     public FlyController(PixhawkController pixhawk) {
         this.pixhawk = pixhawk;
@@ -62,6 +57,7 @@ public class FlyController extends BasicController{
         }
         
         cancle= false;
+        double altSpeed = speed.mps();
         double dAngle;
         double yawSpeedFaktor;
         double yawSpeed = rotationalSpeed.toAngularSpeed().toRadiansPerSecond();
@@ -131,11 +127,11 @@ public class FlyController extends BasicController{
                 yawSpeed = rotationalSpeed.toAngularSpeed().toRadiansPerSecond() * yawSpeedFaktor;
                 
             }
-
+            
                         
             //Send Command
             pixhawk.setPositionTargetLocal(X.desired , Y.desired, Z.desired,
-                speed.mps(),speed.mps(),speed.mps(),
+                speed.mps(),speed.mps(),altSpeed,
                 Yaw.desired,yawSpeed,absoluteRotation);
             
             //Check Target == Current
@@ -153,15 +149,13 @@ public class FlyController extends BasicController{
                 Logger.getLogger(FlyController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        //Cancled
+        
+        pixhawk.setPositionTargetLocal(X.current , Y.current, Z.current,
+            speed.mps(),speed.mps(),speed.mps(),
+            pixhawk.getAttitude().yaw,yawSpeed,true);
         
         return CommandResult.CANCELLED;
-    }
-
-  
-
-    @Override
-    public void onCanle() {
-        cancle = true;
     }
 
     class CSD{

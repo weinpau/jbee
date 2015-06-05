@@ -19,13 +19,5 @@ public class CancelController extends BasicController{
     public CommandResult execute(CancelCommand cancelCommand) {
         setCancle(true);
         return CommandResult.COMPLETED;
-    }
-
-    @Override
-    public void onCanle() {
-        
-    }
-    
-    
-
+    }  
 }

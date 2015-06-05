@@ -9,6 +9,7 @@ import com.jbee.Bee;
 import com.jbee.BeeBootstrapException;
 import com.jbee.BeeContext;
 import com.jbee.BeeControl;
+import com.jbee.Direction;
 import com.jbee.RotationDirection;
 import com.jbee.commands.Commands;
 import com.jbee.commands.FlyCommand;
@@ -33,20 +34,14 @@ public class PixhawkSimpleFlight {
         //bee.monitor().onStateChange(state -> System.out.print("\r" + state.getPosition()));
         BeeControl control = bee.control();
 
-
-        //Commands.forward(Distance.ZERO).andRotate(Angle.ZERO, RotationDirection.CLOCKWISE).build()
         control = control.rotationalSpeed(RotationalSpeed.rpm(6));
         
         control.takeOff();
-        //control.hover(Duration.ofSeconds(1));
-        /*
-       for (int i = 0; i < 4; i++) {
-            control.forward(Distance.ofMeters(5));
-            control.rotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE);
-        }*/
+
         for (int i = 0; i < 4; i++) {
             control.execute(Commands.forward(Distance.ofMeters(4)).andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).build());
         }
+                
         System.out.println("land: " + control.land());
         
         context.close();
