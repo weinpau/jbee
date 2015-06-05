@@ -4,6 +4,8 @@ import com.jbee.device.pixhawk.controller.helper.Vector3D;
 import com.jbee.RotationDirection;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.FlyCommand;
+import com.jbee.commands.FlyCommandBuilder;
+import com.jbee.device.pixhawk.Pixhawk;
 import com.jbee.device.pixhawk.controller.helper.PID;
 import com.jbee.device.pixhawk.internal.PixhawkController;
 import com.jbee.positioning.Position;
@@ -24,13 +26,13 @@ public class FlyController extends BasicController{
     private final Boolean ready = true;
     private CommandResult result;
     
-    Angle angle;
-    Position position;
-    RotationDirection rotationDirection;
-    Speed speed;
-    boolean realtivePosition;
-    boolean absoluteRotation;
-    RotationalSpeed rotationalSpeed;
+    private Angle angle;
+    private Position position;
+    private RotationDirection rotationDirection;
+    private Speed speed;
+    private boolean realtivePosition;
+    private boolean absoluteRotation;
+    private RotationalSpeed rotationalSpeed;
     
     private boolean cancle= false;
     
@@ -52,6 +54,13 @@ public class FlyController extends BasicController{
         realtivePosition = flyCommand.isRealtivePosition();
         absoluteRotation = !flyCommand.isRealtiveRotation();
         
+        if(speed == null){
+            speed = Speed.mps(10);
+        }
+        if(rotationalSpeed == null){
+            rotationalSpeed = RotationalSpeed.rps(0.25);
+        }
+        
         cancle= false;
         double dAngle;
         double yawSpeedFaktor;
@@ -60,16 +69,16 @@ public class FlyController extends BasicController{
         
         CSD X = new CSD(pixhawk.getLocalPosition().x);
         CSD Y = new CSD(pixhawk.getLocalPosition().y);
-        CSD Z = new CSD(pixhawk.getLocalPosition().z);
+        CSD Z = new CSD(-pixhawk.getLocalPosition().z);
         CSD Yaw = new CSD(pixhawk.getAttitude().yaw);
 
         if(realtivePosition){
-            Vector3D vector = new Vector3D((float)position.getX(), (float)position.getY(), (float)position.getZ());
+            Vector3D vector = new Vector3D((float)position.getX(), (float)position.getY(), 0);
             vector.rotate2D((float)-Yaw.current);
             
             X.desired += vector.y;
             Y.desired += vector.x;
-            Z.desired += vector.z;
+            Z.desired += position.getZ();
         }
         else{
             X.desired = position.getY();
@@ -99,7 +108,7 @@ public class FlyController extends BasicController{
             //Main Loop
             X.current = pixhawk.getLocalPosition().x;
             Y.current = pixhawk.getLocalPosition().y;
-            Z.current = pixhawk.getLocalPosition().z;
+            Z.current = -pixhawk.getLocalPosition().z;
             
             if(absoluteRotation){
                 Yaw.current = pixhawk.getAttitude().yaw;
@@ -125,14 +134,14 @@ public class FlyController extends BasicController{
 
                         
             //Send Command
-            pixhawk.setPositionTargetLocal(X.desired , Y.desired, -Z.desired,
+            pixhawk.setPositionTargetLocal(X.desired , Y.desired, Z.desired,
                 speed.mps(),speed.mps(),speed.mps(),
                 Yaw.desired,yawSpeed,absoluteRotation);
             
             //Check Target == Current
-            if(     inRange(X, 1.0) && 
-                    inRange(Y, 1.0) &&
-                    inRange(Z, 1.0)&&
+            if(     inRange(X, 0.1) && 
+                    inRange(Y, 0.1) &&
+                    inRange(Z, 0.1)&&
                     inRange(Yaw, Math.PI / 180))
                     {                
                 return CommandResult.COMPLETED;

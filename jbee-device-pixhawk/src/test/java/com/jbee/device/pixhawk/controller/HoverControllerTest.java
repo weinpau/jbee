@@ -23,35 +23,13 @@ public class HoverControllerTest extends ControllerTestHelper{
     public HoverControllerTest() {
         super(HoverControllerTest.class.getSimpleName());
     }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-        setup();
-    }
-    
-    @After
-    public void tearDown() {
-        teardown();
-    }
-
+        
     /**
      * Test of execute method, of class HoverController.
      */
     @Test
     public void testExecute() {
-        
-        if((pixhawk.getHeartbeat().base_mode & MAV_MODE_FLAG_DECODE_POSITION.MAV_MODE_FLAG_DECODE_POSITION_HIL) == 0){
-            fail("Test this only in HIL mode!");
-        }
-        
+
         HoverController controller = new HoverController(pixhawk);
         
         assertEquals(CommandResult.COMPLETED, controller.execute(null));

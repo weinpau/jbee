@@ -4,19 +4,17 @@
  */
 package com.jbee.device.pixhawk.controller;
 
+import com.MAVLink.enums.MAV_MODE_FLAG_DECODE_POSITION;
 import com.MAVLink.enums.MAV_QC_ACCESS;
 import com.MAVLink.enums.MAV_QC_REGISTER_RESULT;
 import com.jbee.BeeBootstrapException;
 import com.jbee.device.pixhawk.connection.network.NetworkConnection;
-import com.jbee.device.pixhawk.internal.CommandDispatcher;
 import com.jbee.device.pixhawk.internal.PixhawkController;
 import com.jbee.device.pixhawk.mavlink.MavlinkModule;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.junit.Assert;
+import org.junit.After;
+import static org.junit.Assert.fail;
+import org.junit.Before;
 
 /**
  *
@@ -35,7 +33,8 @@ public class ControllerTestHelper {
         this.name = name;
     }
     
-    protected void setup(){
+    @Before
+    public void setup(){
         try {
             //init network
             connection = new NetworkConnection(
@@ -45,7 +44,7 @@ public class ControllerTestHelper {
             connection.connect();
         } catch (Exception ex) {
             connection.disconnect();
-            Assert.fail(ex.getMessage());
+            fail(ex.getMessage());
         }
         
         
@@ -54,20 +53,25 @@ public class ControllerTestHelper {
         
         int result = myModule.registerModule(name,MAV_QC_ACCESS.MAV_QC_ACCESS_ALL);
         if(result == MAV_QC_REGISTER_RESULT.MAV_QC_REGISTER_RESULT_FAILD_EXISTING){
-            Assert.fail("This Module is already registerd");
+            fail("This Module is already registerd");
         }
         if(result == MAV_QC_REGISTER_RESULT.MAV_QC_REGISTER_RESULT_FAILD_OTHER){
-            Assert.fail("This Module coud not be registerd");
+            fail("This Module coud not be registerd");
         }
         
         try {
             pixhawk.waitForConnection();
         } catch (BeeBootstrapException ex) {
-            Assert.fail(ex.getMessage());
+            fail(ex.getMessage());
+        }
+        
+        if((pixhawk.getHeartbeat().base_mode & MAV_MODE_FLAG_DECODE_POSITION.MAV_MODE_FLAG_DECODE_POSITION_HIL) == 0){
+            fail("Test this only in HIL mode!");
         }
     }
     
-    protected void teardown(){
+    @After
+    public void teardown(){
         if(myModule != null)
             myModule.unregisterModule();
         connection.disconnect();

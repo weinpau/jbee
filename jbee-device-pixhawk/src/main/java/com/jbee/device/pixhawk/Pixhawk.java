@@ -144,7 +144,7 @@ public class Pixhawk extends BeeModule implements TargetDevice{
 
     @Override
     public RotationalSpeed getDefaultRotationalSpeed() {
-        return RotationalSpeed.rps(120.0);
+        return RotationalSpeed.rpm(6.0);
     }
     
     

@@ -151,49 +151,50 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
      * @return the raw gps data expressed as deg * 1e7
      */
     public msg_global_position_int getGpsStatus() {
-        return globalPosition;
+        return new msg_global_position_int(globalPosition.pack());
     }
     /**
      * get the current battery Status
      * @return the battery status
      */
     public msg_battery_status getBattery() {
-        return battery;
+        return new msg_battery_status(battery.pack());
+        
     }
     /**
      * get the current System Status
      * @return the system status
      */
     public msg_sys_status getSysStatus() {
-        return sysStatus;
+        return new msg_sys_status(sysStatus.pack());
     }
     /**
      * get the current attitude like yaw/pitch/roll
      * @return the attitude data
      */
     public msg_attitude getAttitude() {
-        return attitude;
+        return new msg_attitude(attitude.pack());
     }
     /**
      * get local position in NED frame
      * @return the local position
      */
     public msg_local_position_ned getLocalPosition() {
-        return localPosition;
+        return new msg_local_position_ned(localPosition.pack());
     }
     /**
      * get the raw IMU data like gyro/acc/mag
      * @return the imu data
      */
     public msg_highres_imu getImu() {
-        return imu;
+        return new msg_highres_imu(imu.pack());
     }
     /**
      * get the current target Position where the Pixhawk will fly to
      * @return the target position
      */
     public msg_position_target_global_int getTargetPos() {
-        return targetPos;
+        return new msg_position_target_global_int(targetPos.pack());
     }
     
     /**
@@ -201,7 +202,7 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
      * @return the heartbeat message
      */
     public msg_heartbeat getHeartbeat() {
-        return heartbeat;
+        return new msg_heartbeat(heartbeat.pack());
     }
     
     /**
