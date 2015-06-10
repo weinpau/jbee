@@ -14,6 +14,14 @@ import java.time.Duration;
  */
 public class FlyCommand extends AbstractCommand {
 
+    public enum Mode {
+
+        FLY,
+        ROTATE,
+        FLY_AND_ROTATE,
+        ROTATE_AND_FLY
+    }
+
     private final Position position;
 
     private final Angle angle;
@@ -21,11 +29,15 @@ public class FlyCommand extends AbstractCommand {
 
     private final boolean realtivePosition;
     private final boolean realtiveRotation;
+    private final Mode mode;
 
     private Speed speed;
     private RotationalSpeed rotationalSpeed;
 
-    FlyCommand(Position position, Angle angle, RotationDirection rotationDirection, RotationalSpeed rotationalSpeed, boolean realtivePosition, boolean realtiveRotation, Speed speed) {
+    FlyCommand(Position position, Angle angle,
+            RotationDirection rotationDirection, RotationalSpeed rotationalSpeed,
+            boolean realtivePosition, boolean realtiveRotation,
+            Speed speed, Mode mode) {
         this.position = position;
         this.angle = angle;
         this.rotationDirection = rotationDirection;
@@ -33,6 +45,7 @@ public class FlyCommand extends AbstractCommand {
         this.realtivePosition = realtivePosition;
         this.realtiveRotation = realtiveRotation;
         this.speed = speed;
+        this.mode = mode;
     }
 
     @Override
@@ -73,6 +86,10 @@ public class FlyCommand extends AbstractCommand {
 
     public Speed getSpeed() {
         return speed;
+    }
+
+    public Mode getMode() {
+        return mode;
     }
 
     public Angle calculateDeltaYAW(Angle initialYAW) {

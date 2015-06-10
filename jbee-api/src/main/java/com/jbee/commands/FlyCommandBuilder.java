@@ -24,6 +24,7 @@ public final class FlyCommandBuilder {
 
     Speed speed;
     RotationalSpeed rotationalSpeed;
+    FlyCommand.Mode mode = FlyCommand.Mode.FLY;
 
     FlyCommandBuilder() {
     }
@@ -32,6 +33,7 @@ public final class FlyCommandBuilder {
         this.angle = angle;
         this.rotationDirection = rotationDirection;
         this.realtiveRotation = true;
+        this.mode = FlyCommand.Mode.ROTATE;
         return new RotationalSpeedStep(this);
     }
 
@@ -39,6 +41,7 @@ public final class FlyCommandBuilder {
         this.angle = angle.normalize();
         this.rotationDirection = rotationDirection;
         this.realtiveRotation = false;
+        this.mode = FlyCommand.Mode.ROTATE;
         return new RotationalSpeedStep(this);
     }
 
@@ -48,132 +51,187 @@ public final class FlyCommandBuilder {
         return new SpeedStep(this);
     }
 
-    public RelativePositionStep fly(Direction direction, Distance distance) {
-        return new RelativePositionStep(this).fly(direction, distance);
-    }
+    public SpeedStep fly(Distance right, Distance forward, Distance up) {
 
-    public RelativePositionStep forward(Distance distance) {
-        return new RelativePositionStep(this).forward(distance);
-    }
-
-    public RelativePositionStep right(Distance distance) {
-        return new RelativePositionStep(this).right(distance);
-    }
-
-    public RelativePositionStep left(Distance distance) {
-        return new RelativePositionStep(this).left(distance);
-    }
-
-    public RelativePositionStep backward(Distance distance) {
-        return new RelativePositionStep(this).backward(distance);
-    }
-
-    public RelativePositionStep up(Distance distance) {
-        return new RelativePositionStep(this).up(distance);
-    }
-
-    public RelativePositionStep down(Distance distance) {
-        return new RelativePositionStep(this).down(distance);
-    }
-
-    public static class RelativePositionStep extends RotationStep {
-
-        RelativePositionStep(FlyCommandBuilder commandBuilder) {
-            super(commandBuilder);
-            commandBuilder.realtivePosition = true;
-        }
-
-        public RotationStep with(Speed speed) {
-            commandBuilder.speed = speed;
-            return new RotationStep(commandBuilder);
-
-        }
-
-        public RelativePositionStep forward(Distance distance) {
-
-            commandBuilder.position = commandBuilder.position.addY(distance.toMeters());
-            return this;
-        }
-
-        public RelativePositionStep right(Distance distance) {
-            commandBuilder.position = commandBuilder.position.addX(distance.toMeters());
-            return this;
-        }
-
-        public RelativePositionStep left(Distance distance) {
-            return right(distance.multiply(-1));
-        }
-
-        public RelativePositionStep backward(Distance distance) {
-            return forward(distance.multiply(-1));
-        }
-
-        public RelativePositionStep up(Distance distance) {
-            commandBuilder.position = commandBuilder.position.addZ(distance.toMeters());
-            return this;
-        }
-
-        public RelativePositionStep down(Distance distance) {
-            return up(distance.multiply(-1));
-        }
-
-        public RelativePositionStep fly(Direction direction, Distance distance) {
-            switch (direction) {
-                case BACKWARD:
-                    return backward(distance);
-                case DOWN:
-                    return down(distance);
-                case FORWARD:
-                    return forward(distance);
-                case LEFT:
-                    return left(distance);
-                case RIGHT:
-                    return right(distance);
-                case UP:
-                    return up(distance);
-            }
-            return this;
-        }
+        this.position = new Position(right.toMeters(), forward.toMeters(), up.toMeters());
+        this.realtivePosition = true;
+        return new SpeedStep(this);
 
     }
 
-    public static class SpeedStep extends RotationStep {
+    public SpeedStep fly(Direction direction, Distance distance) {
+        switch (direction) {
+            case BACKWARD:
+                return backward(distance);
+            case DOWN:
+                return down(distance);
+            case FORWARD:
+                return forward(distance);
+            case LEFT:
+                return left(distance);
+            case RIGHT:
+                return right(distance);
+            case UP:
+                return up(distance);
+        }
+        return new SpeedStep(this);
+    }
+
+    public SpeedStep forward(Distance distance) {
+        return fly(Distance.ZERO, distance, Distance.ZERO);
+    }
+
+    public SpeedStep right(Distance distance) {
+        return fly(distance, Distance.ZERO, Distance.ZERO);
+    }
+
+    public SpeedStep left(Distance distance) {
+        return right(distance.multiply(-1));
+    }
+
+    public SpeedStep backward(Distance distance) {
+        return forward(distance.multiply(-1));
+    }
+
+    public SpeedStep up(Distance distance) {
+        return fly(Distance.ZERO, Distance.ZERO, distance);
+    }
+
+    public SpeedStep down(Distance distance) {
+        return up(distance.multiply(-1));
+    }
+
+    public static class SpeedStep extends FlyRotationStep {
 
         SpeedStep(FlyCommandBuilder commandBuilder) {
             super(commandBuilder);
         }
 
-        public RotationStep with(Speed speed) {
+        public FlyRotationStep with(Speed speed) {
             commandBuilder.speed = speed;
             return this;
         }
 
     }
 
-    public static class RotationStep extends BuildStep {
+    public static class FlyRotationStep extends BuildStep {
 
-        RotationStep(FlyCommandBuilder commandBuilder) {
+        FlyRotationStep(FlyCommandBuilder commandBuilder) {
             super(commandBuilder);
         }
 
-        public RotationalSpeedStep andRotate(Angle angle, RotationDirection rotationDirection) {
+        public RotationalSpeedFinalStep andRotate(Angle angle, RotationDirection rotationDirection) {
             commandBuilder.angle = angle.normalize();
             commandBuilder.rotationDirection = rotationDirection;
             commandBuilder.realtiveRotation = true;
-            return new RotationalSpeedStep(commandBuilder);
+            commandBuilder.mode = FlyCommand.Mode.FLY_AND_ROTATE;
+            return new RotationalSpeedFinalStep(commandBuilder);
         }
 
-        public RotationalSpeedStep andRotateTo(Angle angle, RotationDirection rotationDirection) {
+        public RotationalSpeedFinalStep andRotateTo(Angle angle, RotationDirection rotationDirection) {
             commandBuilder.angle = angle;
             commandBuilder.rotationDirection = rotationDirection;
             commandBuilder.realtiveRotation = false;
-            return new RotationalSpeedStep(commandBuilder);
+            commandBuilder.mode = FlyCommand.Mode.FLY_AND_ROTATE;
+            return new RotationalSpeedFinalStep(commandBuilder);
         }
     }
 
-    public static class RotationalSpeedStep extends BuildStep {
+    public static class RotationalSpeedStep extends RotationFlyStep {
 
         RotationalSpeedStep(FlyCommandBuilder commandBuilder) {
+            super(commandBuilder);
+        }
+
+        public RotationFlyStep with(RotationalSpeed rotationalSpeed) {
+            commandBuilder.rotationalSpeed = rotationalSpeed;
+            return this;
+        }
+
+    }
+
+    public static class RotationFlyStep extends BuildStep {
+
+        RotationFlyStep(FlyCommandBuilder commandBuilder) {
+            super(commandBuilder);
+        }
+
+        public SpeedFinalStep andFlyTo(Position position) {
+            commandBuilder.mode = FlyCommand.Mode.ROTATE_AND_FLY;
+            commandBuilder.position = position;
+            commandBuilder.realtivePosition = false;
+            return new SpeedFinalStep(commandBuilder);
+
+        }
+
+        public SpeedFinalStep andFly(Distance right, Distance forward, Distance up) {
+            commandBuilder.mode = FlyCommand.Mode.ROTATE_AND_FLY;
+            commandBuilder.position = new Position(right.toMeters(), forward.toMeters(), up.toMeters());
+            commandBuilder.realtivePosition = true;
+            return new SpeedFinalStep(commandBuilder);
+
+        }
+
+        public SpeedFinalStep andFly(Direction direction, Distance distance) {
+            switch (direction) {
+                case BACKWARD:
+                    return andBackward(distance);
+                case DOWN:
+                    return andDown(distance);
+                case FORWARD:
+                    return andForward(distance);
+                case LEFT:
+                    return andLeft(distance);
+                case RIGHT:
+                    return andRight(distance);
+                case UP:
+                    return andUp(distance);
+            }
+            return new SpeedFinalStep(commandBuilder);
+        }
+
+        public SpeedFinalStep andForward(Distance distance) {
+            return andFly(Distance.ZERO, distance, Distance.ZERO);
+        }
+
+        public SpeedFinalStep andRight(Distance distance) {
+            return andFly(distance, Distance.ZERO, Distance.ZERO);
+        }
+
+        public SpeedFinalStep andLeft(Distance distance) {
+            return andRight(distance.multiply(-1));
+        }
+
+        public SpeedFinalStep andBackward(Distance distance) {
+            return andForward(distance.multiply(-1));
+        }
+
+        public SpeedFinalStep andUp(Distance distance) {
+            return andFly(Distance.ZERO, Distance.ZERO, distance);
+        }
+
+        public SpeedFinalStep andDown(Distance distance) {
+            return andUp(distance.multiply(-1));
+        }
+
+    }
+
+    public static class SpeedFinalStep extends BuildStep {
+
+        SpeedFinalStep(FlyCommandBuilder commandBuilder) {
+            super(commandBuilder);
+        }
+
+        public BuildStep with(Speed speed) {
+            commandBuilder.speed = speed;
+            return this;
+        }
+
+    }
+
+    public static class RotationalSpeedFinalStep extends BuildStep {
+
+        RotationalSpeedFinalStep(FlyCommandBuilder commandBuilder) {
             super(commandBuilder);
         }
 
@@ -200,7 +258,8 @@ public final class FlyCommandBuilder {
                     commandBuilder.rotationalSpeed,
                     commandBuilder.realtivePosition,
                     commandBuilder.realtiveRotation,
-                    commandBuilder.speed);
+                    commandBuilder.speed,
+                    commandBuilder.mode);
         }
 
     }
