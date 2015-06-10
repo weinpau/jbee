@@ -4,7 +4,7 @@ import com.jbee.BeeState;
 import com.jbee.ControlStateMachine;
 import com.jbee.RotationDirection;
 import com.jbee.buses.BeeStateBus;
-import com.jbee.buses.PrincipalAxesBus;
+import com.jbee.buses.AxisAnglesBus;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.FlyCommand;
 import com.jbee.concurrent.CallbackWrapper;
@@ -28,7 +28,7 @@ public class FlyController implements CommandController<FlyCommand> {
 
     AT_CommandSender commandSender;
     BeeStateBus beeStateBus;
-    PrincipalAxesBus principalAxesBus;
+    AxisAnglesBus principalAxesBus;
     ControlStateMachine controlStateMachine;
     ExecutorService commandExecutorService;
     LoopControl loopControl = new OpenLoopControl();
@@ -101,7 +101,7 @@ public class FlyController implements CommandController<FlyCommand> {
 
         double targetX, targetY, targetZ, targetYAW;
         int acceptableCount = 0;
-        RotationDirection rotationDirection = RotationDirection.CLOCKWISE;
+        RotationDirection rotationDirection = RotationDirection.CW;
 
         boolean enable = false;
 
@@ -189,7 +189,7 @@ public class FlyController implements CommandController<FlyCommand> {
 
             Angle deltaYAW = command.calculateDeltaYAW(initialYAW);
             targetYAW = initialYAW.add(deltaYAW).normalize().abs().toRadians();
-            rotationDirection = deltaYAW.isNegative() ? RotationDirection.COUNTERCLOCKWISE : RotationDirection.CLOCKWISE;
+            rotationDirection = deltaYAW.isNegative() ? RotationDirection.CCW : RotationDirection.CW;
         }
 
         void reset() {

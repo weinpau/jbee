@@ -23,11 +23,11 @@ public class FlyCommandBuilderTest {
         FlyCommandBuilder instance = new FlyCommandBuilder();
 
         FlyCommand flyCommand = instance.
-                rotate(Angle.ofRadians(1), RotationDirection.COUNTERCLOCKWISE).build();
+                rotate(Angle.ofRadians(1), RotationDirection.CCW).build();
 
         assertTrue(flyCommand.isRealtiveRotation());
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
-        assertEquals(RotationDirection.COUNTERCLOCKWISE, flyCommand.getRotationDirection());
+        assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
     }
 
     @Test
@@ -35,13 +35,13 @@ public class FlyCommandBuilderTest {
         FlyCommandBuilder instance = new FlyCommandBuilder();
 
         FlyCommand flyCommand = instance.
-                rotate(Angle.ofRadians(1), RotationDirection.COUNTERCLOCKWISE).
+                rotate(Angle.ofRadians(1), RotationDirection.CCW).
                 with(RotationalSpeed.rps(1)).
                 build();
 
         assertTrue(flyCommand.isRealtiveRotation());
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
-        assertEquals(RotationDirection.COUNTERCLOCKWISE, flyCommand.getRotationDirection());
+        assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
         assertEquals(RotationalSpeed.rps(1), flyCommand.getRotationalSpeed());
     }
 
@@ -51,12 +51,12 @@ public class FlyCommandBuilderTest {
         FlyCommandBuilder instance = new FlyCommandBuilder();
 
         FlyCommand flyCommand = instance.
-                rotateTo(Angle.ofRadians(1), RotationDirection.COUNTERCLOCKWISE).
+                rotateTo(Angle.ofRadians(1), RotationDirection.CCW).
                 build();
 
         assertFalse(flyCommand.isRealtiveRotation());
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
-        assertEquals(RotationDirection.COUNTERCLOCKWISE, flyCommand.getRotationDirection());
+        assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
 
     }
 
@@ -66,13 +66,13 @@ public class FlyCommandBuilderTest {
         FlyCommandBuilder instance = new FlyCommandBuilder();
 
         FlyCommand flyCommand = instance.
-                rotateTo(Angle.ofRadians(1), RotationDirection.COUNTERCLOCKWISE).
+                rotateTo(Angle.ofRadians(1), RotationDirection.CCW).
                 with(RotationalSpeed.rps(1)).
                 build();
 
         assertFalse(flyCommand.isRealtiveRotation());
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
-        assertEquals(RotationDirection.COUNTERCLOCKWISE, flyCommand.getRotationDirection());
+        assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
         assertEquals(RotationalSpeed.rps(1), flyCommand.getRotationalSpeed());
     }
 
@@ -114,14 +114,14 @@ public class FlyCommandBuilderTest {
 
         FlyCommand flyCommand = instance.
                 flyTo(position).
-                andRotate(Angle.ofRadians(1), RotationDirection.COUNTERCLOCKWISE).
+                andRotate(Angle.ofRadians(1), RotationDirection.CCW).
                 build();
 
         assertFalse(flyCommand.isRealtivePosition());
         assertEquals(position, flyCommand.getPosition());
         assertNull(flyCommand.getSpeed());
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
-        assertEquals(RotationDirection.COUNTERCLOCKWISE, flyCommand.getRotationDirection());
+        assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
 
     }
 

@@ -78,18 +78,18 @@ public class FlyCommand extends AbstractCommand {
     public Angle calculateDeltaYAW(Angle initialYAW) {
         Angle yaw = getAngle();
         if (isRealtiveRotation()) {
-            if (getRotationDirection() == RotationDirection.CLOCKWISE) {
+            if (getRotationDirection() == RotationDirection.CW) {
                 return yaw;
             } else {
                 return yaw.multiply(-1);
             }
         } else {
             yaw = yaw.normalize();
-            if ((initialYAW.compareTo(yaw) >= 0 && rotationDirection == RotationDirection.CLOCKWISE)
-                    || (initialYAW.compareTo(yaw) <= 0 && rotationDirection == RotationDirection.COUNTERCLOCKWISE)) {
+            if ((initialYAW.compareTo(yaw) >= 0 && rotationDirection == RotationDirection.CW)
+                    || (initialYAW.compareTo(yaw) <= 0 && rotationDirection == RotationDirection.CCW)) {
                 return initialYAW.sub(yaw).normalize();
             } else {
-                if (rotationDirection == RotationDirection.CLOCKWISE) {
+                if (rotationDirection == RotationDirection.CW) {
                     return Angle.ofDegrees(360).sub(yaw.sub(initialYAW)).normalize();
                 } else {
                     return initialYAW.sub(yaw).sub(Angle.ofDegrees(360)).normalize();

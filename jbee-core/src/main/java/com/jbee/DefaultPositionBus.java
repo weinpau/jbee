@@ -88,7 +88,7 @@ final class DefaultPositionBus extends PositionBus {
             return new Position(x, y, z);
         }
         
-        Position estimatePosition(GlobalVelocity velocity) {
+        Position estimatePosition(Velocity velocity) {
             long now = System.nanoTime();
             if (lastTime == 0) {
                 lastTime = now;

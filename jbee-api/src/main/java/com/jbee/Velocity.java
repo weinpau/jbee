@@ -9,15 +9,15 @@ import java.util.Objects;
  * 
  * @author weinpau
  */
-public class GlobalVelocity {
+public class Velocity {
 
-    public static final GlobalVelocity ZERO = new GlobalVelocity(Speed.ZERO, Speed.ZERO, Speed.ZERO);
+    public static final Velocity ZERO = new Velocity(Speed.ZERO, Speed.ZERO, Speed.ZERO);
 
     private final Speed x; 
     private final Speed y;
     private final Speed z;
 
-    public GlobalVelocity(Speed x, Speed y, Speed z) {
+    public Velocity(Speed x, Speed y, Speed z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -35,35 +35,35 @@ public class GlobalVelocity {
         return z;
     }
 
-    public GlobalVelocity withX(Speed x) {
-        return new GlobalVelocity(x, y, z);
+    public Velocity withX(Speed x) {
+        return new Velocity(x, y, z);
     }
 
-    public GlobalVelocity withY(Speed y) {
-        return new GlobalVelocity(x, y, z);
+    public Velocity withY(Speed y) {
+        return new Velocity(x, y, z);
     }
 
-    public GlobalVelocity withZ(Speed z) {
-        return new GlobalVelocity(x, y, z);
+    public Velocity withZ(Speed z) {
+        return new Velocity(x, y, z);
     }
 
-    public GlobalVelocity abs() {
-        return new GlobalVelocity(x.abs(), y.abs(), z.abs());
+    public Velocity abs() {
+        return new Velocity(x.abs(), y.abs(), z.abs());
     }
 
-    public GlobalVelocity add(GlobalVelocity velocity) {
-        return new GlobalVelocity(x.add(velocity.x), y.add(velocity.y), z.add(velocity.z));
+    public Velocity add(Velocity velocity) {
+        return new Velocity(x.add(velocity.x), y.add(velocity.y), z.add(velocity.z));
     }
 
-    public GlobalVelocity sub(GlobalVelocity velocity) {
+    public Velocity sub(Velocity velocity) {
         return add(velocity.multiply(-1));
     }
 
-    public GlobalVelocity multiply(double factor) {
+    public Velocity multiply(double factor) {
         if (!Double.isFinite(factor)) {
             throw new IllegalArgumentException("The factor must be a finite number.");
         }
-        return new GlobalVelocity(x.multiply(factor), y.multiply(factor), z.multiply(factor));
+        return new Velocity(x.multiply(factor), y.multiply(factor), z.multiply(factor));
     }
 
     public Speed totalSpeed() {
@@ -96,7 +96,7 @@ public class GlobalVelocity {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final GlobalVelocity other = (GlobalVelocity) obj;
+        final Velocity other = (Velocity) obj;
         if (!Objects.equals(this.x, other.x)) {
             return false;
         }

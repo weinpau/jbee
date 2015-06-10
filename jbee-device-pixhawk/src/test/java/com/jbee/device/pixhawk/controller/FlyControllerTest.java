@@ -41,12 +41,12 @@ public class FlyControllerTest extends ControllerTestHelper{
         testMovement("Down", Commands.down(Distance.ofMeters(2)).build(),yawStart);
         
         //simple Rotation
-        testMovement("Turn to Zero",Commands.rotateTo(Angle.ZERO, RotationDirection.CLOCKWISE).build(),0);
-        testMovement("Turn",Commands.rotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).build(),(float)(Math.PI/ 2.0));
-        testMovement("Turn",Commands.rotate(Angle.ofDegrees(180), RotationDirection.COUNTERCLOCKWISE).build(),(float)(-Math.PI / 2.0));
-        testMovement("Turn",Commands.rotate(Angle.ofDegrees(360), RotationDirection.CLOCKWISE).build(),(float)(-Math.PI / 2.0));
-        testMovement("Turn",Commands.rotate(Angle.ofDegrees(2 * 360), RotationDirection.COUNTERCLOCKWISE).build(),(float)(-Math.PI / 2.0));
-        testMovement("Turn",Commands.rotate(Angle.ofDegrees(270), RotationDirection.COUNTERCLOCKWISE).build(),0);
+        testMovement("Turn to Zero",Commands.rotateTo(Angle.ZERO, RotationDirection.CW).build(),0);
+        testMovement("Turn",Commands.rotate(Angle.ofDegrees(90), RotationDirection.CW).build(),(float)(Math.PI/ 2.0));
+        testMovement("Turn",Commands.rotate(Angle.ofDegrees(180), RotationDirection.CCW).build(),(float)(-Math.PI / 2.0));
+        testMovement("Turn",Commands.rotate(Angle.ofDegrees(360), RotationDirection.CW).build(),(float)(-Math.PI / 2.0));
+        testMovement("Turn",Commands.rotate(Angle.ofDegrees(2 * 360), RotationDirection.CCW).build(),(float)(-Math.PI / 2.0));
+        testMovement("Turn",Commands.rotate(Angle.ofDegrees(270), RotationDirection.CCW).build(),0);
         
         yawStart = pixhawk.getAttitude().yaw;
         
@@ -55,9 +55,9 @@ public class FlyControllerTest extends ControllerTestHelper{
         testMovement("Side", Commands.backward(Distance.ofMeters(3)).left(Distance.ofMeters(2)).up(Distance.ofMeters(1)).build(),yawStart);
         
         //Complex Movement + Rotation
-        testMovement("Turn to Zero",Commands.rotateTo(Angle.ZERO, RotationDirection.CLOCKWISE).build(),0);
-        testMovement("Side", Commands.forward(Distance.ofMeters(3)).andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).build(),(float)(Math.PI/ 2.0));
-        testMovement("Side", Commands.right(Distance.ofMeters(3)).andRotate(Angle.ofDegrees(90), RotationDirection.COUNTERCLOCKWISE).build(),0);
+        testMovement("Turn to Zero",Commands.rotateTo(Angle.ZERO, RotationDirection.CW).build(),0);
+        testMovement("Side", Commands.forward(Distance.ofMeters(3)).andRotate(Angle.ofDegrees(90), RotationDirection.CW).build(),(float)(Math.PI/ 2.0));
+        testMovement("Side", Commands.right(Distance.ofMeters(3)).andRotate(Angle.ofDegrees(90), RotationDirection.CCW).build(),0);
     }
     
     public void testMovement(String name,FlyCommand command,float expectedYaw) {

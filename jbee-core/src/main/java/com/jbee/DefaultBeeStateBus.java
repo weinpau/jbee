@@ -2,7 +2,7 @@ package com.jbee;
 
 import com.jbee.buses.BeeStateBus;
 import com.jbee.buses.PositionBus;
-import com.jbee.buses.PrincipalAxesBus;
+import com.jbee.buses.AxisAnglesBus;
 import com.jbee.buses.GlobalVelocityBus;
 import com.jbee.positioning.Position;
 
@@ -13,8 +13,8 @@ import com.jbee.positioning.Position;
 class DefaultBeeStateBus extends BeeStateBus {
 
     Position position = Position.ORIGIN;
-    GlobalVelocity velocity = GlobalVelocity.ZERO;
-    PrincipalAxes principalAxes = PrincipalAxes.ZERO;
+    Velocity velocity = Velocity.ZERO;
+    AxisAngles principalAxes = AxisAngles.ZERO;
 
     DefaultBeeStateBus() {
         super(Priority.HIGH);
@@ -22,7 +22,7 @@ class DefaultBeeStateBus extends BeeStateBus {
 
     @Override
     public void bootstrap(TargetDevice device, BusRegistry busRegistry) throws BeeBootstrapException {
-        busRegistry.get(PrincipalAxesBus.class).
+        busRegistry.get(AxisAnglesBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A principal axes bus is missing.")).
                 subscripe(pa -> {
                     principalAxes = pa;

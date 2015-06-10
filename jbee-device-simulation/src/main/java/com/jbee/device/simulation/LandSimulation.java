@@ -1,6 +1,6 @@
 package com.jbee.device.simulation;
 
-import com.jbee.GlobalVelocity;
+import com.jbee.Velocity;
 import com.jbee.commands.LandCommand;
 import com.jbee.positioning.Position;
 import com.jbee.units.Speed;
@@ -26,9 +26,9 @@ class LandSimulation implements CommandSimulation<LandCommand> {
                         multiply(-1).toMeters());
 
         if (time < calculateDuration(initialState, command)) {
-            return new State(p, new GlobalVelocity(Speed.ZERO, Speed.ZERO, landSpeed.multiply(-1)), initialState.getYaw());
+            return new State(p, new Velocity(Speed.ZERO, Speed.ZERO, landSpeed.multiply(-1)), initialState.getYaw());
         } else {
-            return new State(p, GlobalVelocity.ZERO, initialState.getYaw());
+            return new State(p, Velocity.ZERO, initialState.getYaw());
         }
 
     }

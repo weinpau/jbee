@@ -7,11 +7,11 @@ package com.jbee.device.pixhawk.internal;
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_global_position_int;
-import com.jbee.PrincipalAxes;
+import com.jbee.AxisAngles;
 import com.jbee.buses.AltitudeBus;
 import com.jbee.buses.GlobalVelocityBus;
 import com.jbee.buses.LatLonBus;
-import com.jbee.buses.PrincipalAxesBus;
+import com.jbee.buses.AxisAnglesBus;
 import com.jbee.positioning.LatLon;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  */
 public class BusHandler implements Consumer<MAVLinkPacket>{
     
-    PrincipalAxesBus axeAngleBus = new PrincipalAxesBus();
+    AxisAnglesBus axeAngleBus = new AxisAnglesBus();
     LatLonBus posBus = new LatLonBus();
     AltitudeBus altBus = new AltitudeBus();
     GlobalVelocityBus velBus = new GlobalVelocityBus();
@@ -33,7 +33,7 @@ public class BusHandler implements Consumer<MAVLinkPacket>{
         switch(t.msgid){
             case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:{
                 msg_attitude msg = new msg_attitude(t);
-                axeAngleBus.publish(new PrincipalAxes(Angle.ofRadians(msg.yaw), Angle.ofRadians(msg.roll), Angle.ofRadians(msg.pitch)));
+                axeAngleBus.publish(new AxisAngles(Angle.ofRadians(msg.yaw), Angle.ofRadians(msg.roll), Angle.ofRadians(msg.pitch)));
             } break;
             case msg_global_position_int.MAVLINK_MSG_ID_GLOBAL_POSITION_INT:{
                 msg_global_position_int msg = new msg_global_position_int(t);
@@ -43,7 +43,7 @@ public class BusHandler implements Consumer<MAVLinkPacket>{
         }
     }
 
-    public PrincipalAxesBus getAxeAngleBus() {
+    public AxisAnglesBus getAxeAngleBus() {
         return axeAngleBus;
     }
 

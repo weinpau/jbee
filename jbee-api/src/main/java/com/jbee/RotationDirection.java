@@ -6,6 +6,12 @@ package com.jbee;
  */
 public enum RotationDirection {
 
-    CLOCKWISE,
-    COUNTERCLOCKWISE
+    /**
+     * clockwise
+     */
+    CW,
+    /**
+     * counterclockwise
+     */
+    CCW
 }

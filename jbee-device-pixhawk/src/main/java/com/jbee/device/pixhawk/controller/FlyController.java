@@ -89,7 +89,7 @@ public class FlyController extends BasicController{
          }else {
             if(!angle.isZero()){
                 Yaw.desired = angle.toRadians();
-                if(rotationDirection == RotationDirection.COUNTERCLOCKWISE){
+                if(rotationDirection == RotationDirection.CCW){
                     Yaw.desired *= -1;
                     yawSpeed *= -1;
                     angle.multiply(-1);

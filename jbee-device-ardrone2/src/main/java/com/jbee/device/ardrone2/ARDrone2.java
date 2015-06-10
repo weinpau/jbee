@@ -6,12 +6,12 @@ import com.jbee.BeeModule;
 import com.jbee.BusRegistry;
 import com.jbee.ControlState;
 import com.jbee.ControlStateMachine;
-import com.jbee.PrincipalAxes;
+import com.jbee.AxisAngles;
 import com.jbee.TargetDevice;
-import com.jbee.GlobalVelocity;
+import com.jbee.Velocity;
 import com.jbee.buses.AltitudeBus;
 import com.jbee.buses.BeeStateBus;
-import com.jbee.buses.PrincipalAxesBus;
+import com.jbee.buses.AxisAnglesBus;
 import com.jbee.buses.GlobalVelocityBus;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
@@ -56,7 +56,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
 
     AltitudeBus altitudeBus = new AltitudeBus();
     GlobalVelocityBus velocityBus = new GlobalVelocityBus();
-    PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
+    AxisAnglesBus principalAxesBus = new AxisAnglesBus();
     BeeStateBus beeStateBus;
 
     AT_CommandSender commandSender;
@@ -254,7 +254,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
         }
 
         void publishAxes(Demo demo) {
-            principalAxesBus.publish(new PrincipalAxes(
+            principalAxesBus.publish(new AxisAngles(
                     Angle.ofDegrees(demo.getYaw()),
                     Angle.ofDegrees(demo.getRoll()),
                     Angle.ofDegrees(demo.getPitch())));
@@ -269,7 +269,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
             double directedYSpeed = xSpeed * Math.sin(phi) + ySpeed * Math.cos(phi);
             double zSpeed = demo.getSpeedZ() / 100d;
 
-            GlobalVelocity velocity = new GlobalVelocity(Speed.mps(directedXSpeed), Speed.mps(directedYSpeed), Speed.mps(zSpeed));
+            Velocity velocity = new Velocity(Speed.mps(directedXSpeed), Speed.mps(directedYSpeed), Speed.mps(zSpeed));
             velocityBus.publish(velocity);
         }
 

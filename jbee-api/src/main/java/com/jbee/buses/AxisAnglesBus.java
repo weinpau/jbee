@@ -1,20 +1,20 @@
 package com.jbee.buses;
 
 import com.jbee.Bus;
-import com.jbee.PrincipalAxes;
+import com.jbee.AxisAngles;
 import com.jbee.Priority;
 
 /**
  *
  * @author weinpau
  */
-public class PrincipalAxesBus extends Bus<PrincipalAxes> {
+public class AxisAnglesBus extends Bus<AxisAngles> {
 
-    public PrincipalAxesBus() {
+    public AxisAnglesBus() {
         super(Priority.MEDIUM);
     }
 
-    public PrincipalAxesBus(Priority priority) {
+    public AxisAnglesBus(Priority priority) {
         super(priority);
     }
 

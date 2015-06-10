@@ -20,19 +20,19 @@ public class FlyCommandTest {
     public void testCalculateDeltaYAW() {
 
         assertTrue(Angle.ofDegrees(40).equal(
-                Commands.rotateTo(Angle.ofDegrees(340), RotationDirection.CLOCKWISE).build().
+                Commands.rotateTo(Angle.ofDegrees(340), RotationDirection.CW).build().
                 calculateDeltaYAW(Angle.ofDegrees(20))));
 
         assertTrue(Angle.ofDegrees(90).equal(
-                Commands.rotateTo(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).build().
+                Commands.rotateTo(Angle.ofDegrees(90), RotationDirection.CW).build().
                 calculateDeltaYAW(Angle.ofDegrees(180))));
 
         assertTrue(Angle.ofDegrees(-320).equal(
-                Commands.rotateTo(Angle.ofDegrees(340), RotationDirection.COUNTERCLOCKWISE).build().
+                Commands.rotateTo(Angle.ofDegrees(340), RotationDirection.CCW).build().
                 calculateDeltaYAW(Angle.ofDegrees(20))));
 
         assertTrue(Angle.ofDegrees(-270).equal(
-                Commands.rotateTo(Angle.ofDegrees(90), RotationDirection.COUNTERCLOCKWISE).build().
+                Commands.rotateTo(Angle.ofDegrees(90), RotationDirection.CCW).build().
                 calculateDeltaYAW(Angle.ofDegrees(180))));
     }
 
@@ -40,18 +40,18 @@ public class FlyCommandTest {
     public void testCalculateDeltaYAW_Zero() {
 
         assertTrue(Angle.ofDegrees(0).equal(
-                Commands.rotate(Angle.ZERO, RotationDirection.CLOCKWISE).build().calculateDeltaYAW(Angle.ZERO)));
+                Commands.rotate(Angle.ZERO, RotationDirection.CW).build().calculateDeltaYAW(Angle.ZERO)));
 
         assertTrue(Angle.ofDegrees(0).equal(
-                Commands.rotate(Angle.ZERO, RotationDirection.COUNTERCLOCKWISE).build().
+                Commands.rotate(Angle.ZERO, RotationDirection.CCW).build().
                 calculateDeltaYAW(Angle.ZERO)));
 
         assertTrue(Angle.ofDegrees(0).equal(
-                Commands.rotateTo(Angle.ofDegrees(20), RotationDirection.CLOCKWISE).build().
+                Commands.rotateTo(Angle.ofDegrees(20), RotationDirection.CW).build().
                 calculateDeltaYAW(Angle.ofDegrees(20))));
 
         assertTrue(Angle.ofDegrees(0).equal(
-                Commands.rotateTo(Angle.ofDegrees(20), RotationDirection.COUNTERCLOCKWISE).build().
+                Commands.rotateTo(Angle.ofDegrees(20), RotationDirection.CCW).build().
                 calculateDeltaYAW(Angle.ofDegrees(20))));
 
     }
@@ -60,27 +60,27 @@ public class FlyCommandTest {
     public void testCalculateDeltaYAW_Realtive() {
 
         assertTrue(Angle.ofDegrees(40).equal(
-                Commands.rotate(Angle.ofDegrees(40), RotationDirection.CLOCKWISE).build().
+                Commands.rotate(Angle.ofDegrees(40), RotationDirection.CW).build().
                 calculateDeltaYAW(Angle.ofDegrees(20))));
 
         assertTrue(Angle.ofDegrees(180).equal(
-                Commands.rotate(Angle.ofDegrees(180), RotationDirection.CLOCKWISE).build().
+                Commands.rotate(Angle.ofDegrees(180), RotationDirection.CW).build().
                 calculateDeltaYAW(Angle.ofDegrees(340))));
 
         assertTrue(Angle.ofDegrees(350).equal(
-                Commands.rotate(Angle.ofDegrees(350), RotationDirection.CLOCKWISE).build().
+                Commands.rotate(Angle.ofDegrees(350), RotationDirection.CW).build().
                 calculateDeltaYAW(Angle.ofDegrees(20))));
 
         assertTrue(Angle.ofDegrees(-40).equal(
-                Commands.rotate(Angle.ofDegrees(40), RotationDirection.COUNTERCLOCKWISE).build().
+                Commands.rotate(Angle.ofDegrees(40), RotationDirection.CCW).build().
                 calculateDeltaYAW(Angle.ofDegrees(20))));
 
         assertTrue(Angle.ofDegrees(-180).equal(
-                Commands.rotate(Angle.ofDegrees(180), RotationDirection.COUNTERCLOCKWISE).build().
+                Commands.rotate(Angle.ofDegrees(180), RotationDirection.CCW).build().
                 calculateDeltaYAW(Angle.ofDegrees(340))));
 
         assertTrue(Angle.ofDegrees(-350).equal(
-                Commands.rotate(Angle.ofDegrees(350), RotationDirection.COUNTERCLOCKWISE).build().
+                Commands.rotate(Angle.ofDegrees(350), RotationDirection.CCW).build().
                 calculateDeltaYAW(Angle.ofDegrees(20))));
 
     }
@@ -108,7 +108,7 @@ public class FlyCommandTest {
         FlyCommand command = Commands.
                 forward(Distance.ofMeters(10)).
                 with(Speed.mps(2)).
-                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CW).
                 with(RotationalSpeed.rpm(1)).build();
 
         Duration duration = command.calculateFlyDuration(Position.ORIGIN);
@@ -122,7 +122,7 @@ public class FlyCommandTest {
         FlyCommand command = Commands.
                 forward(Distance.ofMeters(10)).
                 with(Speed.mps(2)).
-                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CW).
                 with(RotationalSpeed.rpm(1)).build();
 
         Duration duration = command.calculateRotationDuration(Angle.ZERO);
@@ -136,7 +136,7 @@ public class FlyCommandTest {
         FlyCommand command = Commands.
                 forward(Distance.ofMeters(10)).
                 with(Speed.mps(2)).
-                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CW).
                 with(RotationalSpeed.rpm(1)).build();
 
         Duration duration = command.calculateDuration(Position.ORIGIN, Angle.ZERO);
@@ -150,7 +150,7 @@ public class FlyCommandTest {
         FlyCommand command = Commands.
                 forward(Distance.ofMeters(10)).
                 with(Speed.mps(2)).
-                andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                andRotate(Angle.ofDegrees(90), RotationDirection.CW).
                 with(RotationalSpeed.rps(10)).build();
 
         Duration duration = command.calculateDuration(Position.ORIGIN, Angle.ZERO);

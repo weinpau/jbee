@@ -1,6 +1,6 @@
 package com.jbee.device.simulation;
 
-import com.jbee.GlobalVelocity;
+import com.jbee.Velocity;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
 
@@ -10,13 +10,13 @@ import com.jbee.units.Angle;
  */
 class State {
 
-    static final State INITIAL_STATE = new State(Position.ORIGIN, GlobalVelocity.ZERO, Angle.ZERO);
+    static final State INITIAL_STATE = new State(Position.ORIGIN, Velocity.ZERO, Angle.ZERO);
 
     final Position position;
-    final GlobalVelocity velocity;
+    final Velocity velocity;
     final Angle yaw;
 
-    public State(Position position, GlobalVelocity velocity, Angle yaw) {
+    public State(Position position, Velocity velocity, Angle yaw) {
 
         this.position = position;
         this.velocity = velocity;
@@ -27,7 +27,7 @@ class State {
         return position;
     }
 
-    public GlobalVelocity getVelocity() {
+    public Velocity getVelocity() {
         return velocity;
     }
 

@@ -1,7 +1,7 @@
 package com.jbee.device.simulation;
 
 import com.jbee.RotationDirection;
-import com.jbee.GlobalVelocity;
+import com.jbee.Velocity;
 import com.jbee.commands.FlyCommand;
 import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
@@ -20,7 +20,7 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
         Angle yaw = calculateYAW(initialState, command, progress);
         Position position = calculatePosition(initialState, command, progress);
 
-        GlobalVelocity velocity = calculateVelocity(initialState, command, progress);
+        Velocity velocity = calculateVelocity(initialState, command, progress);
 
         return new State(position, velocity, yaw);
     }
@@ -37,7 +37,7 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
     Angle calculateYAW(State initialState, FlyCommand command, double progress) {
         Angle deltaYAW = command.calculateDeltaYAW(initialState.getYaw());
         Angle yaw = initialState.getYaw().add(deltaYAW.multiply(progress)).normalize();
-        if (command.getRotationDirection() == RotationDirection.CLOCKWISE) {
+        if (command.getRotationDirection() == RotationDirection.CW) {
             yaw = initialState.getYaw().sub(deltaYAW.multiply(progress)).normalize();
         }
         return yaw;
@@ -48,10 +48,10 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
         return command.calculateDuration(initialState.getPosition(), initialState.getYaw()).toMillis();
     }
 
-    GlobalVelocity calculateVelocity(State initialState, FlyCommand command, double progress) {
+    Velocity calculateVelocity(State initialState, FlyCommand command, double progress) {
 
         if (command.getSpeed().isZero()) {
-            return GlobalVelocity.ZERO;
+            return Velocity.ZERO;
         }
 
         long flyDuration = command.calculateFlyDuration(initialState.getPosition()).toMillis();
@@ -66,7 +66,7 @@ class FlySimulation implements CommandSimulation<FlyCommand> {
                 normalize().
                 multiply(command.getSpeed().multiply(speedFactor).mps());
 
-        return new GlobalVelocity(
+        return new Velocity(
                 Speed.mps(p.getX()),
                 Speed.mps(p.getY()),
                 Speed.mps(p.getZ()));

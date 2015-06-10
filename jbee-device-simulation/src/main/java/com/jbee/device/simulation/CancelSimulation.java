@@ -1,6 +1,6 @@
 package com.jbee.device.simulation;
 
-import com.jbee.GlobalVelocity;
+import com.jbee.Velocity;
 import com.jbee.commands.CancelCommand;
 
 /**
@@ -11,7 +11,7 @@ class CancelSimulation implements CommandSimulation<CancelCommand> {
     
     @Override
     public State simulateState(State initialState, CancelCommand command, long time) {
-        return new State(initialState.getPosition(), GlobalVelocity.ZERO, initialState.getYaw());
+        return new State(initialState.getPosition(), Velocity.ZERO, initialState.getYaw());
     }
 
     @Override

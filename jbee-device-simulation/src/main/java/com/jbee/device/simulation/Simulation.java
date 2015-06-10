@@ -5,12 +5,12 @@ import com.jbee.BeeBootstrapException;
 import com.jbee.BeeModule;
 import com.jbee.BusRegistry;
 import com.jbee.ControlState;
-import com.jbee.PrincipalAxes;
+import com.jbee.AxisAngles;
 import com.jbee.TargetDevice;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.buses.GlobalVelocityBus;
-import com.jbee.buses.PrincipalAxesBus;
+import com.jbee.buses.AxisAnglesBus;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.Frequency;
@@ -43,7 +43,7 @@ public class Simulation extends BeeModule implements TargetDevice {
     CommandDispatcher dispatcher;
 
     GlobalVelocityBus velocityBus = new GlobalVelocityBus();
-    PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
+    AxisAnglesBus principalAxesBus = new AxisAnglesBus();
 
     Timer stateListener = new Timer("simulation-state-listener", true);
 
@@ -55,7 +55,7 @@ public class Simulation extends BeeModule implements TargetDevice {
 
             State state = dispatcher.getCurrentState();
             velocityBus.publish(state.getVelocity());
-            principalAxesBus.publish(new PrincipalAxes(state.getYaw(), Angle.ZERO, Angle.ZERO));
+            principalAxesBus.publish(new AxisAngles(state.getYaw(), Angle.ZERO, Angle.ZERO));
         }
     };
 

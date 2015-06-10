@@ -35,11 +35,11 @@ public class SimpleFlight {
         beeControl.onPositionChanged((c, p) -> System.out.println(bee.monitor().getLastKnownState().getPrincipalAxes()),
                 Distance.ofMeters(1)).execute(Commands.
                         forward(Distance.ofMeters(10)).
-                        andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).
+                        andRotate(Angle.ofDegrees(90), RotationDirection.CW).
                         with(RotationalSpeed.rpm(1)).
                         build());
 
-        beeControl.rotate(Angle.ofDegrees(90), RotationDirection.COUNTERCLOCKWISE);
+        beeControl.rotate(Angle.ofDegrees(90), RotationDirection.CCW);
         beeControl.forward(Distance.ofMeters(2));
         beeControl.hover(Duration.ofSeconds(5));
         beeControl.land();

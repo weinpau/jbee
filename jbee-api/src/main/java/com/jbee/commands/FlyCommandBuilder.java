@@ -17,7 +17,7 @@ public final class FlyCommandBuilder {
     Position position = Position.ORIGIN;
 
     Angle angle = Angle.ZERO;
-    RotationDirection rotationDirection = RotationDirection.CLOCKWISE;
+    RotationDirection rotationDirection = RotationDirection.CW;
 
     boolean realtivePosition = true;
     boolean realtiveRotation = true;

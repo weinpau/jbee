@@ -7,13 +7,13 @@ import java.util.Objects;
  *
  * @author weinpau
  */
-public class PrincipalAxes {
+public class AxisAngles {
 
-    public static final PrincipalAxes ZERO = new PrincipalAxes(Angle.ZERO, Angle.ZERO, Angle.ZERO);
+    public static final AxisAngles ZERO = new AxisAngles(Angle.ZERO, Angle.ZERO, Angle.ZERO);
 
     private final Angle yaw, roll, pitch;
 
-    public PrincipalAxes(Angle yaw, Angle roll, Angle pitch) {
+    public AxisAngles(Angle yaw, Angle roll, Angle pitch) {
         this.yaw = yaw;
         this.roll = roll;
         this.pitch = pitch;
@@ -48,7 +48,7 @@ public class PrincipalAxes {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PrincipalAxes other = (PrincipalAxes) obj;
+        final AxisAngles other = (AxisAngles) obj;
         if (!Objects.equals(this.yaw, other.yaw)) {
             return false;
         }

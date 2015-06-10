@@ -42,7 +42,7 @@ public class PixhawkSimpleFlight {
         
         control.takeOff();
         for (int i = 0; i < 4; i++) {
-            control.execute(Commands.forward(Distance.ofMeters(10)).andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).build());
+            control.execute(Commands.forward(Distance.ofMeters(10)).andRotate(Angle.ofDegrees(90), RotationDirection.CW).build());
         }
         control.land();
         

@@ -10,22 +10,22 @@ public class BeeState {
 
     public static final BeeState START_STATE = new BeeState(0,
             Position.ORIGIN,
-            GlobalVelocity.ZERO,
-            PrincipalAxes.ZERO,
+            Velocity.ZERO,
+            AxisAngles.ZERO,
             new BatteryState(1, false),
             ControlState.DISCONNECTED);
 
     private final long timestamp;
     private final Position position;
-    private final GlobalVelocity velocity;
-    private final PrincipalAxes principalAxes;
+    private final Velocity globalVelocity;
+    private final AxisAngles principalAxes;
     private final BatteryState batteryState;
     private final ControlState controlState;
 
-    BeeState(long timestamp, Position position, GlobalVelocity velocity, PrincipalAxes principalAxes, BatteryState batteryState, ControlState controlState) {
+    BeeState(long timestamp, Position position, Velocity velocity, AxisAngles principalAxes, BatteryState batteryState, ControlState controlState) {
         this.timestamp = timestamp;
         this.position = position;
-        this.velocity = velocity;
+        this.globalVelocity = velocity;
 
         this.principalAxes = principalAxes;
         this.batteryState = batteryState;
@@ -40,11 +40,11 @@ public class BeeState {
         return position;
     }
 
-    public GlobalVelocity getVelocity() {
-        return velocity;
+    public Velocity getGlobalVelocity() {
+        return globalVelocity;
     }
 
-    public PrincipalAxes getPrincipalAxes() {
+    public AxisAngles getPrincipalAxes() {
         return principalAxes;
     }
 
@@ -85,7 +85,7 @@ public class BeeState {
         stringBuilder.append("\t").append("controlState=").append(controlState).append("\n");
         stringBuilder.append("\t").append("batteryState=").append(batteryState).append("\n");
         stringBuilder.append("\t").append("position=").append(position).append("\n");
-        stringBuilder.append("\t").append("velocity=").append(velocity).append("\n");
+        stringBuilder.append("\t").append("velocity=").append(globalVelocity).append("\n");
         stringBuilder.append("\t").append("principalAxes=").append(principalAxes).append("\n");
         stringBuilder.append("}");
 
