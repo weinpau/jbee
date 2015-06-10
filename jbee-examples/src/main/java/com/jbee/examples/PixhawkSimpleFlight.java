@@ -31,18 +31,21 @@ public class PixhawkSimpleFlight {
         BeeContext context = BeeContext.of(pixhawk);
 
         Bee bee = context.bootstrap();
-        //bee.monitor().onStateChange(state -> System.out.print("\r" + state.getPosition()));
+        
+        
         BeeControl control = bee.control();
 
-        control = control.rotationalSpeed(RotationalSpeed.rpm(6));
+        control = control.rotationalSpeed(RotationalSpeed.rpm(1));
+        
+        control = control.onPositionChanged((s,p) -> System.out.println(p), Distance.ofMeters(1));
+        
         
         control.takeOff();
-
         for (int i = 0; i < 4; i++) {
-            control.execute(Commands.forward(Distance.ofMeters(4)).andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).build());
+            control.execute(Commands.forward(Distance.ofMeters(10)).andRotate(Angle.ofDegrees(90), RotationDirection.CLOCKWISE).build());
         }
-                
-        System.out.println("land: " + control.land());
+        control.land();
+        
         
         context.close();
 

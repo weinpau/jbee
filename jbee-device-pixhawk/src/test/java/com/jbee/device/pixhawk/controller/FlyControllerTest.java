@@ -31,7 +31,7 @@ public class FlyControllerTest extends ControllerTestHelper{
         float yawStart = pixhawk.getAttitude().yaw;
         
         //Simple Movement
-        testMovement("Foreward", Commands.forward(Distance.ofMeters(2)).build(),yawStart);
+        testMovement("Forward", Commands.forward(Distance.ofMeters(2)).build(),yawStart);
         testMovement("Backward", Commands.backward(Distance.ofMeters(2)).build(),yawStart);
 
         testMovement("Right", Commands.right(Distance.ofMeters(2)).build(),yawStart);

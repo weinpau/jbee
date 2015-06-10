@@ -69,6 +69,7 @@ public class FlyController extends BasicController{
         CSD Yaw = new CSD(pixhawk.getAttitude().yaw);
 
         if(realtivePosition){
+            //rotate position Vector to current heading
             Vector3D vector = new Vector3D((float)position.getX(), (float)position.getY(), 0);
             vector.rotate2D((float)-Yaw.current);
             

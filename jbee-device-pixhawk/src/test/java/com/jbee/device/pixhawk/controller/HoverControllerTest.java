@@ -7,6 +7,7 @@ package com.jbee.device.pixhawk.controller;
 import com.jbee.commands.CommandResult;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -18,9 +19,7 @@ public class HoverControllerTest extends ControllerTestHelper{
         super(HoverControllerTest.class.getSimpleName());
     }
         
-    /**
-     * Test of execute method, of class HoverController.
-     */
+    @Ignore
     @Test
     public void testExecute() {
 
