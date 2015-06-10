@@ -8,11 +8,11 @@ import com.jbee.ControlState;
 import com.jbee.ControlStateMachine;
 import com.jbee.PrincipalAxes;
 import com.jbee.TargetDevice;
-import com.jbee.AxisVelocity;
+import com.jbee.GlobalVelocity;
 import com.jbee.buses.AltitudeBus;
 import com.jbee.buses.BeeStateBus;
 import com.jbee.buses.PrincipalAxesBus;
-import com.jbee.buses.AxisVelocityBus;
+import com.jbee.buses.GlobalVelocityBus;
 import com.jbee.commands.Command;
 import com.jbee.commands.CommandResult;
 import com.jbee.concurrent.CallbackWrapper;
@@ -55,7 +55,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
     Frequency transmissionRate = Frequency.ofHz(15);
 
     AltitudeBus altitudeBus = new AltitudeBus();
-    AxisVelocityBus velocityBus = new AxisVelocityBus();
+    GlobalVelocityBus velocityBus = new GlobalVelocityBus();
     PrincipalAxesBus principalAxesBus = new PrincipalAxesBus();
     BeeStateBus beeStateBus;
 
@@ -269,7 +269,7 @@ public class ARDrone2 extends BeeModule implements TargetDevice {
             double directedYSpeed = xSpeed * Math.sin(phi) + ySpeed * Math.cos(phi);
             double zSpeed = demo.getSpeedZ() / 100d;
 
-            AxisVelocity velocity = new AxisVelocity(Speed.mps(directedXSpeed), Speed.mps(directedYSpeed), Speed.mps(zSpeed));
+            GlobalVelocity velocity = new GlobalVelocity(Speed.mps(directedXSpeed), Speed.mps(directedYSpeed), Speed.mps(zSpeed));
             velocityBus.publish(velocity);
         }
 

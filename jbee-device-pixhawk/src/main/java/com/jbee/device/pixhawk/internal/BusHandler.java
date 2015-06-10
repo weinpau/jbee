@@ -9,7 +9,7 @@ import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_global_position_int;
 import com.jbee.PrincipalAxes;
 import com.jbee.buses.AltitudeBus;
-import com.jbee.buses.AxisVelocityBus;
+import com.jbee.buses.GlobalVelocityBus;
 import com.jbee.buses.LatLonBus;
 import com.jbee.buses.PrincipalAxesBus;
 import com.jbee.positioning.LatLon;
@@ -26,7 +26,7 @@ public class BusHandler implements Consumer<MAVLinkPacket>{
     PrincipalAxesBus axeAngleBus = new PrincipalAxesBus();
     LatLonBus posBus = new LatLonBus();
     AltitudeBus altBus = new AltitudeBus();
-    AxisVelocityBus velBus = new AxisVelocityBus();
+    GlobalVelocityBus velBus = new GlobalVelocityBus();
 
     @Override
     public void accept(MAVLinkPacket t) {
@@ -55,7 +55,7 @@ public class BusHandler implements Consumer<MAVLinkPacket>{
         return altBus;
     }
 
-    public AxisVelocityBus getVelBus() {
+    public GlobalVelocityBus getVelBus() {
         return velBus;
     }
     

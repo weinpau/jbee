@@ -1,6 +1,6 @@
 package com.jbee.device.simulation;
 
-import com.jbee.AxisVelocity;
+import com.jbee.GlobalVelocity;
 import com.jbee.commands.TakeOffCommand;
 import com.jbee.positioning.Position;
 import com.jbee.units.Distance;
@@ -27,9 +27,9 @@ class TakeOffSimulation implements CommandSimulation<TakeOffCommand> {
                 addZ(takeOffSpeed.multiply(Duration.ofMillis(time)).toMeters());
 
         if (time < calculateDuration(initialState, command)) {
-            return new State(p, new AxisVelocity(Speed.ZERO, Speed.ZERO, takeOffSpeed), initialState.getYaw());
+            return new State(p, new GlobalVelocity(Speed.ZERO, Speed.ZERO, takeOffSpeed), initialState.getYaw());
         } else {
-            return new State(p, AxisVelocity.ZERO, initialState.getYaw());
+            return new State(p, GlobalVelocity.ZERO, initialState.getYaw());
         }
     }
 

@@ -3,7 +3,7 @@ package com.jbee;
 import com.jbee.buses.BeeStateBus;
 import com.jbee.buses.PositionBus;
 import com.jbee.buses.PrincipalAxesBus;
-import com.jbee.buses.AxisVelocityBus;
+import com.jbee.buses.GlobalVelocityBus;
 import com.jbee.positioning.Position;
 
 /**
@@ -13,7 +13,7 @@ import com.jbee.positioning.Position;
 class DefaultBeeStateBus extends BeeStateBus {
 
     Position position = Position.ORIGIN;
-    AxisVelocity velocity = AxisVelocity.ZERO;
+    GlobalVelocity velocity = GlobalVelocity.ZERO;
     PrincipalAxes principalAxes = PrincipalAxes.ZERO;
 
     DefaultBeeStateBus() {
@@ -29,7 +29,7 @@ class DefaultBeeStateBus extends BeeStateBus {
                     publish(createBeeState(device));
                 });
 
-        busRegistry.get(AxisVelocityBus.class).
+        busRegistry.get(GlobalVelocityBus.class).
                 orElseThrow(() -> new BeeBootstrapException("A velocity bus is missing.")).
                 subscripe(v -> {
                     velocity = v;

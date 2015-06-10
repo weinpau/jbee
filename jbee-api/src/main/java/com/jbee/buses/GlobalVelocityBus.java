@@ -2,19 +2,19 @@ package com.jbee.buses;
 
 import com.jbee.Bus;
 import com.jbee.Priority;
-import com.jbee.AxisVelocity;
+import com.jbee.GlobalVelocity;
 
 /**
  *
  * @author weinpau
  */
-public class AxisVelocityBus extends Bus<AxisVelocity> {
+public class GlobalVelocityBus extends Bus<GlobalVelocity> {
 
-    public AxisVelocityBus() {
+    public GlobalVelocityBus() {
         super(Priority.MEDIUM);
     }
 
-    public AxisVelocityBus(Priority priority) {
+    public GlobalVelocityBus(Priority priority) {
         super(priority);
     }
     
