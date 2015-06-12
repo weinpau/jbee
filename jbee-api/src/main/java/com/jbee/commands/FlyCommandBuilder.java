@@ -157,14 +157,14 @@ public final class FlyCommandBuilder {
         }
 
         public RotationalSpeedStep andRotate(Angle angle, RotationDirection rotationDirection) {
-            commandBuilder.angle = angle.normalize();
+            commandBuilder.angle = angle;
             commandBuilder.rotationDirection = rotationDirection;
             commandBuilder.realtiveRotation = true;
             return new RotationalSpeedStep(commandBuilder);
         }
 
         public RotationalSpeedStep andRotateTo(Angle angle, RotationDirection rotationDirection) {
-            commandBuilder.angle = angle;
+            commandBuilder.angle = angle.normalize();
             commandBuilder.rotationDirection = rotationDirection;
             commandBuilder.realtiveRotation = false;
             return new RotationalSpeedStep(commandBuilder);

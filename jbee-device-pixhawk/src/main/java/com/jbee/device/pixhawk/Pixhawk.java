@@ -70,8 +70,10 @@ public class Pixhawk extends BeeModule implements TargetDevice{
                     8080, 1000);
             connection.connect();
         } catch (UnknownHostException ex) {
+            connection.disconnect();
             throw new BeeBootstrapException(ex.getMessage());
         } catch (IOException ex) {
+            connection.disconnect();
             throw new BeeBootstrapException(ex.getMessage());
         }
         
@@ -83,15 +85,30 @@ public class Pixhawk extends BeeModule implements TargetDevice{
         
         commandDispatcher = new CommandDispatcher(pixhawk);
         
-        int result = myModule.registerModule("JBee Demo",MAV_QC_ACCESS.MAV_QC_ACCESS_ALL);
+        int result = 0;
+        for (int i = 0; i < 5; i++) {
+            result = myModule.registerModule("JBee Demo",MAV_QC_ACCESS.MAV_QC_ACCESS_ALL);
+            if(result == MAV_QC_REGISTER_RESULT.MAV_QC_REGISTER_RESULT_REGISTER_OK)
+                break;
+            System.out.println("Failed to register, try again");
+            //Tray again
+        }
         if(result == MAV_QC_REGISTER_RESULT.MAV_QC_REGISTER_RESULT_FAILD_EXISTING){
+            connection.disconnect();
             throw new BeeBootstrapException("This Module is already registerd");
         }
         if(result == MAV_QC_REGISTER_RESULT.MAV_QC_REGISTER_RESULT_FAILD_OTHER){
+            connection.disconnect();
             throw new BeeBootstrapException("This Module coud not be registerd");
         }
         
-        pixhawk.waitForConnection();
+        try{
+            pixhawk.waitForConnection();
+        }
+        catch(BeeBootstrapException e){
+            connection.disconnect();
+            throw e;
+        }
     }
 
     @Override

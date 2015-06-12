@@ -220,7 +220,8 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
             }
         }
         if(!isConnected){
-            throw new BeeBootstrapException("System not found or not connected. Please Check connection and Power State of the System!");
+            watchdogTimer.cancel();
+            throw new BeeBootstrapException("Pixhawk not found or not connected. Please Check connection and Power State of the System!");
         }else watchdogTimer.cancel();
         
         try {
