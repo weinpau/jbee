@@ -6,17 +6,17 @@ import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.RotationalSpeed;
 import com.jbee.units.Speed;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  * @author weinpau
  */
 public class FlyCommandBuilderTest {
-
-    public FlyCommandBuilderTest() {
-    }
 
     @Test
     public void testRotate() {
@@ -28,6 +28,7 @@ public class FlyCommandBuilderTest {
         assertTrue(flyCommand.isRealtiveRotation());
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
         assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
+        assertEquals(FlyCommand.Mode.ROTATE, flyCommand.getMode());
     }
 
     @Test
@@ -43,6 +44,7 @@ public class FlyCommandBuilderTest {
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
         assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
         assertEquals(RotationalSpeed.rps(1), flyCommand.getRotationalSpeed());
+        assertEquals(FlyCommand.Mode.ROTATE, flyCommand.getMode());
     }
 
     @Test
@@ -57,6 +59,7 @@ public class FlyCommandBuilderTest {
         assertFalse(flyCommand.isRealtiveRotation());
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
         assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
+        assertEquals(FlyCommand.Mode.ROTATE, flyCommand.getMode());
 
     }
 
@@ -74,6 +77,7 @@ public class FlyCommandBuilderTest {
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
         assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
         assertEquals(RotationalSpeed.rps(1), flyCommand.getRotationalSpeed());
+        assertEquals(FlyCommand.Mode.ROTATE, flyCommand.getMode());
     }
 
     @Test
@@ -88,6 +92,7 @@ public class FlyCommandBuilderTest {
         assertEquals(position, flyCommand.getPosition());
         assertNull(flyCommand.getSpeed());
         assertEquals(Angle.ZERO, flyCommand.getAngle());
+        assertEquals(FlyCommand.Mode.FLY, flyCommand.getMode());
 
     }
 
@@ -104,6 +109,7 @@ public class FlyCommandBuilderTest {
         assertEquals(position, flyCommand.getPosition());
         assertEquals(speed, flyCommand.getSpeed());
         assertEquals(Angle.ZERO, flyCommand.getAngle());
+        assertEquals(FlyCommand.Mode.FLY, flyCommand.getMode());
     }
 
     @Test
@@ -122,23 +128,40 @@ public class FlyCommandBuilderTest {
         assertNull(flyCommand.getSpeed());
         assertEquals(Angle.ofRadians(1), flyCommand.getAngle());
         assertEquals(RotationDirection.CCW, flyCommand.getRotationDirection());
+        assertEquals(FlyCommand.Mode.FLY_AND_ROTATE, flyCommand.getMode());
 
     }
 
     @Test
-    public void testFly() {
+    public void testFlyRelative() {
 
         FlyCommandBuilder instance = new FlyCommandBuilder();
 
         FlyCommand flyCommand = instance.
-                forward(Distance.ofMeters(10)).
-                right(Distance.ofMeters(5)).
+                fly(Distance.ofMeters(5), Distance.ofMeters(10), Distance.ZERO).
                 build();
 
         assertTrue(flyCommand.isRealtivePosition());
         assertEquals(new Position(5, 10, 0), flyCommand.getPosition());
         assertNull(flyCommand.getSpeed());
         assertEquals(Angle.ZERO, flyCommand.getAngle());
+        assertEquals(FlyCommand.Mode.FLY, flyCommand.getMode());
+
+    }
+
+    @Test
+    public void testRotateAndFly() {
+
+        FlyCommandBuilder instance = new FlyCommandBuilder();
+
+        FlyCommand flyCommand = instance.
+                rotate(Angle.ofDegrees(40), RotationDirection.CW).
+                andFly(Distance.ofMeters(10), Distance.ofMeters(-5), Distance.ofMeters(5)).
+                build();
+
+        assertTrue(flyCommand.isRealtivePosition());
+        assertEquals(new Position(10, -5, 5), flyCommand.getPosition());
+        assertEquals(FlyCommand.Mode.ROTATE_AND_FLY, flyCommand.getMode());
 
     }
 
