@@ -8,6 +8,7 @@ import com.MAVLink.common.msg_heartbeat;
 import com.MAVLink.common.msg_highres_imu;
 import com.MAVLink.common.msg_local_position_ned;
 import com.MAVLink.common.msg_position_target_global_int;
+import com.MAVLink.common.msg_statustext;
 import com.MAVLink.common.msg_sys_status;
 import com.MAVLink.enums.MAV_AUTOPILOT;
 import com.jbee.BeeBootstrapException;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
  */
 public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
    
+    public boolean landed = true;
     public boolean performingLand = false;
     public boolean performingTakeOff = false;
     private boolean isConnected = false;
@@ -118,6 +120,15 @@ public class PixhawkStateListener implements Consumer<MAVLinkPacket>{
                     targetPos = new msg_position_target_global_int(t);
                 else targetPos.unpack(t.payload);
             }break;
+            case msg_statustext.MAVLINK_MSG_ID_STATUSTEXT:{
+                msg_statustext msg = new msg_statustext(t);
+                if(msg.getText().contains("LANDED MODE")){
+                    landed = true;
+                }
+                else if(msg.getText().contains("IN AIR MODE")){
+                    landed = false;
+                }
+            }
         }
     }
 

@@ -25,7 +25,7 @@ public class FlyControllerTest extends ControllerTestHelper {
         super("FlyControllerTest");
     }
 
-    @Ignore
+    //@Ignore
     @Test
     public void testMovement() {
         float yawStart = pixhawk.getAttitude().yaw;
@@ -49,7 +49,7 @@ public class FlyControllerTest extends ControllerTestHelper {
         testMovement("Turn", Commands.rotate(Angle.ofDegrees(270), RotationDirection.CCW).build(), 0);
 
         yawStart = pixhawk.getAttitude().yaw;
-
+        
         //Complex Movement
         testMovement("Side", Commands.fly(Distance.ofMeters(2), Distance.ofMeters(3), Distance.ofMeters(-1)).build(), yawStart);
         testMovement("Side", Commands.fly(Distance.ofMeters(-2), Distance.ofMeters(-3), Distance.ofMeters(1)).build(), yawStart);
@@ -64,16 +64,16 @@ public class FlyControllerTest extends ControllerTestHelper {
 
         FlyController controller = new FlyController(pixhawk);
 
-        float yawStart = -pixhawk.getAttitude().yaw;
+        double yawStart = -pixhawk.getAttitude().yaw;
 
         final msg_local_position_ned startPosition = pixhawk.getLocalPosition();
         controller.execute(command);
         final msg_local_position_ned endPosition = pixhawk.getLocalPosition();
 
-        Vector3D start = new Vector3D((float) startPosition.x, (float) startPosition.y, 0);
+        Vector3D start = new Vector3D( startPosition.x, startPosition.y, 0.0);
         start.rotate2D(yawStart);
         start.z = (float) -startPosition.z;
-        Vector3D end = new Vector3D((float) endPosition.x, (float) endPosition.y, 0);
+        Vector3D end = new Vector3D( endPosition.x,  endPosition.y, 0.0);
         end.rotate2D(yawStart);
         end.z = (float) -endPosition.z;
 

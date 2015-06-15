@@ -32,6 +32,13 @@ public class PID {
             errorSum = 0;
         }
 
+        public double getLimitedRawCommand(double error,double lowerLimit,double upperLimit) {
+            double result = getRawCommand(error);
+            if(result < lowerLimit) result = lowerLimit;
+            if(result > upperLimit) result = upperLimit;
+           return result;
+        }
+        
         public double getRawCommand(double error) {
 
             long nanoTime = System.nanoTime();

@@ -25,5 +25,15 @@
             <artifactId>jbee-device-pixhawk</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jbee-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jbee-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

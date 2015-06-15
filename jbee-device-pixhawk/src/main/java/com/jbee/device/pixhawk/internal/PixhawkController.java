@@ -139,9 +139,10 @@ public class PixhawkController extends PixhawkStateListener{
      * @param yaw The desired Yaw Angle
      * @param yawRate The desired Yaw Speed in rad/s
      * @param useYaw If true, the Yaw Angle will be set instead of the YawRate. If false the Yaw will be ignored and the YawRate will be set.
+     * @param useVelocity If true, the X,Y,Z Corrdinates will not be used and the velocity is used. If false the Velocity will be ignored
      */
-    public void setPositionTargetLocal(double x, double y, double alt, double velX, double velY, double velZ, double yaw, double yawRate,boolean useGlobalYaw) {
-        mavlink.setPositionTargetLocal(getTargetSysID(), (byte)MAV_COMPONENT.MAV_COMP_ID_ALL, x, y, alt, velX, velY, velZ, yaw, yawRate, useGlobalYaw);
+    public void setPositionTargetLocal(double x, double y, double alt, double velX, double velY, double velZ, double yaw, double yawRate,boolean useGlobalYaw,boolean useVelocity) {
+        mavlink.setPositionTargetLocal(getTargetSysID(), (byte)MAV_COMPONENT.MAV_COMP_ID_ALL, x, y, alt, velX, velY, velZ, yaw, yawRate, useGlobalYaw,useVelocity);
     }
 
     

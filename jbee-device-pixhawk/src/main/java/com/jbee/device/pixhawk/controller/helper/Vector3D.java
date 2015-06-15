@@ -18,16 +18,22 @@ public class Vector3D {
     /**
      * The x component of the vector.
      */
-    public float x;
+    public double x;
     /**
      * The y component of the vector.
      */
-    public float y;
+    public double y;
     /**
      * The z component of the vector.
      */
-    public float z;
-    
+    public double z;
+
+    public Vector3D(Vector3D copy) {
+        this.x = copy.x;
+        this.y = copy.y;
+        this.z = copy.z;
+    }
+
     /**
      * Constructor for a 3D vector.
      *
@@ -36,7 +42,7 @@ public class Vector3D {
      * @param  z_ the y coordinate.
      */
     
-    public Vector3D(float x_, float y_, float z_) {
+    public Vector3D(double x_, double y_, double z_) {
         x = x_; y = y_; z = z_;
     }
     
@@ -47,8 +53,8 @@ public class Vector3D {
      * @param  y_ the y coordinate.
      */
     
-    public Vector3D(float x_, float y_) {
-        x = x_; y = y_; z = 0f;
+    public Vector3D(double x_, double y_) {
+        x = x_; y = y_; z = 0.0;
     }
     
     /**
@@ -56,7 +62,7 @@ public class Vector3D {
      */
     
     public Vector3D() {
-        x = 0f; y = 0f; z = 0f;
+        x = 0.0; y = 0.0; z = 0.0;
     }
     
     /**
@@ -65,7 +71,7 @@ public class Vector3D {
      *  @param  x_ the x coordinate.
      */
     
-    public void setX(float x_) {
+    public void setX(double x_) {
         x = x_;
     }
     
@@ -74,7 +80,7 @@ public class Vector3D {
      *     
      *  @param  y_ the y coordinate.
      */
-    public void setY(float y_) {
+    public void setY(double y_) {
         y = y_;
     }
     
@@ -83,7 +89,7 @@ public class Vector3D {
      *     
      *  @param  z_ the z coordinate.
      */
-    public void setZ(float z_) {
+    public void setZ(double z_) {
         z = z_;
     }
     
@@ -94,7 +100,7 @@ public class Vector3D {
      *  @param  y_ the y coordinate.
      *  @param  z_ the z coordinate.
      */
-    public void setXYZ(float x_, float y_, float z_) {
+    public void setXYZ(double x_, double y_, double z_) {
         x = x_;
         y = y_;
         z = z_;
@@ -115,8 +121,8 @@ public class Vector3D {
      * Calculate the magnitude (length) of the vector
      * @return      the magnitude of the vector    
      */
-    public float magnitude() {
-        return (float) Math.sqrt(x*x + y*y + z*z);
+    public double magnitude() {
+        return (double) Math.sqrt(x*x + y*y + z*z);
     }
     
     /**
@@ -160,7 +166,7 @@ public class Vector3D {
      * Multiply this vector by a scalar
      * @param      n the value to multiply by 
      */     
-    public void mult(float n) {
+    public void mult(double n) {
         x *= n;
         y *= n;
         z *= n;
@@ -170,7 +176,7 @@ public class Vector3D {
      * Divide this vector by a scalar
      * @param      n the value to divide by 
      */     
-    public void div(float n) {
+    public void div(double n) {
         x /= n;
         y /= n;
         z /= n;
@@ -181,8 +187,8 @@ public class Vector3D {
      * Calculate the dot product with another vector
      * @return  the dot product
      */     
-    public float dot(Vector3D v) {
-        float dot = x*v.x + y*v.y + z*v.z;
+    public double dot(Vector3D v) {
+        double dot = x*v.x + y*v.y + z*v.z;
         return dot;
     }
     
@@ -191,9 +197,9 @@ public class Vector3D {
      * @return  the cross product
      */     
     public Vector3D cross(Vector3D v) {
-        float crossX = y * v.z - v.y * z;
-        float crossY = z * v.x - v.z * x;
-        float crossZ = x * v.y - v.x * y;
+        double crossX = y * v.z - v.y * z;
+        double crossY = z * v.x - v.z * x;
+        double crossZ = x * v.y - v.x * y;
         return(new Vector3D(crossX,crossY,crossZ));
     }
     
@@ -201,7 +207,7 @@ public class Vector3D {
      * Normalize the vector to length 1 (make it a unit vector)
      */     
     public void normalize() {
-        float m = magnitude();
+        double m = magnitude();
         if (m > 0) {
             div(m);
         }
@@ -211,7 +217,7 @@ public class Vector3D {
      * Limit the magnitude of this vector
      * @param max the maximum length to limit this vector
      */     
-    public void limit(float max) {
+    public void limit(double max) {
         if (magnitude() > max) {
             normalize();
             mult(max);
@@ -222,8 +228,8 @@ public class Vector3D {
      * Calculate the angle of rotation for this vector (only 2D vectors)
      * @return the angle of rotation
      */    
-    public float heading2D() {
-        float angle = (float) Math.atan2(-y, x);
+    public double heading2D() {
+        double angle = (double) Math.atan2(-y, x);
         return -1*angle;
     }
     
@@ -231,12 +237,12 @@ public class Vector3D {
      * Rotates a 2D Vector
      * @param theta, angle in radians to rotate vector
      */    
-    public void rotate2D(float theta) {
-        float currentTheta = heading2D();
-        float mag = magnitude();
+    public void rotate2D(double theta) {
+        double currentTheta = heading2D();
+        double mag = magnitude();
         currentTheta += theta;
-        x = (float) (mag*Math.cos(currentTheta));
-        y = (float) (mag*Math.sin(currentTheta));
+        x = (double) (mag*Math.cos(currentTheta));
+        y = (double) (mag*Math.sin(currentTheta));
     }
     
   
@@ -268,7 +274,7 @@ public class Vector3D {
      * @param n scalar 
      * @return a new vector that is v1 / n
      */ 
-    public static Vector3D div(Vector3D v1, float n) {
+    public static Vector3D div(Vector3D v1, double n) {
         Vector3D v = new Vector3D(v1.x/n,v1.y/n,v1.z/n);
         return v;
     }
@@ -279,7 +285,7 @@ public class Vector3D {
      * @param n scalar 
      * @return a new vector that is v1 * n
      */ 
-    public static Vector3D mult(Vector3D v1, float n) {
+    public static Vector3D mult(Vector3D v1, double n) {
         Vector3D v = new Vector3D(v1.x*n,v1.y*n,v1.z*n);
         return v;
     }
@@ -289,15 +295,15 @@ public class Vector3D {
      * @param theta, angle in radians to rotate vector
      * @return a new Vector object, rotated by theta
      */    
-    public static Vector3D rotate2D(Vector3D v, float theta) {
+    public static Vector3D rotate2D(Vector3D v, double theta) {
         // What is my current heading
-        float currentTheta = v.heading2D();
+        double currentTheta = v.heading2D();
         // What is my current speed
-        float mag = v.magnitude();
+        double mag = v.magnitude();
         // Turn me
         currentTheta += theta;
         // Look, polar coordinates to cartesian!!
-        Vector3D newV = new Vector3D((float) (mag*Math.cos(currentTheta)),(float) (mag*Math.cos(currentTheta)));
+        Vector3D newV = new Vector3D((double) (mag*Math.cos(currentTheta)),(double) (mag*Math.cos(currentTheta)));
         return  newV;
     }
     
@@ -307,11 +313,11 @@ public class Vector3D {
      * @param v2 another vector
      * @return the Euclidean distance between v1 and v2
      */ 
-    public static float distance (Vector3D v1, Vector3D v2) {
-        float dx = v1.x - v2.x;
-        float dy = v1.y - v2.y;
-        float dz = v1.z - v2.z;
-        return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);
+    public static double distance (Vector3D v1, Vector3D v2) {
+        double dx = v1.x - v2.x;
+        double dy = v1.y - v2.y;
+        double dz = v1.z - v2.z;
+        return (double) Math.sqrt(dx*dx + dy*dy + dz*dz);
     }
     
     /**
@@ -320,9 +326,9 @@ public class Vector3D {
      * @param v2 another vector
      * @return the angle between the vectors
      */ 
-    public static float angleBetween(Vector3D v1, Vector3D v2) {
-        float dot = v1.dot(v2);
-        float theta = (float) Math.acos(dot / (v1.magnitude() * v2.magnitude()));
+    public static double angleBetween(Vector3D v1, Vector3D v2) {
+        double dot = v1.dot(v2);
+        double theta = (double) Math.acos(dot / (v1.magnitude() * v2.magnitude()));
         return theta;
     }
     

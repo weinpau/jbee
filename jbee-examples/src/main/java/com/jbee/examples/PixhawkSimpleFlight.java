@@ -15,9 +15,11 @@ import com.jbee.commands.Commands;
 import com.jbee.commands.FlyCommand;
 import com.jbee.commands.FlyCommandBuilder;
 import com.jbee.device.pixhawk.Pixhawk;
+import com.jbee.positioning.Position;
 import com.jbee.units.Angle;
 import com.jbee.units.Distance;
 import com.jbee.units.RotationalSpeed;
+import com.jbee.units.Speed;
 import java.time.Duration;
 
 /**
@@ -37,14 +39,18 @@ public class PixhawkSimpleFlight {
 
         control = control.rotationalSpeed(RotationalSpeed.rpm(1));
         
-        control = control.onPositionChanged((s,p) -> System.out.println(p), Distance.ofMeters(1));
+        //control = control.onPositionChanged((s,p) -> System.out.println(p), Distance.ofMeters(1));
         
         
-        control.takeOff();
+        //control.takeOff();
+        
+        //control.execute(Commands.forward(Distance.ofMeters(5)).andRotate(Angle.ofDegrees(360), RotationDirection.CW).build());
+        control.execute(Commands.rotate(Angle.ofDegrees(360), RotationDirection.CCW).andRight(Distance.ofMeters(50)).with(Speed.mps(10)).build());
+        //control.execute(Commands.rotate(Angle.ofDegrees(360), RotationDirection.CW).build());
         for (int i = 0; i < 4; i++) {
-            control.execute(Commands.forward(Distance.ofMeters(10)).andRotate(Angle.ofDegrees(90), RotationDirection.CW).build());
+            //control.execute(Commands.forward(Distance.ofMeters(10)).andRotate(Angle.ofDegrees(90), RotationDirection.CW).build());
         }
-        control.land();
+        //control.land();
         
         
         context.close();

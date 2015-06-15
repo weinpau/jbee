@@ -276,7 +276,20 @@ public class MavlinkModule implements Consumer<MAVLinkPacket>{
         connection.sendPackage(createPackage(msg));
     }
     
-    public void setPositionTargetLocal(byte targetSysID, byte targetCompID, double x, double y,double alt, double velX, double velY, double velZ,double yaw, double yawRate,boolean useGlobalYaw) {
+    /**
+     * Sends a Target Position to the Pixhawk
+     * @param x The X Coordinate of the Target in m relative to the start Position
+     * @param y The Y Coordinate of the Target in m relative to the start Position
+     * @param alt The Height of the Target in m relative to the start Position
+     * @param velX The Velocity to move to the Target in X Direction
+     * @param velY The Velocity to move to the Target in Y Direction
+     * @param velZ The Velocity to climp to the Target
+     * @param yaw The desired Yaw Angle
+     * @param yawRate The desired Yaw Speed in rad/s
+     * @param useYaw If true, the Yaw Angle will be set instead of the YawRate. If false the Yaw will be ignored and the YawRate will be set.
+     * @param useVelocity If true, the X,Y,Z Corrdinates will not be used and the velocity is used. If false the Velocity will be ignored
+     */
+    public void setPositionTargetLocal(byte targetSysID, byte targetCompID, double x, double y,double alt, double velX, double velY, double velZ,double yaw, double yawRate,boolean useYaw,boolean useVelocity) {
         msg_set_position_target_local_ned msg = new msg_set_position_target_local_ned();
         msg.coordinate_frame = MAV_FRAME.MAV_FRAME_LOCAL_NED;
         msg.target_system = targetSysID;
@@ -294,13 +307,17 @@ public class MavlinkModule implements Consumer<MAVLinkPacket>{
         //bit 4: vx, bit 5: vy, bit 6: vz
         //bit 7: ax, bit 8: ay, bit 9: az,
         //bit 10: is force setpoint, bit 11: yaw, bit 12: yaw rate
-        if(useGlobalYaw){
+        msg.type_mask = 0b0000000111000000;
+        if(useVelocity){
+            msg.type_mask |= 0b0000000000000111;
+        }
+        
+        if(useYaw){
             msg.yaw = (float)yaw; //yaw setpoint in rad
-            msg.type_mask = 0b0000000111000000;
         }
         else{
             msg.yaw_rate = (float)yawRate; //yaw rate setpoint in rad/s
-            msg.type_mask = 0b0000010111000000;
+            msg.type_mask |= 0b0000010000000000;
         }
         
         connection.sendPackage(createPackage(msg));

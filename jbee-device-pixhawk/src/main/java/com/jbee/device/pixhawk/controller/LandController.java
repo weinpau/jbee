@@ -1,9 +1,5 @@
 package com.jbee.device.pixhawk.controller;
 
-import com.MAVLink.MAVLinkPacket;
-import com.MAVLink.common.msg_mission_ack;
-import com.MAVLink.common.msg_mission_item_reached;
-import com.MAVLink.common.msg_mission_request;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.jbee.commands.CommandResult;
 import com.jbee.commands.Commands;
@@ -11,9 +7,6 @@ import com.jbee.commands.LandCommand;
 import com.jbee.device.pixhawk.internal.PixhawkController;
 import com.jbee.units.Distance;
 import com.jbee.units.Speed;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -42,7 +35,7 @@ public class LandController extends BasicController{
         pixhawk.performingLand = false;
         if(pixhawk.getLocalPosition().z > -10){
             int base_mode =  pixhawk.getHeartbeat().base_mode & 0xFF;
-            pixhawk.setMode(base_mode & (~MAV_MODE_FLAG.MAV_MODE_FLAG_SAFETY_ARMED) , 0);
+            pixhawk.setMode(base_mode & (~MAV_MODE_FLAG.MAV_MODE_FLAG_SAFETY_ARMED) & (~MAV_MODE_FLAG.MAV_MODE_FLAG_GUIDED_ENABLED) & (~MAV_MODE_FLAG.MAV_MODE_FLAG_AUTO_ENABLED) , 0);
         }
         return result;
     }
